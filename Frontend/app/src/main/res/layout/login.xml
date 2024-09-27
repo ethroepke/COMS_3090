@@ -105,4 +105,17 @@
         android:textColor="#4169E1">
     </TextView>
 
+    <!-- Message display -->
+    <TextView
+        android:id="@+id/mainMessage"
+        android:layout_width="300dp"
+        android:layout_height="25dp"
+        android:text=""
+        android:textSize="18dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="120dp"
+        android:textColor="#FF0000"
+        android:textAlignment="center">
+    </TextView>
+
 </androidx.appcompat.widget.LinearLayoutCompat>
