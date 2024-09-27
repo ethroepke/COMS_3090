@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 //import com.example.androidexample.EmployerActivity;
@@ -19,6 +21,10 @@ public class loginActivity extends AppCompatActivity {
     private EditText usernameInput;
     private EditText passwordInput;
     private Button submitButton;
+    private ImageButton showPassword;
+
+
+    boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -30,6 +36,7 @@ public class loginActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.usernameInput);
         passwordInput = findViewById(R.id.passwordInput);
         messageText = findViewById(R.id.mainMessage);
+        showPassword = findViewById(R.id.showPassword);
 
 
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +55,22 @@ public class loginActivity extends AppCompatActivity {
                 else{
                     messageText.setText("Invalid credentials, try again.");
                 }
+            }
+        });
+
+        showPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isPasswordVisible){
+                    passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    showPassword.setImageResource(R.drawable.eyehide);
+                }
+                else{
+                    passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    showPassword.setImageResource(R.drawable.eyeshow);
+                }
+
+                isPasswordVisible = !isPasswordVisible;
             }
         });
     }

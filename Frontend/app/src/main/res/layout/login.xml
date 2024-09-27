@@ -94,16 +94,16 @@
     </TextView>
 
     <!--Show Password-->
-    <TextView
-        android:layout_width="50dp"
-        android:layout_height="25dp"
-        android:layout_marginLeft="285dp"
-        android:layout_marginTop="-253dp"
-        android:text="Show"
-        android:textAlignment="center"
-        android:gravity="bottom"
-        android:textColor="#4169E1">
-    </TextView>
+    <ImageButton
+        android:id="@+id/showPassword"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/eyehide"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="306dp"
+        android:layout_marginTop="-250dp"
+        android:background="@android:color/transparent">
+    </ImageButton>
 
     <!-- Message display -->
     <TextView
@@ -117,5 +117,6 @@
         android:textColor="#FF0000"
         android:textAlignment="center">
     </TextView>
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>
