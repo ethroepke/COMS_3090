@@ -81,4 +81,10 @@
         android:textAlignment="textEnd"
         android:textColor="@color/white"
         android:text="   Next Payday" />
+
+    <Button
+        android:id="@+id/signout_btn"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:text="Log Out" />
 </androidx.appcompat.widget.LinearLayoutCompat>

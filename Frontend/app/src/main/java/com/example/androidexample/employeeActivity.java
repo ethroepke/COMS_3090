@@ -2,6 +2,7 @@ package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,12 +21,15 @@ public class employeeActivity extends AppCompatActivity {
     private TextView timerText;
     private long checked_time;
 
+    private Button signoutButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.employee);             // link to Main activity XML
 
         checkButton = findViewById(R.id.check_btn);
+        signoutButton = findViewById(R.id.signout_btn);
         checkText = findViewById(R.id.check_txt);
         timerText = findViewById(R.id.check_clk_txt);
 
@@ -74,6 +78,14 @@ public class employeeActivity extends AppCompatActivity {
                     checkButton.setBackgroundColor(check_green);
                     timerText.setVisibility(View.INVISIBLE);
                 }
+            }
+        });
+
+        signoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employeeActivity.this, loginActivity.class);
+                startActivity(intent);
             }
         });
     }

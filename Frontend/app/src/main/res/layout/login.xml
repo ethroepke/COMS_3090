@@ -55,22 +55,25 @@
         android:id="@+id/submitButton"
         android:layout_width="250dp"
         android:layout_height="50dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:layout_gravity="center"
         android:text="Sign In"
         android:backgroundTint="#FFA500">
     </Button>
 
     <!--Forgot password-->
-    <TextView
+    <Button
+        android:id="@+id/forgotButton"
         android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="68dp"
-        android:layout_marginTop="-80dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="57dp"
+        android:layout_marginTop="-100dp"
         android:text="Forgot Password?"
+        android:textSize="5pt"
         android:textAlignment="center"
+        android:backgroundTint="@color/white"
         android:textColor="#4169E1">
-    </TextView>
+    </Button>
 
     <!--New to WorkAround-->
     <TextView
@@ -117,6 +120,17 @@
         android:textColor="#FF0000"
         android:textAlignment="center">
     </TextView>
+
+    <Button
+        android:id="@+id/newUserJoin"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent">
+
+    </Button>
+
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
