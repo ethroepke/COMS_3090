@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 
 
+
+
 public class loginActivity extends AppCompatActivity {
 
     private TextView messageText;
@@ -26,10 +28,13 @@ public class loginActivity extends AppCompatActivity {
 
     boolean isPasswordVisible = false;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
 
         /*Initialize UI Elements*/
         submitButton = findViewById(R.id.submitButton);
