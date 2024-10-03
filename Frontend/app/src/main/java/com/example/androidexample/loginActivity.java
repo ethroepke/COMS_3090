@@ -11,10 +11,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 
-
-
-
-
 public class loginActivity extends AppCompatActivity {
 
     private TextView messageText;

@@ -1,10 +1,12 @@
 package com.example.androidexample;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,7 +15,9 @@ public class forgotpasswordActivity extends AppCompatActivity {
     private Button back_button;
     private EditText email_input;
     private Button submit_button;
+    private TextView messageText;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -22,6 +26,7 @@ public class forgotpasswordActivity extends AppCompatActivity {
         back_button = findViewById(R.id.backButton);
         email_input = findViewById(R.id.usernameInput);
         submit_button = findViewById(R.id.submitButton);
+        messageText = findViewById(R.id.messageText);
 
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,14 +39,21 @@ public class forgotpasswordActivity extends AppCompatActivity {
         submit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String s = email_input.getText().toString();
+                String email = email_input.getText().toString();
+
+                if(email.equals("admin123@gmail.com")){
+                    //Send reset password to email
+
+                    //Send user to email sent page
+                    Intent intent = new Intent(forgotpasswordActivity.this, forgotPasswordVerifiedActivity.class);
+                    startActivity(intent);
+                }
+
+                //Email not in database send message letting them know
+                else{
+                    messageText.setText("An account could not be found for provided email ID");
+                }
             }
         });
-
-
     }
-
-
-
-
 }

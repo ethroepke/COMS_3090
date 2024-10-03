@@ -30,9 +30,12 @@
             />
 
         <activity
-            android:name="com.example.androidexample.forgotpasswordActivity"
+            android:name=".forgotpasswordActivity"
             android:exported="true"
             />
+        <activity
+            android:name=".forgotPasswordVerifiedActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
