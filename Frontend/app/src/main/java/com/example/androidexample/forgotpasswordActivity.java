@@ -52,7 +52,7 @@ public class forgotpasswordActivity extends AppCompatActivity {
 
                 //Email not in database send message letting them know
                 else{
-                    messageText.setText("An account could not be found for provided email ID");
+                    messageText.setText("An account could not be found for the given email ID");
                 }
             }
         });

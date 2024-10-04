@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".forgotPasswordVerifiedActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF0E0">
+
+    <!--White background to surround forgot password-->
+    <FrameLayout
+        android:layout_width="350dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="250dp"
+        android:background="@color/white">
+    </FrameLayout>
+
+    <!--Logo-->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-500dp"
+        android:src="@drawable/workaroundlogo">
+    </ImageView>
+    
+
+
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
