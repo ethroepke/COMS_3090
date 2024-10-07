@@ -15,8 +15,6 @@ downloading all the required libraries/frameworks and adding them to the project
 applying different test plugins in the pom.xml file. Additionally, maven also packages the project into a jar/war files.
 
 #### Below are the steps that take place when a maven project is run.
-
-1. Validity of the pom.xml is checked.
 2. Resources(dependencies) that are specified in the pom.xml are gathered from the maven-central repository(and stored in local cache for future builds).
 3. The project is compiled with all the required libraries.
 4. The test are run if they've been configured.

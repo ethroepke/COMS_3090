@@ -36,6 +36,9 @@
         <activity
             android:name=".forgotPasswordVerifiedActivity"
             android:exported="true" />
+        <activity
+            android:name=".joinNowActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

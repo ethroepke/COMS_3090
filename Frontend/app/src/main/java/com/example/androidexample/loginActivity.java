@@ -87,7 +87,7 @@ public class loginActivity extends AppCompatActivity {
         newUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(loginActivity.this, forgotpasswordActivity.class);
+                Intent intent = new Intent(loginActivity.this, joinNowActivity.class);
                 startActivity(intent);
             }
         });
