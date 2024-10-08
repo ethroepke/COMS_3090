@@ -21,7 +21,8 @@
     <!--White background to surround forgot password-->
     <FrameLayout
         android:layout_width="350dp"
-        android:layout_height="400dp"
+        android:layout_height="450dp"
+        android:layout_marginTop="-50dp"
         android:layout_gravity="center"
         android:background="@color/white">
     </FrameLayout>
@@ -34,7 +35,7 @@
         android:hint="Full name"
         android:inputType="text"
         android:layout_gravity="center"
-        android:layout_marginTop="-320dp">
+        android:layout_marginTop="-380dp">
     </EditText>
 
     <!--email-->
@@ -43,6 +44,17 @@
         android:layout_width="250dp"
         android:layout_height="40dp"
         android:hint="Email"
+        android:inputType="text"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+    </EditText>
+
+    <!--username-->
+    <EditText
+        android:id="@+id/usernameInput"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:hint="Username"
         android:inputType="text"
         android:layout_gravity="center"
         android:layout_marginTop="20dp">
@@ -86,7 +98,7 @@
         android:id="@+id/backButton"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_marginTop="-370dp"
+        android:layout_marginTop="-430dp"
         android:layout_gravity="right"
         android:layout_marginRight="50dp"
         android:text="Back"
@@ -101,7 +113,7 @@
         android:src="@drawable/eyehide"
         android:scaleType="fitCenter"
         android:layout_marginLeft="300dp"
-        android:layout_marginTop="205dp"
+        android:layout_marginTop="260dp"
         android:background="@android:color/transparent">
     </ImageButton>
 

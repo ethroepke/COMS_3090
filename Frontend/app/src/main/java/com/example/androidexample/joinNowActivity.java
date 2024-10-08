@@ -23,6 +23,7 @@ public class joinNowActivity extends AppCompatActivity {
     private Button signUp;
     private EditText name;
     private EditText email;
+    private EditText username;
     private EditText password;
     private EditText verifyPassword;
     private TextView nameErrorMessage;
@@ -46,6 +47,7 @@ public class joinNowActivity extends AppCompatActivity {
         signUp = findViewById(R.id.joinNow);
         name = findViewById(R.id.enterName);
         email = findViewById(R.id.emailInput);
+        username = findViewById(R.id.usernameInput);
         password = findViewById(R.id.enterPassword);
         verifyPassword = findViewById(R.id.reenterPassword);
         nameErrorMessage = findViewById(R.id.nameError);
@@ -148,6 +150,7 @@ public class joinNowActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String nameFilled = name.getText().toString().trim();
                 String emailFilled = email.getText().toString().trim();
+                String usernameFilled = username.getText().toString().trim();
                 String passwordFilled = password.getText().toString().trim();
                 String verifyPasswordFilled = verifyPassword.getText().toString().trim();
 
