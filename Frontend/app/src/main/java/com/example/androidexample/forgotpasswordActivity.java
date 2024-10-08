@@ -39,7 +39,7 @@ public class forgotpasswordActivity extends AppCompatActivity {
         submit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = email_input.getText().toString();
+                String email = email_input.getText().toString().trim();
 
                 if(email.equals("admin123@gmail.com")){
                     //SEND RESET PASSWORD TO EMAIL

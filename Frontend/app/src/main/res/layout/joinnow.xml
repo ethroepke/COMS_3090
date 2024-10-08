@@ -117,5 +117,44 @@
         android:background="@android:color/transparent">
     </ImageButton>
 
+    <!-- field error -->
+    <TextView
+        android:id="@+id/nameError"
+        android:layout_width="300dp"
+        android:layout_height="25dp"
+        android:text=""
+        android:textSize="14dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-115dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="#FF0000">
+    </TextView>
+
+    <!-- field error -->
+    <TextView
+        android:id="@+id/emailError"
+        android:layout_width="300dp"
+        android:layout_height="25dp"
+        android:text=""
+        android:textSize="14dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="#FF0000">
+    </TextView>
+
+    <!-- field error -->
+    <TextView
+        android:id="@+id/verifyPasswordError"
+        android:layout_width="300dp"
+        android:layout_height="25dp"
+        android:text=""
+        android:textSize="14dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="#FF0000">
+    </TextView>
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>
