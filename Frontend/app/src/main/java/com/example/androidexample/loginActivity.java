@@ -41,6 +41,8 @@ public class loginActivity extends AppCompatActivity {
         forgotPasswordButton = findViewById(R.id.forgotButton);
         newUserButton = findViewById(R.id.newUserJoin);
 
+        showPassword = findViewById(R.id.showPassword);
+
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override

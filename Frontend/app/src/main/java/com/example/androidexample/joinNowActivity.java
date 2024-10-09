@@ -23,7 +23,7 @@ public class joinNowActivity extends AppCompatActivity {
     private Button signUp;
     private EditText name;
     private EditText email;
-    private EditText username;
+    private EditText usernameFill;
     private EditText password;
     private EditText verifyPassword;
     private TextView nameErrorMessage;
@@ -47,7 +47,7 @@ public class joinNowActivity extends AppCompatActivity {
         signUp = findViewById(R.id.joinNow);
         name = findViewById(R.id.enterName);
         email = findViewById(R.id.emailInput);
-        username = findViewById(R.id.usernameInput);
+        usernameFill = findViewById(R.id.usernameInput);
         password = findViewById(R.id.enterPassword);
         verifyPassword = findViewById(R.id.reenterPassword);
         nameErrorMessage = findViewById(R.id.nameError);
@@ -61,6 +61,21 @@ public class joinNowActivity extends AppCompatActivity {
         nameErrorMessage.setVisibility(View.GONE);
         emailErrorMessage.setVisibility(View.GONE);
         verifyPasswordErrorMessage.setVisibility(View.GONE);
+
+        name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                fillUsername(name, usernameFill);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
 
         // Add TextWatcher for name EditText
         name.addTextChangedListener(new TextWatcher() {
@@ -150,7 +165,7 @@ public class joinNowActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String nameFilled = name.getText().toString().trim();
                 String emailFilled = email.getText().toString().trim();
-                String usernameFilled = username.getText().toString().trim();
+                String usernameFilled = usernameFill.getText().toString().trim();
                 String passwordFilled = password.getText().toString().trim();
                 String verifyPasswordFilled = verifyPassword.getText().toString().trim();
 
@@ -253,6 +268,23 @@ public class joinNowActivity extends AppCompatActivity {
         builder.setMessage(message);
         builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
         builder.show();
+    }
+
+    private void fillUsername(EditText name, EditText username){
+        String fullName = name.getText().toString().trim();
+        //Split name by space
+        String[] firstLast = fullName.split("\\s+");
+
+        //Check first and last is in name field
+        if(firstLast.length >= 2){
+            //first initial
+            String firstInitial = firstLast[0].substring(0, 1).toLowerCase();
+            //last name
+            String lastName = firstLast[firstLast.length - 1].toLowerCase();
+
+            String usernameFinal = firstInitial + lastName;
+            usernameFill.setText(usernameFinal);
+        }
     }
 }
 
