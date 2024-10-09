@@ -37,7 +37,7 @@ public class loginActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.usernameInput);
         passwordInput = findViewById(R.id.passwordInput);
         messageText = findViewById(R.id.mainMessage);
-        showPassword = findViewById(R.id.showPassword);
+
         forgotPasswordButton = findViewById(R.id.forgotButton);
         newUserButton = findViewById(R.id.newUserJoin);
 
