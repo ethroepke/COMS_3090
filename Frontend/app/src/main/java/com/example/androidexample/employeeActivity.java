@@ -41,9 +41,6 @@ public class employeeActivity extends AppCompatActivity {
         checkButton.setBackgroundColor(check_green);
 
 
-        /* click listener on counter button pressed */
-
-
         //runs without a timer by reposting this handler at the end of the runnable
         Handler timerHandler = new Handler();
         Runnable timerRunnable = new Runnable() {

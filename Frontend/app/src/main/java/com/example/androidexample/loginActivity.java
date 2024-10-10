@@ -21,10 +21,7 @@ public class loginActivity extends AppCompatActivity {
     private Button forgotPasswordButton;
     private Button newUserButton;
 
-
     boolean isPasswordVisible = false;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
