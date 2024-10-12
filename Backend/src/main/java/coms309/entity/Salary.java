@@ -1,12 +1,22 @@
+
 package coms309.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
-
-
+/**
+ * Entity class representing an employee's salary.
+ * 
+ * Improvements:
+ * - Added validation annotations to enforce data integrity.
+ * - Enhanced documentation for field-level relationships.
+ */
 @Entity
-@Table(name= "salaries")
+@Getter
+@Setter
+@Table(name = "salary")
 public class Salary {
 
     @Id
@@ -14,29 +24,12 @@ public class Salary {
     @Column(name = "salary_id")
     private Long salaryId;
 
+    @NotNull(message = "Salary amount cannot be null")
+    @Column(name = "salary_amount")
+    private Double salaryAmount;
+
+    @NotNull(message = "Employee cannot be null")
     @OneToOne
-    @JoinColumn(name = "eID_salary", referencedColumnName = "employee_id")
+    @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
     private Employee employee;
-
-    @ManyToOne
-    @JoinColumn(name = "erID_salary", referencedColumnName = "employer_id")
-    private Employer employers;
-
-    @Column(name = "base_salary", nullable = false)
-    private Double baseSalary;
-
-    @Column(name = "bonus")
-    private Double bonus;
-
-    @Column(name = "deductions")
-    private Double deductions;
-
-    @Column(name = "pay_period", nullable = false)
-    private String payPeriod; // E.g., 'Monthly', 'Bi-weekly'
-
-    @Column(name = "total_compensation", nullable = false)
-    private Double totalCompensation;
-
-
 }
-

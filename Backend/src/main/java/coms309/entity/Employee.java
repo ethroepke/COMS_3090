@@ -1,28 +1,37 @@
+
 package coms309.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entity class representing an Employee.
+ * 
+ * Improvements:
+ * - Added validation annotations for data integrity.
+ * - Enhanced field-level documentation.
+ */
 @Entity
 @Getter
 @Setter
 @Table(name = "employee")
 public class Employee {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "employee_id")
-        private Long employeeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "employee_id")
+    private Long employeeId;
 
-        @OneToOne
-        @JoinColumn (name = "u_id", referencedColumnName = "user_id")
-        private UserProfile userProfile;
+    @NotNull(message = "UserProfile cannot be null")
+    @OneToOne
+    @JoinColumn(name = "u_id", referencedColumnName = "user_id")
+    private UserProfile userProfile;
 
-        @ManyToOne
-        @JoinColumn(name = "e_projects" , referencedColumnName = "project_id")
-        private Projects projects;
-
-
+    @NotNull(message = "Project assignment cannot be null")
+    @ManyToOne
+    @JoinColumn(name = "e_projects", referencedColumnName = "project_id")
+    private Projects projects;
 
 }

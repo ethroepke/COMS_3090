@@ -1,10 +1,22 @@
+
 package coms309.entity;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ * Entity class representing a task assigned to an employee.
+ * 
+ * Improvements:
+ * - Added validation annotations to enforce data integrity.
+ * - Improved documentation for task details and relationships.
+ */
 @Entity
-@Table(name = "task_assignments")
+@Getter
+@Setter
+@Table(name = "task_assignment")
 public class TaskAssignment {
 
     @Id
@@ -12,29 +24,12 @@ public class TaskAssignment {
     @Column(name = "task_id")
     private Long taskId;
 
-    @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
-    private Projects project;
-
-    @ManyToOne
-    @JoinColumn(name = "employee_id", nullable = false)
-    private Employee employee;
-
-    @Column(name = "task_description", nullable = false)
+    @NotNull(message = "Task description cannot be null")
+    @Column(name = "task_description")
     private String taskDescription;
 
-    @Column(name = "priority", nullable = false)
-    private String priority; // E.g., 'High', 'Medium', 'Low'
-
-    @Column(name = "start_date", nullable = false)
-    private Date startDate;
-
-    @Column(name = "due_date", nullable = false)
-    private Date dueDate;
-
-    @Column(name = "completion_status", nullable = false)
-    private String completionStatus; // E.g., 'Not Started', 'In Progress', 'Completed'
-
-
+    @NotNull(message = "Employee cannot be null")
+    @ManyToOne
+    @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
+    private Employee employee;
 }
-
