@@ -104,11 +104,11 @@ public class loginActivity extends AppCompatActivity {
 
     }
 
-    public void postRequest(JSONObject post) {
+    public void getRequest() {
         JsonObjectRequest username = new JsonObjectRequest(
-                Request.Method.POST,
+                Request.Method.GET,
                 url,
-                post,
+                null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
