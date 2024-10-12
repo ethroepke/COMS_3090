@@ -1,96 +1,78 @@
+
 package onetoone.Persons;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import onetoone.Laptops.Laptop;
 import onetoone.Laptops.LaptopRepository;
 
-/**
- * 
- * @author Vivek Bengre
- * 
- */ 
+import java.util.List;
 
+/**
+ * REST Controller for managing Person entities
+ */
 @RestController
 public class PersonController {
 
     @Autowired
-    PersonRepository PersonRepository;
+    PersonRepository personRepository;
 
     @Autowired
     LaptopRepository laptopRepository;
 
-    private String success = "{\"message\":\"success\"}";
-    private String failure = "{\"message\":\"failure\"}";
+    private final String success = "Operation was successful";
+    private final String failure = "Operation failed";
 
-    @GetMapping(path = "/Persons")
-    List<Person> getAllPersons(){
-        return PersonRepository.findAll();
+    @GetMapping("/persons")
+    public List<Person> getAllPersons() {
+        return personRepository.findAll();
     }
 
-    @GetMapping(path = "/Persons/{id}")
-    Person getPersonById( @PathVariable int id){
-        return PersonRepository.findById(id);
+    @GetMapping("/persons/{id}")
+    public Person getPersonById(@PathVariable int id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Person not found with id: " + id));
     }
 
-    @PostMapping(path = "/Persons")
-    String createPerson(@RequestBody Person Person){
-        if (Person == null)
+    @PostMapping("/persons")
+    public String createPerson(@RequestBody Person person) {
+        if (person == null) {
             return failure;
-        PersonRepository.save(Person);
+        }
+        personRepository.save(person);
         return success;
     }
 
-    /* not safe to update */
-//    @PutMapping("/Persons/{id}")
-//    Person updatePerson(@PathVariable int id, @RequestBody Person request){
-//        Person Person = PersonRepository.findById(id);
-//        if(Person == null)
-//            return null;
-//        PersonRepository.save(request);
-//        return PersonRepository.findById(id);
-//    }
-
-    @PutMapping("/Persons/{id}")
-    Person updatePerson(@PathVariable int id, @RequestBody Person request){
-        Person Person = PersonRepository.findById(id);
-
-        if(Person == null) {
-            throw new RuntimeException("Person id does not exist");
+    @PutMapping("/persons/{id}")
+    public String updatePerson(@PathVariable int id, @RequestBody Person person) {
+        Person existingPerson = personRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Person not found with id: " + id));
+        
+        if (existingPerson.getId() != id) {
+            throw new RuntimeException("Person ID mismatch");
         }
-        else if (Person.getId() != id){
-            throw new RuntimeException("path variable id does not match Person request id");
-        }
-
-        PersonRepository.save(request);
-        return PersonRepository.findById(id);
-    }
-
-    @PutMapping("/Persons/{PersonId}/laptops/{laptopId}")
-    String assignLaptopToPerson(@PathVariable int PersonId,@PathVariable int laptopId){
-        Person Person = PersonRepository.findById(PersonId);
-        Laptop laptop = laptopRepository.findById(laptopId);
-        if(Person == null || laptop == null)
-            return failure;
-        laptop.setPerson(Person);
-        Person.setLaptop(laptop);
-        PersonRepository.save(Person);
+        
+        personRepository.save(person);
         return success;
     }
 
-    @DeleteMapping(path = "/Persons/{id}")
-    String deletePerson(@PathVariable int id){
-        PersonRepository.deleteById(id);
+    @PutMapping("/persons/{personId}/laptops/{laptopId}")
+    public String assignLaptopToPerson(@PathVariable int personId, @PathVariable int laptopId) {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new RuntimeException("Person not found with id: " + personId));
+        Laptop laptop = laptopRepository.findById(laptopId)
+                .orElseThrow(() -> new RuntimeException("Laptop not found with id: " + laptopId));
+
+        laptop.setPerson(person);
+        person.setLaptop(laptop);
+        personRepository.save(person);
+        return success;
+    }
+
+    @DeleteMapping("/persons/{id}")
+    public String deletePerson(@PathVariable int id) {
+        personRepository.deleteById(id);
         return success;
     }
 }

@@ -1,3 +1,4 @@
+
 package onetoone.Laptops;
 
 import jakarta.persistence.Entity;
@@ -11,17 +12,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import onetoone.Persons.Person;
 
 /**
- * 
- * @author Vivek Bengre
- */ 
-
+ * Entity representing a Laptop
+ */
 @Entity
 public class Laptop {
     
-    /* 
-     * The annotation @ID marks the field below as the primary key for the table created by springboot
-     * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -29,83 +24,78 @@ public class Laptop {
     private int cpuCores;
     private int ram;
     private String manufacturer;
-    private int cost;
+    private int price;  // renamed 'cost' to 'price' for clarity
 
-    /*
-     * @OneToOne creates a relation between the current entity/table(Laptop) with the entity/table defined below it(Person)
-     * @JsonIgnore is to assure that there is no infinite loop while returning either Person/laptop objects (laptop->Person->laptop->...)
-     */
     @OneToOne
     @JsonIgnore
-    private Person Person;
+    private Person person; // renamed 'Person' to 'person' to follow naming conventions
 
-    public Laptop( double cpuClock, int cpuCores, int ram, String manufacturer, int cost) {
+    // Constructor
+    public Laptop(double cpuClock, int cpuCores, int ram, String manufacturer, int price) {
         this.cpuClock = cpuClock;
         this.cpuCores = cpuCores;
         this.ram = ram;
         this.manufacturer = manufacturer;
-        this.cost = cost;
+        this.price = price;
     }
 
-    public Laptop() {
-    }
+    // Default constructor
+    public Laptop() {}
 
-    // =============================== Getters and Setters for each field ================================== //
-
-    public int getId(){
+    // Getters and Setters
+    public int getId() {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
-    public double getCpuClock(){
+    public double getCpuClock() {
         return cpuClock;
     }
 
-    public void setCpuClock(double cpuClock){
+    public void setCpuClock(double cpuClock) {
         this.cpuClock = cpuClock;
     }
 
-    public int getCpuCores(){
+    public int getCpuCores() {
         return cpuCores;
     }
 
-    public void setCpuCores(int cpuCores){
+    public void setCpuCores(int cpuCores) {
         this.cpuCores = cpuCores;
     }
 
-    public String getManufacturer(){
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer){
-        this.manufacturer = manufacturer;
-    }
-
-    public int getCost(){
-        return cost;
-    }
-
-    public void setCost(int cost){
-        this.cost = cost;
-    }
-
-    public Person getPerson(){
-        return Person;
-    }
-
-    public void setPerson(Person Person){
-        this.Person = Person;
-    }
-
-    public int getRam(){
+    public int getRam() {
         return ram;
     }
 
-    public void setRam(int ram){
+    public void setRam(int ram) {
         this.ram = ram;
     }
 
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
 }

@@ -62,7 +62,7 @@ public class loginActivity extends AppCompatActivity {
                 if(username.equals("Employer") && password.equals("Boss123")){
                     Intent intent = new Intent(loginActivity.this, employerActivity.class);
                     startActivity(intent);
-                } else if (username.equals("Employee") && password.equals("Associate123")) {
+                } else if (username.equals("") && password.equals("Associate123")) {
                     Intent intent = new Intent(loginActivity.this, employeeActivity.class);
                     startActivity(intent);
                 }
@@ -112,7 +112,7 @@ public class loginActivity extends AppCompatActivity {
         JSONObject loginData = new JSONObject();
 
         try {
-            loginData.put("username", usernameInput.getText().toString());
+            loginData.put("userName", usernameInput.getText().toString());
             loginData.put("password", passwordInput.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();

@@ -1,3 +1,4 @@
+
 package onetoone;
 
 import org.springframework.boot.CommandLineRunner;
@@ -11,10 +12,9 @@ import onetoone.Persons.Person;
 import onetoone.Persons.PersonRepository;
 
 /**
- * 
- * @author Vivek Bengre
- * 
- */ 
+ * Main class for initializing the Spring Boot application
+ * Author: Vivek Bengre
+ */
 
 @SpringBootApplication
 class Main {
@@ -23,31 +23,30 @@ class Main {
         SpringApplication.run(Main.class, args);
     }
 
-    // Create 3 Persons with their machines
-    /**
-     * 
-     * @param PersonRepository repository for the Person entity
-     * @param laptopRepository repository for the Laptop entity
-     * Creates a commandLine runner to enter dummy data into the database
-     * As mentioned in Person.java just associating the Laptop object with the Person will save it into the database because of the CascadeType
-     */
+    // Create Persons with their laptops and save to the repository
     @Bean
-    CommandLineRunner initPerson(PersonRepository PersonRepository, LaptopRepository laptopRepository) {
+    CommandLineRunner initPerson(PersonRepository personRepository, LaptopRepository laptopRepository) {
         return args -> {
-            Person Person1 = new Person("John", "john@somemail.com");
-            Person Person2 = new Person("Jane", "jane@somemail.com");
-            Person Person3 = new Person("Justin", "justin@somemail.com");
-            Laptop laptop1 = new Laptop( 2.5, 4, 8, "Lenovo", 300);
-            Laptop laptop2 = new Laptop( 4.1, 8, 16, "Hp", 800);
-            Laptop laptop3 = new Laptop( 3.5, 32, 32, "Dell", 2300);  
-            Person1.setLaptop(laptop1);
-            Person2.setLaptop(laptop2);
-            Person3.setLaptop(laptop3);            
-            PersonRepository.save(Person1);
-            PersonRepository.save(Person2);
-            PersonRepository.save(Person3);
+            try {
+                Person[] persons = {
+                    new Person("John", "john@somemail.com"),
+                    new Person("Jane", "jane@somemail.com"),
+                    new Person("Justin", "justin@somemail.com")
+                };
 
+                Laptop[] laptops = {
+                    new Laptop(2.5, 4, 8, "Lenovo", 300),
+                    new Laptop(4.1, 8, 16, "Hp", 800),
+                    new Laptop(3.5, 32, 32, "Dell", 2300)
+                };
+
+                for (int i = 0; i < persons.length; i++) {
+                    persons[i].setLaptop(laptops[i]);
+                    personRepository.save(persons[i]);
+                }
+            } catch (Exception e) {
+                System.err.println("Error initializing persons and laptops: " + e.getMessage());
+            }
         };
     }
-
 }
