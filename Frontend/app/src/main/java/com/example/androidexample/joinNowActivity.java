@@ -10,12 +10,26 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class joinNowActivity extends AppCompatActivity {
 
@@ -34,6 +48,8 @@ public class joinNowActivity extends AppCompatActivity {
 
     boolean isPasswordVisible1 = false;
     boolean isPasswordVisible2 = false;
+
+    private String url_json_object = "http://coms-3090-046.class.las.iastate.edu";
 
 
 
@@ -286,5 +302,7 @@ public class joinNowActivity extends AppCompatActivity {
             usernameFill.setText(usernameFinal);
         }
     }
+
+
 }
 
