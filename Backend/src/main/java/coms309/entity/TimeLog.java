@@ -23,7 +23,7 @@ public class TimeLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "time_log_id")
+    @Column(name = "timeLog_id")
     private Long timeLogId;
 
     @NotNull(message = "Log date cannot be null")
@@ -37,6 +37,6 @@ public class TimeLog {
 
     @NotNull(message = "Employee cannot be null")
     @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
+    @JoinColumn(name = "timeTrackingForEmployee", referencedColumnName = "employee_id")
     private Employee employee;
 }

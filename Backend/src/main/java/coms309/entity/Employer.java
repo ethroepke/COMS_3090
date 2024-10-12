@@ -1,4 +1,3 @@
-
 package coms309.entity;
 
 import jakarta.persistence.*;
@@ -10,10 +9,6 @@ import java.util.List;
 
 /**
  * Entity class representing an Employer.
- * 
- * Improvements:
- * - Added validation annotations to enforce data integrity.
- * - Enhanced documentation for field-level relationships.
  */
 @Entity
 @Getter
@@ -40,8 +35,17 @@ public class Employer {
     )
     private List<Projects> projects;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name="user_type")
+    private UserType userType;
+
     @NotNull(message = "Leave Requests cannot be null")
     @ManyToOne
     @JoinColumn(name = "er_leaveRequests", referencedColumnName = "leave_id")
     private LeaveRequests leaveRequests;
+
+    @ManyToOne
+    @JoinColumn(name = "er_timeLog", referencedColumnName = "timeLog_id")
+    private TimeLog timeLog;
+
 }

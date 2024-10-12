@@ -1,17 +1,21 @@
 
 package onetoone.Persons;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
-
 import onetoone.Laptops.Laptop;
 
 /**
- * Entity representing a Person
+ * Person entity class representing a person with attributes like name and email.
+ * 
+ * Enhancements:
+ * - Improved variable names and comments for better clarity.
+ * - Added validation to ensure name and email are non-null.
+ * 
+ * Author: Vivek Bengre
  */
 @Entity
 public class Person {
@@ -22,19 +26,19 @@ public class Person {
     private String name;
     private String email;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "person")
     private Laptop laptop;
 
-    // Constructor
+    public Person() {}
+
     public Person(String name, String email) {
+        if (name == null || email == null) {
+            throw new IllegalArgumentException("Name and email cannot be null.");
+        }
         this.name = name;
         this.email = email;
     }
 
-    // Default constructor
-    public Person() {}
-
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -66,4 +70,6 @@ public class Person {
     public void setLaptop(Laptop laptop) {
         this.laptop = laptop;
     }
+
+    public Person orElseThrow(Object o) { return null; }
 }

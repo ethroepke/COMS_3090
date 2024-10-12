@@ -1,4 +1,3 @@
-
 package coms309.entity;
 
 import jakarta.persistence.*;
@@ -8,10 +7,6 @@ import lombok.Setter;
 
 /**
  * Entity class representing an Employee.
- * 
- * Improvements:
- * - Added validation annotations for data integrity.
- * - Enhanced field-level documentation.
  */
 @Entity
 @Getter
@@ -34,4 +29,7 @@ public class Employee {
     @JoinColumn(name = "e_projects", referencedColumnName = "project_id")
     private Projects projects;
 
+        @Enumerated(EnumType.STRING)
+        @Column(name = "user_type")
+        private UserType userType;
 }

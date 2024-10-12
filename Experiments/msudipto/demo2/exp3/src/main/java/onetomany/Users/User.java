@@ -1,132 +1,123 @@
 package onetomany.Users;
 
-import java.util.ArrayList;
+import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-
+import java.util.ArrayList;
 import onetomany.Laptops.Laptop;
 import onetomany.Phones.Phone;
 
+/**
+ * User entity class representing a system user with details such as name, email, and associated devices (laptop and phones).
+ *
+ * Enhancements:
+ * - Proper mapping for relationships (One-to-One with Laptop, One-to-Many with Phones).
+ * - Added validation for fields like name, email, and phone association.
+ * - Ensured proper cascading and fetch strategies for better performance and data integrity.
+ *
+ * Author: Vivek Bengre
+ */
 @Entity
 public class User {
 
-    /* 
-     * The annotation @ID marks the field below as the primary key for the table created by springboot
-     * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
-    private String emailId;
-    private Date joiningDate;
-    private boolean ifActive;
 
-    /*
-     * @OneToOne creates a relation between the current entity/table(Laptop) with the entity/table defined below it(User), the cascade option tells springboot
-     * to create the child entity if not present already (in this case it is laptop)
-     * @JoinColumn specifies the ownership of the key i.e. The User table will contain a foreign key from the laptop table and the column name will be laptop_id
-     */
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "laptop_id")
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Laptop laptop;
 
-     /*
-     * @OneToMany tells springboot that one instance of User can map to multiple instances of Phone OR one user row can map to multiple rows of the phone table 
-     */
-    @OneToMany
-    private List<Phone> phones;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Phone> phones = new ArrayList<>();
 
-     // =============================== Constructors ================================== //
+    // =============================== Constructors ================================== //
 
+    public User() {}
 
-    public User(String name, String emailId, Date joiningDate) {
+    public User(String name, String email, Date createdDate) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty.");
+        }
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty.");
+        }
         this.name = name;
-        this.emailId = emailId;
-        this.joiningDate = joiningDate;
-        this.ifActive = true;
-        phones = new ArrayList<>();
+        this.email = email;
+        this.createdDate = createdDate != null ? createdDate : new Date();
     }
 
-    public User() {
-        phones = new ArrayList<>();
-    }
+    // =============================== Getters and Setters ================================== //
 
-    
-    // =============================== Getters and Setters for each field ================================== //
-
-
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty.");
+        }
         this.name = name;
     }
 
-    public String getEmailId(){
-        return emailId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmailId(String emailId){
-        this.emailId = emailId;
+    public void setEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty.");
+        }
+        this.email = email;
     }
 
-    public Date getJoiningDate(){
-        return joiningDate;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setJoiningDate(Date joiningDate){
-        this.joiningDate = joiningDate;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public boolean getIsActive(){
-        return ifActive;
-    }
-
-    public void setIfActive(boolean ifActive){
-        this.ifActive = ifActive;
-    }
-
-    public Laptop getLaptop(){
+    public Laptop getLaptop() {
         return laptop;
     }
 
-    public void setLaptop(Laptop laptop){
+    public void setLaptop(Laptop laptop) {
         this.laptop = laptop;
-    }
-
-    public boolean isIfActive() {
-        return ifActive;
     }
 
     public List<Phone> getPhones() {
         return phones;
     }
 
-    public void setPhones(List<Phone> phones) {
-        this.phones = phones;
+    public void addPhone(Phone phone) {
+        if (phone != null) {
+            this.phones.add(phone);
+            phone.setUser(this);  // Set the relationship properly on the Phone side
+        }
     }
 
-    public void addPhones(Phone phone){
-        this.phones.add(phone);
+    public void removePhone(Phone phone) {
+        if (phone != null) {
+            this.phones.remove(phone);
+            phone.setUser(null);  // Remove the relationship properly
+        }
     }
-    
 }

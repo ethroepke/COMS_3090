@@ -56,18 +56,20 @@ public class loginActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Get the user input from the text fields
                 String username = usernameInput.getText().toString();
                 String password = passwordInput.getText().toString();
 
-                if(username.equals("Employer") && password.equals("Boss123")){
-                    Intent intent = new Intent(loginActivity.this, employerActivity.class);
-                    startActivity(intent);
-                } else if (username.equals("") && password.equals("Associate123")) {
+                // Check if both fields are filled
+                if (!username.isEmpty() && !password.isEmpty()) {
+                    // Call loginRequest() to send the request
                     Intent intent = new Intent(loginActivity.this, employeeActivity.class);
                     startActivity(intent);
-                }
-                else{
-                    messageText.setText("Invalid credentials, try again.");
+                    loginRequest();
+
+                } else {
+                    // Display a message if fields are empty
+                    messageText.setText("Please enter both username and password.");
                 }
             }
         });
@@ -108,20 +110,16 @@ public class loginActivity extends AppCompatActivity {
 
     //For login
     public void loginRequest() {
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/login";
-        JSONObject loginData = new JSONObject();
+        String username = usernameInput.getText().toString();
+        String password = passwordInput.getText().toString();
 
-        try {
-            loginData.put("userName", usernameInput.getText().toString());
-            loginData.put("password", passwordInput.getText().toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // Add username and password to URL as query parameters
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/login";
 
         JsonObjectRequest loginRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
-                loginData,
+                null, // No body for GET request
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -138,7 +136,7 @@ public class loginActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("Login Error", error.toString());
-                        messageText.setText("Invalid credentials, try again.");
+                        messageText.setText(error.toString());
                     }
                 }
         );

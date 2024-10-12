@@ -7,7 +7,7 @@ import lombok.Data;
 
 /**
  * Entity class representing an Admin.
- * 
+ *
  * Improvements:
  * - Added validation annotations to enforce data integrity.
  * - Improved class-level and field-level documentation.
@@ -26,4 +26,7 @@ public class Admin {
     @JoinColumn(name = "u_id", referencedColumnName = "user_id")
     private UserProfile userProfile;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type")
+    private UserType userType;
 }

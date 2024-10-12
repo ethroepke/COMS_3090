@@ -1,16 +1,14 @@
-
 package coms309.repository;
 
 import coms309.entity.UserProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.query.Param;
 
-/**
- * Repository interface for accessing user profile data.
- * 
- * Improvements:
- * - Added better documentation for interface usage.
- */
-@Repository
-public interface UserProfileRepository extends JpaRepository<UserProfile, Integer> {
+import java.util.Optional;
+
+
+public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
+    Optional<UserProfile> findByUsernameAndPassword (@Param("user_name") String username, @Param("password") String password);
+    Optional<UserProfile> findByUsername(String username);
+    Optional<UserProfile> findByEmail(String email);
 }

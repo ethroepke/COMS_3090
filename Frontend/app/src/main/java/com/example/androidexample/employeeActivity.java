@@ -22,6 +22,7 @@ public class employeeActivity extends AppCompatActivity {
     private long checked_time;
 
     private Button signoutButton;
+    private Button deleteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class employeeActivity extends AppCompatActivity {
 
         checkButton = findViewById(R.id.check_btn);
         signoutButton = findViewById(R.id.signout_btn);
+        deleteButton = findViewById(R.id.delete_btn);
         checkText = findViewById(R.id.check_txt);
         timerText = findViewById(R.id.check_clk_txt);
 
@@ -82,6 +84,14 @@ public class employeeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(employeeActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employeeActivity.this, deleteActivity.class);
                 startActivity(intent);
             }
         });

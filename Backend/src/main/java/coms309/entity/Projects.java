@@ -37,6 +37,9 @@ public class Projects {
     @ManyToMany(mappedBy = "projects")
     private List<Employer> employers;
 
+    @Column(name = "status", nullable = false)
+    private String status;
+
     @OneToMany(mappedBy = "projects")
     private List<Employee> employees;
 }

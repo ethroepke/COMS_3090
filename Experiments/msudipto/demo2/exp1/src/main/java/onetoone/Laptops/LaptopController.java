@@ -1,22 +1,15 @@
 
 package onetoone.Laptops;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-/**
- * REST Controller for managing Laptop entities
- */
 @RestController
 public class LaptopController {
 
     @Autowired
-    LaptopRepository laptopRepository;
-
-    private final String success = "Operation was successful";
-    private final String failure = "Operation failed";
+    private LaptopRepository laptopRepository;
 
     @GetMapping("/laptops")
     public List<Laptop> getAllLaptops() {
@@ -25,35 +18,31 @@ public class LaptopController {
 
     @GetMapping("/laptops/{id}")
     public Laptop getLaptopById(@PathVariable int id) {
-        return laptopRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Laptop not found with id: " + id));
+        return laptopRepository.findById(id).orElseThrow(() -> new RuntimeException("Laptop not found for id: " + id));
     }
 
     @PostMapping("/laptops")
-    public String createLaptop(@RequestBody Laptop laptop) {
-        if (laptop == null) {
-            return failure;
-        }
-        laptopRepository.save(laptop);
-        return success;
+    public Laptop createLaptop(@RequestBody Laptop laptop) {
+        // Additional validation logic can be added here
+        return laptopRepository.save(laptop);
     }
 
     @PutMapping("/laptops/{id}")
-    public String updateLaptop(@PathVariable int id, @RequestBody Laptop laptop) {
-        Laptop existingLaptop = laptopRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Laptop not found with id: " + id));
+    public Laptop updateLaptop(@PathVariable int id, @RequestBody Laptop laptopDetails) {
+        Laptop laptop = laptopRepository.findById(id).orElseThrow(() -> new RuntimeException("Laptop not found for id: " + id));
         
-        if (existingLaptop.getId() != id) {
-            throw new RuntimeException("Laptop ID mismatch");
-        }
+        laptop.setCpuClock(laptopDetails.getCpuClock());
+        laptop.setCpuCores(laptopDetails.getCpuCores());
+        laptop.setRam(laptopDetails.getRam());
+        laptop.setManufacturer(laptopDetails.getManufacturer());
+        laptop.setCost(laptopDetails.getCost());
         
-        laptopRepository.save(laptop);
-        return success;
+        return laptopRepository.save(laptop);
     }
 
     @DeleteMapping("/laptops/{id}")
     public String deleteLaptop(@PathVariable int id) {
         laptopRepository.deleteById(id);
-        return success;
+        return "Laptop deleted successfully.";
     }
 }

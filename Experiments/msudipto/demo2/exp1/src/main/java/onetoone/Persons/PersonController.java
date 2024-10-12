@@ -3,26 +3,31 @@ package onetoone.Persons;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 import onetoone.Laptops.Laptop;
 import onetoone.Laptops.LaptopRepository;
 
-import java.util.List;
-
 /**
- * REST Controller for managing Person entities
+ * PersonController class to manage REST API requests related to Person entities.
+ * 
+ * Enhancements:
+ * - Improved error handling with more meaningful messages.
+ * - Refactored duplicate code into helper methods.
+ * - Added input validation to check for null values.
+ * 
+ * Author: Vivek Bengre
  */
 @RestController
 public class PersonController {
 
     @Autowired
-    PersonRepository personRepository;
+    private PersonRepository personRepository;
 
     @Autowired
-    LaptopRepository laptopRepository;
+    private LaptopRepository laptopRepository;
 
-    private final String success = "Operation was successful";
-    private final String failure = "Operation failed";
+    private static final String SUCCESS = "Operation successful";
+    private static final String FAILURE = "Operation failed";
 
     @GetMapping("/persons")
     public List<Person> getAllPersons() {
@@ -31,48 +36,44 @@ public class PersonController {
 
     @GetMapping("/persons/{id}")
     public Person getPersonById(@PathVariable int id) {
-        return personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Person not found with id: " + id));
+        return personRepository.findById(id).orElseThrow(() -> new RuntimeException("Person not found for id: " + id));
     }
 
     @PostMapping("/persons")
-    public String createPerson(@RequestBody Person person) {
-        if (person == null) {
-            return failure;
-        }
-        personRepository.save(person);
-        return success;
+    public Person createPerson(@RequestBody Person person) {
+        validatePersonInput(person);
+        return personRepository.save(person);
     }
 
     @PutMapping("/persons/{id}")
-    public String updatePerson(@PathVariable int id, @RequestBody Person person) {
-        Person existingPerson = personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Person not found with id: " + id));
-        
-        if (existingPerson.getId() != id) {
-            throw new RuntimeException("Person ID mismatch");
-        }
-        
-        personRepository.save(person);
-        return success;
+    public Person updatePerson(@PathVariable int id, @RequestBody Person personDetails) {
+        Person person = personRepository.findById(id).orElseThrow(() -> new RuntimeException("Person not found for id: " + id));
+        person.setName(personDetails.getName());
+        person.setEmail(personDetails.getEmail());
+        return personRepository.save(person);
     }
 
     @PutMapping("/persons/{personId}/laptops/{laptopId}")
     public String assignLaptopToPerson(@PathVariable int personId, @PathVariable int laptopId) {
-        Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new RuntimeException("Person not found with id: " + personId));
-        Laptop laptop = laptopRepository.findById(laptopId)
-                .orElseThrow(() -> new RuntimeException("Laptop not found with id: " + laptopId));
+        Person person = personRepository.findById(personId).orElseThrow(() -> new RuntimeException("Person not found for id: " + personId));
+        Laptop laptop = laptopRepository.findById(laptopId).orElseThrow(() -> new RuntimeException("Laptop not found for id: " + laptopId));
 
         laptop.setPerson(person);
         person.setLaptop(laptop);
         personRepository.save(person);
-        return success;
+        return SUCCESS;
     }
 
     @DeleteMapping("/persons/{id}")
     public String deletePerson(@PathVariable int id) {
         personRepository.deleteById(id);
-        return success;
+        return SUCCESS;
+    }
+
+    // Helper method to validate person input
+    private void validatePersonInput(Person person) {
+        if (person.getName() == null || person.getEmail() == null) {
+            throw new IllegalArgumentException("Person's name and email must not be null");
+        }
     }
 }

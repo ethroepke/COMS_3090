@@ -25,7 +25,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -49,8 +51,8 @@ public class joinNowActivity extends AppCompatActivity {
     boolean isPasswordVisible1 = false;
     boolean isPasswordVisible2 = false;
 
-    private String url_json_object = "http://coms-3090-046.class.las.iastate.edu";
-
+    private String signup_url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/signup";
+    private JSONObject signup_details;
 
 
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
@@ -77,6 +79,8 @@ public class joinNowActivity extends AppCompatActivity {
         nameErrorMessage.setVisibility(View.GONE);
         emailErrorMessage.setVisibility(View.GONE);
         verifyPasswordErrorMessage.setVisibility(View.GONE);
+
+        signup_details = new JSONObject();
 
         name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -179,11 +183,15 @@ public class joinNowActivity extends AppCompatActivity {
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String nameFilled = name.getText().toString().trim();
-                String emailFilled = email.getText().toString().trim();
-                String usernameFilled = usernameFill.getText().toString().trim();
-                String passwordFilled = password.getText().toString().trim();
-                String verifyPasswordFilled = verifyPassword.getText().toString().trim();
+                String nameFilled = name.getText().toString();
+                Log.i("hidden", nameFilled);
+                String emailFilled = email.getText().toString();
+                Log.i("hidden", emailFilled);
+                String usernameFilled = usernameFill.getText().toString();
+                Log.i("hidden", usernameFilled);
+                String passwordFilled = password.getText().toString();
+                Log.i("hidden", passwordFilled);
+                String verifyPasswordFilled = verifyPassword.getText().toString();
 
                 // Check if name includes first and last name
                 if (!isValidFullName(nameFilled)) {
@@ -215,8 +223,16 @@ public class joinNowActivity extends AppCompatActivity {
                 } else {
                     verifyPasswordErrorMessage.setVisibility(View.GONE);
                 }
+                try {
+                    signup_details.put("username", usernameFilled);
+                    signup_details.put("email", emailFilled);
+                    signup_details.put("password", passwordFilled);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
 
                 // If all validations pass, proceed to loginActivity
+                postRequest(signup_details);
                 Intent intent = new Intent(joinNowActivity.this, loginActivity.class);
                 startActivity(intent);
             }
@@ -301,6 +317,44 @@ public class joinNowActivity extends AppCompatActivity {
             String usernameFinal = firstInitial + lastName;
             usernameFill.setText(usernameFinal);
         }
+    }
+
+    public void postRequest(JSONObject j) {
+        JsonObjectRequest post_join = new JsonObjectRequest(
+                Request.Method.POST,
+                signup_url,
+                j,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Volley Response", response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+
+        )
+        {
+            // dont know if necessary
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(post_join);
     }
 
 

@@ -1,11 +1,6 @@
 package onetomany.Phones;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -14,36 +9,36 @@ import onetomany.Users.User;
 @Entity
 public class Phone {
 
-    /* 
-     * The annotation @ID marks the field below as the primary key for the table created by springboot
-     * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
-     */
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "name", columnDefinition = "VARCHAR(255)")
     private String name;
+
+    @Column(name = "manufacturer", columnDefinition = "VARCHAR(255)")
     private String manufacturer;
+
+    @Column(name = "camera_quality", columnDefinition = "DOUBLE")
     private double cameraQuality;
+
+    @Column(name = "battery", columnDefinition = "DOUBLE")
     private double battery;
+
+    @Column(name = "price", columnDefinition = "INT")
     private int price;
 
-    /*
-     * @ManyToOne tells springboot that multiple instances of Phone can map to one instance of OR multiple rows of the phone table can map to one user row
-     * @JoinColumn specifies the ownership of the key i.e. The Phone table will contain a foreign key from the User table and the column name will be user_id
-     * @JsonIgnore is to assure that there is no infinite loop while returning either user/phone objects (phone->user->[phones]->...)
-     */
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 
-     // =============================== Constructors ================================== //
+    // =============================== Constructors ================================== //
 
-    public Phone(){
-
+    public Phone() {
     }
-    
-    public Phone( String manufacturer, double cameraQuality, double battery, String name, int price) {
+
+    public Phone(String manufacturer, double cameraQuality, double battery, String name, int price) {
         this.manufacturer = manufacturer;
         this.cameraQuality = cameraQuality;
         this.battery = battery;
@@ -51,9 +46,7 @@ public class Phone {
         this.price = price;
     }
 
-
-    // =============================== Getters and Setters for each field ================================== //
-
+    // =============================== Getters and Setters ================================== //
 
     public int getId() {
         return id;
@@ -61,6 +54,14 @@ public class Phone {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getManufacturer() {
@@ -87,14 +88,6 @@ public class Phone {
         this.battery = battery;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -103,12 +96,11 @@ public class Phone {
         this.price = price;
     }
 
-    public String getName() {
-        return name;
+    public User getUser() {
+        return user;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUser(User user) {
+        this.user = user;
     }
-
 }

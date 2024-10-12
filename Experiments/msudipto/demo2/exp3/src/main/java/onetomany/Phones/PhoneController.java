@@ -25,24 +25,26 @@ public class PhoneController {
 
     @GetMapping(path = "/phones/{id}")
     Phone getPhoneById( @PathVariable int id){
-        return phoneRepository.findById(id);
+        return phoneRepository.findById(id).orElseThrow(() -> new RuntimeException("Phone not found for id " + id));
     }
 
-    @PostMapping(path = "/phones")
-    String createPhone(Phone phone){
-        if (phone == null)
-            return failure;
+    @PutMapping(path = "/phones/{id}")
+    public Phone updatePhone(@PathVariable int id, @RequestBody Phone request) {
+        // Retrieve the phone from the repository or throw an exception if not found
+        Phone phone = phoneRepository.findById(id).orElseThrow(() -> new RuntimeException("Phone not found for id " + id));
+
+        // Update the phone's properties with the incoming request data
+        phone.setName(request.getName());
+        phone.setManufacturer(request.getManufacturer());
+        phone.setCameraQuality(request.getCameraQuality());
+        phone.setBattery(request.getBattery());
+        phone.setPrice(request.getPrice());
+
+        // Save the updated phone object
         phoneRepository.save(phone);
-        return success;
-    }
 
-    @PutMapping("/phones/{id}")
-    Phone updatePhone(@PathVariable int id, @RequestBody Phone request){
-        Phone phone = phoneRepository.findById(id);
-        if(phone == null)
-            return null;
-        phoneRepository.save(request);
-        return phoneRepository.findById(id);
-    } 
+        // Return the updated phone object
+        return phone;
+    }
       
 }

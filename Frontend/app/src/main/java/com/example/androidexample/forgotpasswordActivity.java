@@ -1,14 +1,29 @@
 package com.example.androidexample;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class forgotpasswordActivity extends AppCompatActivity {
 
@@ -16,6 +31,7 @@ public class forgotpasswordActivity extends AppCompatActivity {
     private EditText email_input;
     private Button submit_button;
     private TextView messageText;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -41,20 +57,35 @@ public class forgotpasswordActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email = email_input.getText().toString().trim();
 
-                if(email.equals("admin123@gmail.com")){
-                    //SEND RESET PASSWORD TO EMAIL
+                //Calling in submit button to check email in other function
+                checkEmail(email);
 
-                    //Send user to email sent page
-                    Intent intent = new Intent(forgotpasswordActivity.this, forgotPasswordVerifiedActivity.class);
-                    intent.putExtra("userEmail", email);
-                    startActivity(intent);
-                }
-
-                //Email not in database send message letting them know
-                else{
-                    messageText.setText("An account could not be found for the given email ID");
-                }
             }
         });
     }
+
+    // Check if the email exists in the database
+    private void checkEmail(String email) {
+        // Construct the URL for checking the email
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/checkEmail";
+
+        // Create a request
+        StringRequest getRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    // If the email exists, send the user to the reset password page
+                    Intent intent = new Intent(forgotpasswordActivity.this, resetPasswordActivity.class);
+                    intent.putExtra("userEmail", email); // Pass email to the next activity
+                    startActivity(intent);
+                },
+                error -> {
+                    // Check for specific status code (optional, refine error handling)
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 400) {
+                        messageText.setText("An account could not be found for the given email ID.");
+                    } else {
+                        messageText.setText("An error occurred. Please try again.");
+                    }
+                }
+        );
+    }
+
 }

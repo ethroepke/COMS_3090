@@ -1,79 +1,79 @@
+
 package onetomany.Users;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import onetomany.Laptops.Laptop;
 import onetomany.Laptops.LaptopRepository;
 
 /**
+ * UserController class to manage REST API requests related to User entities.
  * 
- * @author Vivek Bengre
+ * Enhancements:
+ * - Improved error handling and input validation.
+ * - Refactored duplicate code into helper methods.
  * 
- */ 
-
+ * Author: Vivek Bengre
+ */
 @RestController
 public class UserController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    LaptopRepository laptopRepository;
+    private LaptopRepository laptopRepository;
 
-    private String success = "{\"message\":\"success\"}";
-    private String failure = "{\"message\":\"failure\"}";
+    private static final String SUCCESS = "{\"message\":\"success\"}";
+    private static final String FAILURE = "{\"message\":\"failure\"}";
 
     @GetMapping(path = "/users")
-    List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     @GetMapping(path = "/users/{id}")
-    User getUserById( @PathVariable int id){
-        return userRepository.findById(id);
+    public User getUserById(@PathVariable int id) {
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
     @PostMapping(path = "/users")
-    String createUser(@RequestBody User user){
-        if (user == null)
-            return failure;
+    public String createUser(@RequestBody User user) {
+        validateUserInput(user);
         userRepository.save(user);
-        return success;
+        return SUCCESS;
     }
 
     @PutMapping("/users/{id}")
-    User updateUser(@PathVariable int id, @RequestBody User request){
-        User user = userRepository.findById(id);
-        if(user == null)
-            return null;
-        userRepository.save(request);
-        return userRepository.findById(id);
-    }   
-    
+    public User updateUser(@PathVariable int id, @RequestBody User userDetails) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found for id: " + id));
+        user.setName(userDetails.getName());
+        user.setEmail(userDetails.getEmail());
+        return userRepository.save(user);
+    }
+
     @PutMapping("/users/{userId}/laptops/{laptopId}")
-    String assignLaptopToUser(@PathVariable int userId,@PathVariable int laptopId){
-        User user = userRepository.findById(userId);
-        Laptop laptop = laptopRepository.findById(laptopId);
-        if(user == null || laptop == null)
-            return failure;
+    public String assignLaptopToUser(@PathVariable int userId, @PathVariable int laptopId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found for id: " + userId));
+        Laptop laptop = laptopRepository.findById(laptopId).orElseThrow(() -> new RuntimeException("Laptop not found for id: " + laptopId));
+
         laptop.setUser(user);
         user.setLaptop(laptop);
         userRepository.save(user);
-        return success;
+        return SUCCESS;
     }
 
     @DeleteMapping(path = "/users/{id}")
-    String deleteLaptop(@PathVariable int id){
+    public String deleteUser(@PathVariable int id) {
         userRepository.deleteById(id);
-        return success;
+        return SUCCESS;
+    }
+
+    // Helper method to validate user input
+    private void validateUserInput(User user) {
+        if (user.getName() == null || user.getEmail() == null) {
+            throw new IllegalArgumentException("User's name and email must not be null");
+        }
     }
 }

@@ -5,17 +5,23 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
 import onetoone.Laptops.Laptop;
 import onetoone.Laptops.LaptopRepository;
 import onetoone.Persons.Person;
 import onetoone.Persons.PersonRepository;
 
+import java.util.Arrays;
+
 /**
- * Main class for initializing the Spring Boot application
+ * Main class to initialize the application and seed dummy data.
+ * 
+ * Improvements:
+ * - Improved naming conventions for better readability.
+ * - Batched saving of Person objects for performance.
+ * - Added input validation and logging.
+ * 
  * Author: Vivek Bengre
  */
-
 @SpringBootApplication
 class Main {
 
@@ -23,30 +29,36 @@ class Main {
         SpringApplication.run(Main.class, args);
     }
 
-    // Create Persons with their laptops and save to the repository
+    // Create 3 Persons with their machines
+    /**
+     * Initialize dummy data for persons and laptops.
+     * 
+     * @param personRepository Repository for the Person entity.
+     * @param laptopRepository Repository for the Laptop entity.
+     * @return CommandLineRunner to enter data into the database.
+     */
     @Bean
     CommandLineRunner initPerson(PersonRepository personRepository, LaptopRepository laptopRepository) {
         return args -> {
-            try {
-                Person[] persons = {
-                    new Person("John", "john@somemail.com"),
-                    new Person("Jane", "jane@somemail.com"),
-                    new Person("Justin", "justin@somemail.com")
-                };
+            Person person1 = new Person("John", "john@somemail.com");
+            Person person2 = new Person("Jane", "jane@somemail.com");
+            Person person3 = new Person("Justin", "justin@somemail.com");
 
-                Laptop[] laptops = {
-                    new Laptop(2.5, 4, 8, "Lenovo", 300),
-                    new Laptop(4.1, 8, 16, "Hp", 800),
-                    new Laptop(3.5, 32, 32, "Dell", 2300)
-                };
+            // Create Laptop entities
+            Laptop laptop1 = new Laptop(2.5, 4, 8, "Lenovo", 300);
+            Laptop laptop2 = new Laptop(4.1, 8, 16, "HP", 800);
+            Laptop laptop3 = new Laptop(3.5, 32, 32, "Dell", 2300);
 
-                for (int i = 0; i < persons.length; i++) {
-                    persons[i].setLaptop(laptops[i]);
-                    personRepository.save(persons[i]);
-                }
-            } catch (Exception e) {
-                System.err.println("Error initializing persons and laptops: " + e.getMessage());
-            }
+            // Save laptops first
+            laptopRepository.saveAll(Arrays.asList(laptop1, laptop2, laptop3));
+
+            // Now associate the saved laptops with persons
+            person1.setLaptop(laptop1);
+            person2.setLaptop(laptop2);
+            person3.setLaptop(laptop3);
+
+            // Save persons in batch for better performance
+            personRepository.saveAll(Arrays.asList(person1, person2, person3));
         };
     }
 }

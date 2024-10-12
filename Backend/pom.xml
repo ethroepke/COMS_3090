@@ -13,9 +13,10 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.1.4</version>
+    <relativePath/>
   </parent>
 
-  <name>helloworld</name>
+  <name>demo</name>
 
   <properties>
 
@@ -56,23 +57,35 @@
       <version>1.18.34</version> <!-- Use the latest version available -->
       <scope>provided</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.1.0</version>
+    </dependency>
 
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
       <version>3.4.1</version>
     </dependency>
+      <dependency>
+          <groupId>org.jetbrains</groupId>
+          <artifactId>annotations</artifactId>
+          <version>RELEASE</version>
+          <scope>compile</scope>
+      </dependency>
 
-<!--    <dependency>-->
+      <!--    <dependency>-->
 <!--      <groupId>com.h2database</groupId>-->
 <!--      <artifactId>h2</artifactId>-->
 <!--      <scope>runtime</scope>-->
 <!--    </dependency>-->
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-web</artifactId>
-          <version>6.1.12</version>
-      </dependency>
+<!--      <dependency>-->
+<!--          <groupId>org.springframework</groupId>-->
+<!--          <artifactId>spring-web</artifactId>-->
+<!--          <version>6.1.12</version>-->
+<!--      </dependency>-->
 
   </dependencies>
 

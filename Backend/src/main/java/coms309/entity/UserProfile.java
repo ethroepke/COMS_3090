@@ -2,37 +2,65 @@
 package coms309.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Entity class representing a user's profile.
- * 
+ *
  * Improvements:
- * - Added validation annotations to enforce data integrity.
  * - Enhanced documentation for profile details.
  */
 @Entity
 @Getter
 @Setter
-@Table(name = "user_profile")
-public class UserProfile {
+@Table(name = "user_profiles")
+public class UserProfile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
 
-    @NotNull(message = "First name cannot be null")
-    @Column(name = "first_name")
-    private String firstName;
+    @Column(name = "user_name", nullable = false)
+    private String username;
 
-    @NotNull(message = "Last name cannot be null")
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "password", nullable = false)
+    private String password;
 
-    @NotNull(message = "Email cannot be null")
-    @Column(name = "email", unique = true)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type", nullable = true)
+    private UserType userType;
+
+    @Column(name = "email", nullable = false)
     private String email;
+
+    @Column(name = "job_title", nullable = true)
+    private String jobTitle;
+
+    @Column(name = "department", nullable = true)
+    private String department;
+
+    @Column(name = "date_of_hire", nullable = true)
+    private Date dateOfHire;
+
+    public UserProfile(String username, String email, String password) {
+        this.password = password;
+        this.username = username;
+        this.email = email;
+        this.dateOfHire = new Date();
+    }
+    public UserProfile(){}
+
+
+
+
+
 }
