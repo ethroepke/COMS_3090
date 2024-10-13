@@ -47,8 +47,7 @@
         android:hint="Username"
         android:inputType="text"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:enabled="false">
+        android:layout_marginTop="20dp">
     </EditText>
 
     <!--Join Now button-->
@@ -75,12 +74,12 @@
 
     <!-- Text to message for no user found -->
     <TextView
+        android:id="@+id/noUserMessage"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:text=""
         android:gravity="center"
-        android:layout_marginTop="-90dp"
         android:textColor="#FF0000">
     </TextView>
 

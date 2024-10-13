@@ -6,7 +6,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class payCheckOverviewActivity extends AppCompatActivity {
 
@@ -19,7 +25,7 @@ public class payCheckOverviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.paycheckoverview); // Make sure the layout is named properly
+        setContentView(R.layout.paycheckoverview); // Ensure the layout is named properly
 
         // Initialize the views
         payDetailsContainer = findViewById(R.id.payDetailsContainer);
@@ -28,8 +34,8 @@ public class payCheckOverviewActivity extends AppCompatActivity {
         takeHomePay = findViewById(R.id.takeHomePay);
         grossPay = findViewById(R.id.grossPay);
 
-        // Optional: Set values for the user’s pay information
-        setUserData();
+        // Fetch user data from the backend
+        fetchUserData();
 
         // Set up the button click listener to toggle the paycheck details
         showHideButton.setOnClickListener(new View.OnClickListener() {
@@ -40,11 +46,39 @@ public class payCheckOverviewActivity extends AppCompatActivity {
         });
     }
 
-    // This method sets some example data; replace it with real data from your backend.
-    private void setUserData() {
-        userName.setText("John Doe"); // Replace with actual user data
-        takeHomePay.setText("Take Home Pay: $1500.00"); // Replace with actual take-home pay
-        grossPay.setText("Gross Pay: $2000.00"); // Replace with actual gross pay
+    // Method to fetch user data from the backend and set it in the TextViews
+    private void fetchUserData() {
+        String url = "https://your-api-url.com/api/user/paycheck"; // Replace with your API URL
+
+        // Create a new request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Parse the response and set the values
+                            String name = response.getString("name"); // Adjust based on your API response structure
+                            String takeHome = response.getString("takeHomePay"); // Adjust as needed
+                            String gross = response.getString("grossPay"); // Adjust as needed
+
+                            userName.setText(name);
+                            takeHomePay.setText("Take Home Pay: $" + takeHome);
+                            grossPay.setText("Gross Pay: $" + gross);
+                        } catch (JSONException e) {
+                            e.printStackTrace(); // Handle JSON parsing error
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace(); // Handle error response
+                        // Optionally show an error message to the user
+                    }
+                });
+
+        // Add the request to the RequestQueue
+        Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
 
     // Method to toggle the visibility of the pay details container
@@ -60,4 +94,5 @@ public class payCheckOverviewActivity extends AppCompatActivity {
         }
     }
 }
+
 
