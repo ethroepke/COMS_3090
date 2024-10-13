@@ -1,5 +1,5 @@
 
-package com.coms309.controller;
+package coms309.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import coms309.entity.User;
 import coms309.service.UserService;
-import com.coms309.exception.ResourceNotFoundException;
+import coms309.exception.ResourceNotFoundException;
 
 import javax.validation.Valid;
 
@@ -54,7 +54,9 @@ public class TimeWorkedController {
     @DeleteMapping("/timeweek")
     public ResponseEntity<String> unsubmitTimeForWeek(@Valid @RequestBody User user) {
         logger.info("Unsubmitting time for week for user with id: {}", user.getId());
-        boolean result = userService.unsubmitTimeForWeek(user);
+        boolean result;
+        if (userService.unsubmitTimeForWeek(user)) result = true;
+        else result = false;
         if (!result) {
             return ResponseEntity.badRequest().body("Failed to unsubmit time for the week.");
         }

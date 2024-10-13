@@ -1,5 +1,4 @@
-
-package com.coms309.exception;
+package coms309.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

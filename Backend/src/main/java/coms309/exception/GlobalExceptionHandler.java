@@ -1,5 +1,5 @@
 
-package com.coms309.exception;
+package coms309.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
