@@ -62,7 +62,7 @@ public class loginActivity extends AppCompatActivity {
 
                 // Check if both fields are filled
                 if (!username.isEmpty() && !password.isEmpty()) {
-                    // Call loginRequest() to send the request
+                    loginRequest();
                     Intent intent = new Intent(loginActivity.this, employeeActivity.class);
                     startActivity(intent);
                     loginRequest();

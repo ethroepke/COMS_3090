@@ -50,6 +50,15 @@
         <activity
             android:name=".deleteActivity"
             android:exported="true" />
+        <activity
+            android:name=".payCheckSearchActivity"
+            android:exported="true" />
+        <activity
+            android:name=".payCheckOverviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".payCheckModifyActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

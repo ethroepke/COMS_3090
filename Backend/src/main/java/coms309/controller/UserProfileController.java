@@ -31,23 +31,23 @@ public class UserProfileController {
     }
 
     @GetMapping("/checkEmail")
-    public ResponseEntity<String> checkEmail(@RequestBody UserDTO email) {
-        Optional<UserProfile> user = userProfileRepository.findByEmail(email);
+    public ResponseEntity<String> checkEmail(@RequestBody UserDTO emailDTO) {
+        Optional<UserProfile> user = userProfileRepository.findByEmail(emailDTO.getEmail());
         if (user.isPresent()) {
             return ResponseEntity.ok("Email exists");
         }
-        return ResponseEntity.badRequest().body("Email does not exist");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email does not exist");
     }
 
     @PutMapping("/forgotPassword")
     public ResponseEntity<String> forgotPassword(@RequestBody UserDTO forgotUser) {
         Optional<UserProfile> user = userProfileRepository.findByEmail(forgotUser.getEmail());
         if (user.isEmpty()) {
-            return ResponseEntity.badRequest().body("No user exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user exists with this email");
         }
         user.get().setPassword(forgotUser.getPassword());
         userProfileRepository.save(user.get());
-        return ResponseEntity.ok("Successfully change the password");
+        return ResponseEntity.ok("Password successfully changed");
     }
 
     /**
@@ -84,35 +84,34 @@ public class UserProfileController {
                 });
     }
 
-
-
-    @GetMapping("/login")
-    public ResponseEntity<String> login (@RequestBody UserDTO loginUser) {
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserDTO loginUser) {
         Optional<UserProfile> existUser = userProfileRepository.findByUsernameAndPassword(loginUser.getUsername(), loginUser.getPassword());
         if (existUser.isEmpty()) {
-            return ResponseEntity.badRequest().body("Login failed");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Invalid credentials.");
         }
-        UserProfile userProfile = userProfileRepository.save(existUser.get());
-        return ResponseEntity.ok("Login successfully");
+        return ResponseEntity.ok("Login successful");
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup (@RequestBody UserSignupDTO signUpUserProfile){
-        //change it to check seperately the email pass and username
-
+    public ResponseEntity<String> signup(@RequestBody UserSignupDTO signUpUserProfile) {
+        // Check if email or username already exists
         Optional<UserProfile> existingUsername = userProfileRepository.findByUsername(signUpUserProfile.getUsername());
-        Optional<UserProfile> existingEmail = userProfileRepository.findByEmail( signUpUserProfile.getEmail());
-        if(existingUsername.isPresent()){
-            return ResponseEntity.badRequest().body("Sign up fail");
+        Optional<UserProfile> existingEmail = userProfileRepository.findByEmail(signUpUserProfile.getEmail());
+
+        if (existingUsername.isPresent()) {
+            return ResponseEntity.badRequest().body("Username is already taken");
         }
-        if(existingEmail.isPresent()){
-            return ResponseEntity.badRequest().body("Sign up fail");
+        if (existingEmail.isPresent()) {
+            return ResponseEntity.badRequest().body("Email is already registered");
         }
-        UserProfile userProfile = userProfileRepository.save(new UserProfile(signUpUserProfile.getUsername(), signUpUserProfile.getEmail(), signUpUserProfile.getPassword()));
-        return ResponseEntity.ok("Sign up successfully");
+
+        // Create and save the new user profile
+        UserProfile newUserProfile = new UserProfile(signUpUserProfile.getUsername(), signUpUserProfile.getEmail(), signUpUserProfile.getPassword());
+        userProfileRepository.save(newUserProfile);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Sign up successful");
     }
-
-
 
     @PutMapping("/{id}")
     public ResponseEntity<UserProfile> updateUserProfile(@PathVariable Long id, @RequestBody UserProfile userProfileDetails) {
@@ -132,22 +131,6 @@ public class UserProfileController {
         } else {
             return ResponseEntity.notFound().build();
         }
-
-    }
-    public void createEmployeeRecord(UserProfile userProfile, UserProfile userProfileDetails) {
-        // Insert record into employee table
-        Employee employee = new Employee();
-        employee.setUserProfile(userProfile);
-
-        // Save employee entity (assuming you have an EmployeeRepository)
-    }
-    public void createEmployerRecord(UserProfile userProfile, UserProfile userProfileDetails){
-        Employer er = new Employer();
-        er.setUserProfile(userProfile);
-    }
-    public void createAdminRecord(UserProfile userProfile, UserProfile userProfileDetails){
-        Admin admin = new Admin();
-        admin.setUserProfile(userProfile);
     }
 
     @DeleteMapping("/{id}")
@@ -158,5 +141,24 @@ public class UserProfileController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // Helper methods to create records for employee, employer, admin
+    public void createEmployeeRecord(UserProfile userProfile, UserProfile userProfileDetails) {
+        Employee employee = new Employee();
+        employee.setUserProfile(userProfile);
+        // Save employee entity (assuming EmployeeRepository exists)
+    }
+
+    public void createEmployerRecord(UserProfile userProfile, UserProfile userProfileDetails) {
+        Employer employer = new Employer();
+        employer.setUserProfile(userProfile);
+        // Save employer entity (assuming EmployerRepository exists)
+    }
+
+    public void createAdminRecord(UserProfile userProfile, UserProfile userProfileDetails) {
+        Admin admin = new Admin();
+        admin.setUserProfile(userProfile);
+        // Save admin entity (assuming AdminRepository exists)
     }
 }
