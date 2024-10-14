@@ -48,7 +48,7 @@ public class payCheckOverviewActivity extends AppCompatActivity {
 
     // Method to fetch user data from the backend and set it in the TextViews
     private void fetchUserData() {
-        String url = "https://your-api-url.com/api/user/paycheck"; // Replace with your API URL
+        String url = ""; // Replace with your API URL
 
         // Create a new request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,

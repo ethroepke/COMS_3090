@@ -1,6 +1,7 @@
 package com.example.androidexample;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +28,7 @@ public class payCheckSearchActivity extends AppCompatActivity {
     private Button modifyUsers;
     private TextView noUserFoundText;
     private RequestQueue requestQueue;
+    private String username;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -40,30 +42,39 @@ public class payCheckSearchActivity extends AppCompatActivity {
         noUserFoundText = findViewById(R.id.noUserMessage);
         requestQueue = Volley.newRequestQueue(this);
 
+        // Set onClickListener for the search button
         searchUsers.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 searchForUser();
             }
         });
 
+        // Set onClickListener for the modify button
         modifyUsers.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                // Implement the modify user logic or navigation here
-                // e.g., navigate to modify user activity
+            public void onClick(View v) {
+                username = usernameInput.getText().toString().trim();
+                if (username.isEmpty()) {
+                    Toast.makeText(payCheckSearchActivity.this, "Please enter a username to modify", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Go to payCheckModifyActivity if modify button is pressed
+                    Intent intent = new Intent(payCheckSearchActivity.this, payCheckModifyActivity.class);
+                    intent.putExtra("username", username);
+                    startActivity(intent);
+                }
             }
         });
     }
 
     private void searchForUser() {
-        String username = usernameInput.getText().toString().trim();
+        username = usernameInput.getText().toString().trim();
         if (username.isEmpty()) {
-            Toast.makeText(this, "Please enter a username", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter a username to search", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String url = "YOUR_BACKEND_URL/search?username=" + username; // Replace with your actual endpoint
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
@@ -72,13 +83,17 @@ public class payCheckSearchActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        handleResponse(response);
+                        handleUserFound(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        noUserFoundText.setText("Error: " + error.getMessage());
+                        if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                            noUserFoundText.setText("No user found");
+                        } else {
+                            noUserFoundText.setText("Error: " + error.getMessage());
+                        }
                     }
                 }
         );
@@ -86,18 +101,21 @@ public class payCheckSearchActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
-    private void handleResponse(JSONObject response) {
+    private void handleUserFound(JSONObject response) {
         try {
-            if (response.getBoolean("user_found")) { // Adjust based on your API's response structure
-                // Navigate to user's pay info page
-                // Intent intent = new Intent(this, UserPayInfoActivity.class);
-                // intent.putExtra("username", usernameInput.getText().toString());
-                // startActivity(intent);
-            } else {
-                noUserFoundText.setText("No user found");
-            }
+            String returnedUsername = response.getString("username");
+            String email = response.getString("email");
+
+            // Log and show a success message if needed
+            Toast.makeText(payCheckSearchActivity.this, "User found: " + returnedUsername, Toast.LENGTH_SHORT).show();
+
+            // Navigate to the overview page and pass the username
+            Intent intent = new Intent(payCheckSearchActivity.this, payCheckOverviewActivity.class);
+            intent.putExtra("username", returnedUsername);
+            startActivity(intent);
         } catch (JSONException e) {
             noUserFoundText.setText("Error parsing response");
         }
     }
 }
+

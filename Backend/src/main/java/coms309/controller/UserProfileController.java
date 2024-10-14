@@ -65,7 +65,8 @@ public class UserProfileController {
      * @param id ID of the user profile
      * @return ResponseEntity with UserProfile or 404 if not found
      */
-    @GetMapping("/{id}")
+
+    @GetMapping("/id/{id}")
     public ResponseEntity<UserProfile> getUserProfileById(@PathVariable Long id) {
         logger.info("Fetching user profile with ID: {}", id);
 
@@ -82,6 +83,27 @@ public class UserProfileController {
                     logger.warn("User profile not found for ID: {}", id);
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
                 });
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<?> getUserProfileByUsername(@PathVariable String username) {
+        logger.info("Fetching user profile for username: " + username);
+
+        Optional<UserProfile> userProfile = userProfileRepository.findByUsername(username);
+
+        if (userProfile.isPresent()) {
+            // Convert the entity to a DTO to send back to the frontend
+            UserDTO userDTO = new UserDTO(
+                    userProfile.get().getUsername(),
+                    userProfile.get().getEmail()
+            );
+
+            logger.info("User profile found for username: " + username);
+            return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        } else {
+            logger.error("User profile not found for username: " + username);
+            return new ResponseEntity<>("User profile not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/login")
