@@ -96,7 +96,8 @@ public class UserProfileController {
             UserDTO userDTO = new UserDTO(
                     userProfile.get().getUsername(),
                     userProfile.get().getEmail(),
-                    userProfile.get().getUserId()
+                    userProfile.get().getUserId(),
+                    userProfile.get().getPassword()
             );
 
             logger.info("User profile found for username: " + username);

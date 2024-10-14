@@ -56,7 +56,4 @@ public class UserProfile implements Serializable {
         this.dateOfHire = new Date();
     }
     public UserProfile(){}
-
-    public UserProfile(String username, String email, String password) {
-    }
 }
