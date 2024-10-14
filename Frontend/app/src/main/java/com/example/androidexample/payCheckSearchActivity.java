@@ -58,10 +58,8 @@ public class payCheckSearchActivity extends AppCompatActivity {
                 if (username.isEmpty()) {
                     Toast.makeText(payCheckSearchActivity.this, "Please enter a username to modify", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Go to payCheckModifyActivity if modify button is pressed
-                    Intent intent = new Intent(payCheckSearchActivity.this, payCheckModifyActivity.class);
-                    intent.putExtra("username", username);
-                    startActivity(intent);
+                    // Check if the user exists before allowing to modify pay
+                    checkUserExistsAndModify(username);
                 }
             }
         });
@@ -116,6 +114,38 @@ public class payCheckSearchActivity extends AppCompatActivity {
         } catch (JSONException e) {
             noUserFoundText.setText("Error parsing response");
         }
+    }
+
+    private void checkUserExistsAndModify(String username) {
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // If we get a response, the user exists, so proceed to modify
+                        Intent intent = new Intent(payCheckSearchActivity.this, payCheckModifyActivity.class);
+                        intent.putExtra("username", username);
+                        startActivity(intent);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // If user does not exist, show a message
+                        if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                            Toast.makeText(payCheckSearchActivity.this, "User does not exist. Cannot modify pay.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(payCheckSearchActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
+
+        requestQueue.add(jsonObjectRequest);
     }
 }
 

@@ -21,6 +21,7 @@ public class payCheckOverviewActivity extends AppCompatActivity {
     private TextView userName;
     private TextView takeHomePay;
     private TextView grossPay;
+    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +34,16 @@ public class payCheckOverviewActivity extends AppCompatActivity {
         userName = findViewById(R.id.userName);
         takeHomePay = findViewById(R.id.takeHomePay);
         grossPay = findViewById(R.id.grossPay);
+        backButton = findViewById(R.id.backButtonSearch);
+
+        // Get the username from the Intent
+        String username = getIntent().getStringExtra("username");
+        if (username != null) {
+            userName.setText(username); // Set the username in the TextView
+        }
 
         // Fetch user data from the backend
-        fetchUserData();
+        fetchUserData(username); // Pass the username to the fetch method
 
         // Set up the button click listener to toggle the paycheck details
         showHideButton.setOnClickListener(new View.OnClickListener() {
@@ -44,11 +52,19 @@ public class payCheckOverviewActivity extends AppCompatActivity {
                 togglePayDetails();
             }
         });
+
+        // Set up the back button click listener
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed(); // Go back to the previous activity
+            }
+        });
     }
 
     // Method to fetch user data from the backend and set it in the TextViews
-    private void fetchUserData() {
-        String url = ""; // Replace with your API URL
+    private void fetchUserData(String username) {
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username; // Replace with your API URL
 
         // Create a new request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -61,7 +77,7 @@ public class payCheckOverviewActivity extends AppCompatActivity {
                             String takeHome = response.getString("takeHomePay"); // Adjust as needed
                             String gross = response.getString("grossPay"); // Adjust as needed
 
-                            userName.setText(name);
+                            userName.setText(name); // Update username in case of API response change
                             takeHomePay.setText("Take Home Pay: $" + takeHome);
                             grossPay.setText("Gross Pay: $" + gross);
                         } catch (JSONException e) {
@@ -93,6 +109,9 @@ public class payCheckOverviewActivity extends AppCompatActivity {
             showHideButton.setText("Hide Pay Details"); // Update button text
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed(); // This will go back to the previous activity
+    }
 }
-
-

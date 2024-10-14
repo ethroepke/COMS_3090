@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 
 @Data
 public class UserDTO {
+    private String userId;
     private String username;
 
     @Nullable
@@ -12,7 +13,7 @@ public class UserDTO {
 
     private String password;
 
-    public UserDTO(String username, String email) {
+    public UserDTO(String username, String email, Long id) {
         // Log constructor usage
         System.out.println("Creating UserDTO for username: " + username);
 

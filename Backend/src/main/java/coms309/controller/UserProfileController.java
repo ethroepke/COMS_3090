@@ -95,7 +95,8 @@ public class UserProfileController {
             // Convert the entity to a DTO to send back to the frontend
             UserDTO userDTO = new UserDTO(
                     userProfile.get().getUsername(),
-                    userProfile.get().getEmail()
+                    userProfile.get().getEmail(),
+                    userProfile.get().getUserId()
             );
 
             logger.info("User profile found for username: " + username);
@@ -164,6 +165,45 @@ public class UserProfileController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Autowired
+    private PayDetailsRepository payDetailsRepository;
+
+    // Fetch PayDetails by user ID
+    @GetMapping("/paydetails/{id}")
+    public ResponseEntity<PayDetails> getPayDetailsByUserId(@PathVariable Long id) {
+        Optional<PayDetails> payDetails = payDetailsRepository.findByUserProfileId(id);
+        if (payDetails.isPresent()) {
+            return ResponseEntity.ok(payDetails.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // Update PayDetails
+    @PutMapping("/paydetails/{id}")
+    public ResponseEntity<PayDetails> updatePayDetails(@PathVariable Long id, @RequestBody PayDetails payDetailsDetails) {
+        Optional<PayDetails> payDetailsOptional = payDetailsRepository.findById(id);
+        if (payDetailsOptional.isPresent()) {
+            PayDetails payDetails = payDetailsOptional.get();
+            payDetails.setHoursWorked(payDetailsDetails.getHoursWorked());
+            payDetails.setPayRate(payDetailsDetails.getPayRate());
+            payDetails.setBonusPay(payDetailsDetails.getBonusPay());
+            payDetails.setDeductibles(payDetailsDetails.getDeductibles());
+        
+            // Calculate gross pay and take-home pay
+            double grossPay = payDetails.getHoursWorked() * payDetails.getPayRate() + payDetails.getBonusPay();
+            double takeHomePay = grossPay - payDetails.getDeductibles();
+            payDetails.setGrossPay(grossPay);
+            payDetails.setTakeHomePay(takeHomePay);
+
+            PayDetails updatedPayDetails = payDetailsRepository.save(payDetails);
+            return ResponseEntity.ok(updatedPayDetails);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     // Helper methods to create records for employee, employer, admin
     public void createEmployeeRecord(UserProfile userProfile, UserProfile userProfileDetails) {

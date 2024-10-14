@@ -5,9 +5,6 @@ import jakarta.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -51,7 +48,8 @@ public class UserProfile implements Serializable {
     @Column(name = "date_of_hire", nullable = true)
     private Date dateOfHire;
 
-    public UserProfile(String username, String email, String password) {
+    public UserProfile(String userId, String username, String email, String password) {
+        this.userId = Long.valueOf(userId);
         this.password = password;
         this.username = username;
         this.email = email;
@@ -59,8 +57,6 @@ public class UserProfile implements Serializable {
     }
     public UserProfile(){}
 
-
-
-
-
+    public UserProfile(String username, String email, String password) {
+    }
 }
