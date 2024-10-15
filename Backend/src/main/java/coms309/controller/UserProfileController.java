@@ -94,9 +94,9 @@ public class UserProfileController {
         if (userProfile.isPresent()) {
             // Convert the entity to a DTO to send back to the frontend
             UserDTO userDTO = new UserDTO(
+                    userProfile.get().getUserId(),
                     userProfile.get().getUsername(),
                     userProfile.get().getEmail(),
-                    userProfile.get().getUserId(),
                     userProfile.get().getPassword()
             );
 
@@ -131,7 +131,7 @@ public class UserProfileController {
         }
 
         // Create and save the new user profile
-        UserProfile newUserProfile = new UserProfile(signUpUserProfile.getUsername(), signUpUserProfile.getEmail(), signUpUserProfile.getPassword());
+        UserProfile newUserProfile = new UserProfile(signUpUserProfile.getUserId(),  signUpUserProfile.getUsername(), signUpUserProfile.getEmail(), signUpUserProfile.getPassword());
         userProfileRepository.save(newUserProfile);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Sign up successful");
@@ -167,6 +167,8 @@ public class UserProfileController {
         }
     }
 
+<<<<<<< HEAD
+    /*
     @Autowired
     private PayDetailsRepository payDetailsRepository;
 
@@ -204,8 +206,10 @@ public class UserProfileController {
             return ResponseEntity.notFound().build();
         }
     }
+    */
 
-
+=======
+>>>>>>> 320dcfa95260d4e0ba6f09962696ab6d92ab80ca
     // Helper methods to create records for employee, employer, admin
     public void createEmployeeRecord(UserProfile userProfile, UserProfile userProfileDetails) {
         Employee employee = new Employee();

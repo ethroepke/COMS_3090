@@ -5,7 +5,7 @@ import org.springframework.lang.Nullable;
 
 @Data
 public class UserDTO {
-    private String userId;
+    private Long userId;
     private String username;
 
     @Nullable
@@ -13,11 +13,16 @@ public class UserDTO {
 
     private String password;
 
-    public UserDTO(String username, String email, Long id) {
+    public UserDTO(Long userId, String username, String email, String password) {
         // Log constructor usage
-        System.out.println("Creating UserDTO for username: " + username);
+        System.out.println("Creating UserDTO for userId: " + userId);
 
-        // Validate username (e.g., ensure it's not null or empty)
+        // Validate userId (ensure it's not null or less than 1)
+        if (userId == null || userId <= 0) {
+            throw new IllegalArgumentException("User ID cannot be null or less than 1");
+        }
+
+        // Validate username (ensure it's not null or empty)
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be null or empty");
         }
@@ -27,11 +32,18 @@ public class UserDTO {
             throw new IllegalArgumentException("Invalid email format");
         }
 
-        // Trim the username to remove extra spaces and standardize the format (e.g., lowercase)
-        this.username = username.trim().toLowerCase();
+        // Validate password (ensure it's not null or empty)
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
 
-        // Store email after validation
+        // Trim and standardize username and email
+        this.username = username.trim().toLowerCase();
         this.email = email.trim();
+
+        // Store the userId and password (optional trimming if needed)
+        this.userId = userId;
+        this.password = password;
 
         // Log success creation of the object
         System.out.println("UserDTO created successfully for username: " + this.username);

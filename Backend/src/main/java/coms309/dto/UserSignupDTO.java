@@ -5,9 +5,11 @@ import org.springframework.lang.Nullable;
 
 @Data
 public class UserSignupDTO {
-    private String password;
+    private String userId;
 
     private String username;
 
     private String email;
+
+    private String password;
 }
