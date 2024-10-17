@@ -167,49 +167,6 @@ public class UserProfileController {
         }
     }
 
-<<<<<<< HEAD
-    /*
-    @Autowired
-    private PayDetailsRepository payDetailsRepository;
-
-    // Fetch PayDetails by user ID
-    @GetMapping("/paydetails/{id}")
-    public ResponseEntity<PayDetails> getPayDetailsByUserId(@PathVariable Long id) {
-        Optional<PayDetails> payDetails = payDetailsRepository.findByUserProfileId(id);
-        if (payDetails.isPresent()) {
-            return ResponseEntity.ok(payDetails.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
-    // Update PayDetails
-    @PutMapping("/paydetails/{id}")
-    public ResponseEntity<PayDetails> updatePayDetails(@PathVariable Long id, @RequestBody PayDetails payDetailsDetails) {
-        Optional<PayDetails> payDetailsOptional = payDetailsRepository.findById(id);
-        if (payDetailsOptional.isPresent()) {
-            PayDetails payDetails = payDetailsOptional.get();
-            payDetails.setHoursWorked(payDetailsDetails.getHoursWorked());
-            payDetails.setPayRate(payDetailsDetails.getPayRate());
-            payDetails.setBonusPay(payDetailsDetails.getBonusPay());
-            payDetails.setDeductibles(payDetailsDetails.getDeductibles());
-        
-            // Calculate gross pay and take-home pay
-            double grossPay = payDetails.getHoursWorked() * payDetails.getPayRate() + payDetails.getBonusPay();
-            double takeHomePay = grossPay - payDetails.getDeductibles();
-            payDetails.setGrossPay(grossPay);
-            payDetails.setTakeHomePay(takeHomePay);
-
-            PayDetails updatedPayDetails = payDetailsRepository.save(payDetails);
-            return ResponseEntity.ok(updatedPayDetails);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    */
-
-=======
->>>>>>> 320dcfa95260d4e0ba6f09962696ab6d92ab80ca
     // Helper methods to create records for employee, employer, admin
     public void createEmployeeRecord(UserProfile userProfile, UserProfile userProfileDetails) {
         Employee employee = new Employee();

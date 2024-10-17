@@ -19,15 +19,15 @@
     </ImageView>
 
     <!--White background to surround forgot password-->
+
+    <!--Name-->
     <FrameLayout
         android:layout_width="350dp"
         android:layout_height="450dp"
-        android:layout_marginTop="-50dp"
         android:layout_gravity="center"
-        android:background="@color/white">
-    </FrameLayout>
+        android:layout_marginTop="-50dp"
+        android:background="@color/white"></FrameLayout>
 
-    <!--Name-->
     <EditText
         android:id="@+id/enterName"
         android:layout_width="250dp"
