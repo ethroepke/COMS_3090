@@ -58,7 +58,7 @@
         android:textSize="16pt"
         android:textAlignment="textStart"
         android:textColor="@color/white"
-        android:text="Next Shift" />
+        android:text="Enter Time" />
 
     <Button
         android:id="@+id/next_payday_btn"
@@ -95,6 +95,7 @@
         android:layout_marginTop="-100dp"
         android:layout_marginLeft="250dp"
         android:text="Delete Account" />
+
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

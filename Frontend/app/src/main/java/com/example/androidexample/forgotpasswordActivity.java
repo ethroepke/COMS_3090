@@ -35,7 +35,7 @@ public class forgotpasswordActivity extends AppCompatActivity {
 
     @SuppressLint("MissingInflatedId")
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.forgotpassword);
 
@@ -56,36 +56,9 @@ public class forgotpasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String email = email_input.getText().toString().trim();
-
-                //Calling in submit button to check email in other function
-                checkEmail(email);
+                
 
             }
         });
     }
-
-    // Check if the email exists in the database
-    private void checkEmail(String email) {
-        // Construct the URL for checking the email
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/checkEmail";
-
-        // Create a request
-        StringRequest getRequest = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    // If the email exists, send the user to the reset password page
-                    Intent intent = new Intent(forgotpasswordActivity.this, resetPasswordActivity.class);
-                    intent.putExtra("userEmail", email); // Pass email to the next activity
-                    startActivity(intent);
-                },
-                error -> {
-                    // Check for specific status code (optional, refine error handling)
-                    if (error.networkResponse != null && error.networkResponse.statusCode == 400) {
-                        messageText.setText("An account could not be found for the given email ID.");
-                    } else {
-                        messageText.setText("An error occurred. Please try again.");
-                    }
-                }
-        );
-    }
-
 }

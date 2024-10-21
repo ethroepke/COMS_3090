@@ -1,6 +1,7 @@
 package coms309.controller;
 
 import coms309.dto.UserDTO;
+import coms309.dto.UserSignupDTO;
 import coms309.entity.Admin;
 import coms309.entity.Employee;
 import coms309.entity.Employer;
@@ -27,6 +28,15 @@ public class UserProfileController {
 
     public UserProfileController(UserProfileRepository userProfileRepository) {
         this.userProfileRepository = userProfileRepository;
+    }
+
+    @GetMapping("/checkEmail")
+    public ResponseEntity<String> checkEmail(@RequestBody UserDTO emailDTO) {
+        Optional<UserProfile> user = userProfileRepository.findByEmail(emailDTO.getEmail());
+        if (user.isPresent()) {
+            return ResponseEntity.ok("Email exists");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email does not exist");
     }
 
     @PutMapping("/forgotPassword")
@@ -84,13 +94,9 @@ public class UserProfileController {
         if (userProfile.isPresent()) {
             // Convert the entity to a DTO to send back to the frontend
             UserDTO userDTO = new UserDTO(
-                    userProfile.get().getUserId(),
                     userProfile.get().getUsername(),
                     userProfile.get().getEmail(),
-<<<<<<< HEAD
                     userProfile.get().getId(),
-=======
->>>>>>> 07ebc41b9ae55b9d70567ade419356c432bfa20e
                     userProfile.get().getPassword()
             );
 
@@ -100,6 +106,35 @@ public class UserProfileController {
             logger.error("User profile not found for username: " + username);
             return new ResponseEntity<>("User profile not found", HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserDTO loginUser) {
+        Optional<UserProfile> existUser = userProfileRepository.findByUsernameAndPassword(loginUser.getUsername(), loginUser.getPassword());
+        if (existUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Invalid credentials.");
+        }
+        return ResponseEntity.ok("Login successful");
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup(@RequestBody UserSignupDTO signUpUserProfile) {
+        // Check if email or username already exists
+        Optional<UserProfile> existingUsername = userProfileRepository.findByUsername(signUpUserProfile.getUsername());
+        Optional<UserProfile> existingEmail = userProfileRepository.findByEmail(signUpUserProfile.getEmail());
+
+        if (existingUsername.isPresent()) {
+            return ResponseEntity.badRequest().body("Username is already taken");
+        }
+        if (existingEmail.isPresent()) {
+            return ResponseEntity.badRequest().body("Email is already registered");
+        }
+
+        // Create and save the new user profile
+        UserProfile newUserProfile = new UserProfile(signUpUserProfile.getUsername(), signUpUserProfile.getEmail(), signUpUserProfile.getPassword());
+        userProfileRepository.save(newUserProfile);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Sign up successful");
     }
 
     @PutMapping("/{id}")
@@ -131,6 +166,45 @@ public class UserProfileController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Autowired
+    private PayDetailsRepository payDetailsRepository;
+
+    // Fetch PayDetails by user ID
+    @GetMapping("/paydetails/{id}")
+    public ResponseEntity<PayDetails> getPayDetailsByUserId(@PathVariable Long id) {
+        Optional<PayDetails> payDetails = payDetailsRepository.findByUserProfileId(id);
+        if (payDetails.isPresent()) {
+            return ResponseEntity.ok(payDetails.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // Update PayDetails
+    @PutMapping("/paydetails/{id}")
+    public ResponseEntity<PayDetails> updatePayDetails(@PathVariable Long id, @RequestBody PayDetails payDetailsDetails) {
+        Optional<PayDetails> payDetailsOptional = payDetailsRepository.findById(id);
+        if (payDetailsOptional.isPresent()) {
+            PayDetails payDetails = payDetailsOptional.get();
+            payDetails.setHoursWorked(payDetailsDetails.getHoursWorked());
+            payDetails.setPayRate(payDetailsDetails.getPayRate());
+            payDetails.setBonusPay(payDetailsDetails.getBonusPay());
+            payDetails.setDeductibles(payDetailsDetails.getDeductibles());
+        
+            // Calculate gross pay and take-home pay
+            double grossPay = payDetails.getHoursWorked() * payDetails.getPayRate() + payDetails.getBonusPay();
+            double takeHomePay = grossPay - payDetails.getDeductibles();
+            payDetails.setGrossPay(grossPay);
+            payDetails.setTakeHomePay(takeHomePay);
+
+            PayDetails updatedPayDetails = payDetailsRepository.save(payDetails);
+            return ResponseEntity.ok(updatedPayDetails);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     // Helper methods to create records for employee, employer, admin
     public void createEmployeeRecord(UserProfile userProfile, UserProfile userProfileDetails) {

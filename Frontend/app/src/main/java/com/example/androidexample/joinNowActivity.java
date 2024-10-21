@@ -51,7 +51,7 @@ public class joinNowActivity extends AppCompatActivity {
     boolean isPasswordVisible1 = false;
     boolean isPasswordVisible2 = false;
 
-    private String signup_url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/signup";
+    private String signup_url = "http://coms-3090-046.class.las.iastate.edu:8080/login/signup";
     private JSONObject signup_details;
 
 
@@ -227,6 +227,12 @@ public class joinNowActivity extends AppCompatActivity {
                     signup_details.put("username", usernameFilled);
                     signup_details.put("email", emailFilled);
                     signup_details.put("password", passwordFilled);
+<<<<<<< HEAD
+
+=======
+                    signup_details.put("name", nameFilled);
+                    signup_details.put("verifyPassword", passwordFilled);
+>>>>>>> 555165c15438496e6f7dac529cf1db62a4e80644
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

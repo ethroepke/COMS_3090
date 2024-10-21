@@ -111,7 +111,7 @@
     <!-- Message display -->
     <TextView
         android:id="@+id/mainMessage"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="25dp"
         android:text=""
         android:textSize="18dp"
