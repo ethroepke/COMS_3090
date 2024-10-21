@@ -35,13 +35,6 @@ public class loginActivity extends AppCompatActivity {
 
     boolean isPasswordVisible = false;
 
-<<<<<<< HEAD
-=======
-    public JSONObject user_details;
-
-    String url = "https://304b2c41-4ef3-4e62-a2f8-e40348b54d5e.mock.pstmn.io";
->>>>>>> 555165c15438496e6f7dac529cf1db62a4e80644
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -63,7 +56,7 @@ public class loginActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the users usernam/password inputs, trim to remove whitespace
+                // Get the users username/password inputs, trim to remove whitespace
                 String username = usernameInput.getText().toString().trim();
                 String password = passwordInput.getText().toString().trim();
 
@@ -77,7 +70,7 @@ public class loginActivity extends AppCompatActivity {
                                 public void onResponse(String response) {
                                     // Login successful
                                     if (response.equals("Login successful")) {
-                                        Intent intent = new Intent(loginActivity.this, employerActivity.class);
+                                        Intent intent = new Intent(loginActivity.this, employeeActivity.class);
                                         startActivity(intent);
                                     } else {
                                         messageText.setText(response);
@@ -132,55 +125,4 @@ public class loginActivity extends AppCompatActivity {
             }
         });
     }
-<<<<<<< HEAD
-=======
-    //For login
-    public void loginRequest() {
-        String username = usernameInput.getText().toString();
-        String password = passwordInput.getText().toString();
-
-        // Create JSON object with the username and password
-        JSONObject loginData = new JSONObject();
-        try {
-            loginData.put("username", username);
-            loginData.put("password", password);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        // Define the URL for the login POST request
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/login";
-
-        // Create a new JsonObjectRequest with POST method
-        JsonObjectRequest loginRequest = new JsonObjectRequest(
-                Request.Method.POST,
-                url,
-                loginData, // Send loginData as the body of the POST request
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Login Response", response.toString());
-                        if (response.optString("message").equals("login successfully")) {
-
-                            Intent intent = new Intent(loginActivity.this, employeeActivity.class);
-                            startActivity(intent);
-                        } else {
-                            messageText.setText("Unexpected response: " + response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Login Error", error.toString());
-                        messageText.setText(error.toString());
-                    }
-                }
-        );
-
-        // Add the request to the Volley request queue
-        Volley.newRequestQueue(this).add(loginRequest);
-    }
-
->>>>>>> 555165c15438496e6f7dac529cf1db62a4e80644
 }

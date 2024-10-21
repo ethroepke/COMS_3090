@@ -87,10 +87,6 @@ public class UserProfileController {
                     userProfile.get().getUserId(),
                     userProfile.get().getUsername(),
                     userProfile.get().getEmail(),
-<<<<<<< HEAD
-                    userProfile.get().getId(),
-=======
->>>>>>> 07ebc41b9ae55b9d70567ade419356c432bfa20e
                     userProfile.get().getPassword()
             );
 
