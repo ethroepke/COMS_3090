@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -43,7 +44,7 @@ public class resetPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.resetpassword);
 
-        userEmail = getIntent().getStringExtra("userEmail");
+        userEmail = getIntent().getStringExtra("email");
 
         backButton = findViewById(R.id.backButton);
         passwordInput = findViewById(R.id.newPasswordInput);
@@ -63,19 +64,48 @@ public class resetPasswordActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String newPassword = passwordInput.getText().toString().trim();
 
-
                 // Check to make sure password has minimum requirements
                 if (!isValidPassword(newPassword)) {
                     showAlertDialog("Error", "Password must be at least 8 characters long, contain 1 uppercase letter, 1 number, and 1 special character");
-                    return; // Exit the method if password is invalid
+                    return;
                 }
+                String url = "http://coms-3090-046.class.las.iastate.edu:8080/login/resetPassword?email=" + userEmail + "&newPassword=" + newPassword;
 
-                resetPassword(userEmail, newPassword);
+                RequestQueue queue = Volley.newRequestQueue(resetPasswordActivity.this);
 
-                Intent intent = new Intent(resetPasswordActivity.this, loginActivity.class);
-                startActivity(intent);
+
+                StringRequest putRequest = new StringRequest(Request.Method.PUT, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Toast.makeText(resetPasswordActivity.this, "Password successfully updated.", Toast.LENGTH_SHORT).show();
+
+                                // Delay 2 seconds
+                                new android.os.Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(resetPasswordActivity.this, loginActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }, 2500);
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // Handle error responses
+                                if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                                    messageText.setText("No user exists with this email.");
+                                } else {
+                                    messageText.setText("An error occurred. Please try again.");
+                                }
+                            }
+                        });
+                queue.add(putRequest);
             }
         });
+
     }
 
 
@@ -93,33 +123,6 @@ public class resetPasswordActivity extends AppCompatActivity {
         builder.setMessage(message);
         builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
         builder.show();
-    }
-
-    // Function to reset the password
-    private void resetPassword(String email, String newPassword) {
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/forgotPassword";
-
-        // Create a HashMap for the PUT request body
-        HashMap<String, String> params = new HashMap<>();
-        params.put("email", email);
-        params.put("password", newPassword);
-
-        // Create a PUT request
-        JsonObjectRequest putRequest = new JsonObjectRequest(Request.Method.PUT, url, new JSONObject(params),
-                response -> {
-                    // Handle success - password reset successfully
-                    Intent intent = new Intent(resetPasswordActivity.this, loginActivity.class);
-                    startActivity(intent);
-                },
-                error -> {
-                    // Handle error
-                    messageText.setText("Failed to reset password.");
-                }
-        );
-
-        // Add the request to the RequestQueue
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(putRequest);
     }
 }
 

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -28,7 +29,7 @@ import org.json.JSONObject;
 public class forgotpasswordActivity extends AppCompatActivity {
 
     private Button back_button;
-    private EditText email_input;
+    private EditText emailInput;
     private Button submit_button;
     private TextView messageText;
 
@@ -40,7 +41,7 @@ public class forgotpasswordActivity extends AppCompatActivity {
         setContentView(R.layout.forgotpassword);
 
         back_button = findViewById(R.id.backButton);
-        email_input = findViewById(R.id.usernameInput);
+        emailInput = findViewById(R.id.usernameInput);
         submit_button = findViewById(R.id.submitButton);
         messageText = findViewById(R.id.messageText);
 
@@ -55,10 +56,44 @@ public class forgotpasswordActivity extends AppCompatActivity {
         submit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = email_input.getText().toString().trim();
-                
+                String email = emailInput.getText().toString().trim();
 
+                // Email empty add message
+                if (email.isEmpty()) {
+                    messageText.setText("Please enter your email.");
+                    return;
+                }
+
+                messageText.setText("");
+
+                String url = "http://coms-3090-046.class.las.iastate.edu:8080/login/forgotPassword?email=" + email;
+
+
+                RequestQueue queue = Volley.newRequestQueue(forgotpasswordActivity.this);
+
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Intent intent = new Intent(forgotpasswordActivity.this, resetPasswordActivity.class);
+                                intent.putExtra("email", email);
+                                startActivity(intent);
+                                finish();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                                    messageText.setText("No user exists with this email.");
+                                } else {
+                                    messageText.setText("An error occurred. Please try again.");
+                                }
+                            }
+                        });
+                queue.add(stringRequest);
             }
         });
+
     }
 }
