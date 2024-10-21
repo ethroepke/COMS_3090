@@ -1,5 +1,6 @@
 package com.example.androidexample;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +37,7 @@ public class employerActivity extends AppCompatActivity {
     private boolean isNextShiftExpanded = false;
     private boolean isPaydayExpanded = false;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

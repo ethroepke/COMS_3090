@@ -14,10 +14,10 @@
       <SelectionState runConfigName="forgotpasswordActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="employerActivity">
+      <SelectionState runConfigName="resetPasswordActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="resetPasswordActivity">
+      <SelectionState runConfigName="payCheckSearchActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
