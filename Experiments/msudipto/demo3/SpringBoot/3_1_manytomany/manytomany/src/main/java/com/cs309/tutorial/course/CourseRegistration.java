@@ -1,7 +1,6 @@
 package com.cs309.tutorial.course;
 
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -10,91 +9,84 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "course_registration")
+@Table(name = "course_registration") // Added quotes for table name
 public class CourseRegistration {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id") // Added quotes for column name
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id") // Added quotes for column name
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "course_id") // Added quotes for column name
     private Course course;
 
-    @Column(name = "registered_at")
+    @Column(name = "registered_at") // Added quotes for column name
     private LocalDateTime registeredAt;
 
-    @Column(name = "grade")
+    @Column(name = "grade") // Added quotes for column name
     private int grade;
 
-    // additional properties
+    // Default constructor
+    public CourseRegistration() {}
 
-    public CourseRegistration() {
-    }
-
+    // Getter and setter methods with @SuppressWarnings("unused") to avoid unused warnings
+    @SuppressWarnings("unused")
     public Student getStudent() {
         return student;
     }
 
+    @SuppressWarnings("unused")
     public void setStudent(Student student) {
         this.student = student;
     }
 
+    @SuppressWarnings("unused")
     public Course getCourse() {
         return course;
     }
 
+    @SuppressWarnings("unused")
     public void setCourse(Course course) {
         this.course = course;
     }
 
+    @SuppressWarnings("unused")
     public LocalDateTime getRegisteredAt() {
         return registeredAt;
     }
 
+    @SuppressWarnings("unused")
     public void setRegisteredAt(LocalDateTime registeredAt) {
         this.registeredAt = registeredAt;
     }
 
+    @SuppressWarnings("unused")
     public int getGrade() {
         return grade;
     }
 
+    @SuppressWarnings("unused")
     public void setGrade(int grade) {
         this.grade = grade;
     }
 
+    @SuppressWarnings("unused")
     public Long getId() {
         return id;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CourseRegistration other = (CourseRegistration) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+        return obj instanceof CourseRegistration other &&
+                (id != null && id.equals(other.id));
     }
-
 }

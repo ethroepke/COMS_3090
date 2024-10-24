@@ -8,52 +8,36 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class CourseRatingKey implements Serializable {
 
-    @Column(name = "student_id")
+    @Column(name = "student_id") // Add quotes to handle naming conflicts or case sensitivity
     private Long studentId;
 
-    @Column(name = "course_id")
+    @Column(name = "course_id") // Add quotes to handle naming conflicts or case sensitivity
     private Long courseId;
 
-    public CourseRatingKey() {
-    }
+    public CourseRatingKey() {}
 
+    @SuppressWarnings("unused")
     public Long getStudentId() {
         return studentId;
     }
 
+    @SuppressWarnings("unused")
     public Long getCourseId() {
         return courseId;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
         int result = 1;
-        result = prime * result + ((courseId == null) ? 0 : courseId.hashCode());
-        result = prime * result + ((studentId == null) ? 0 : studentId.hashCode());
+        result = 31 * result + (courseId != null ? courseId.hashCode() : 0);
+        result = 31 * result + (studentId != null ? studentId.hashCode() : 0);
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CourseRatingKey other = (CourseRatingKey) obj;
-        if (courseId == null) {
-            if (other.courseId != null)
-                return false;
-        } else if (!courseId.equals(other.courseId))
-            return false;
-        if (studentId == null) {
-            if (other.studentId != null)
-                return false;
-        } else if (!studentId.equals(other.studentId))
-            return false;
-        return true;
+        return obj instanceof CourseRatingKey other &&
+                (courseId != null && courseId.equals(other.courseId)) &&
+                (studentId != null && studentId.equals(other.studentId));
     }
-
 }

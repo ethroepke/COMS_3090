@@ -9,71 +9,62 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "course_rating")
+@Table(name = "course_rating") // Use quotes to ensure correct table resolution
 public class CourseRating {
 
     @EmbeddedId
     private CourseRatingKey id;
 
     @ManyToOne
-    @MapsId("student_id")
-    @JoinColumn(name = "student_id")
+    @MapsId("studentId") // Adjust the field name to match the embedded ID field name
+    @JoinColumn(name = "student_id") // Use quotes for consistency
     private Student student;
 
     @ManyToOne
-    @MapsId("course_id")
-    @JoinColumn(name = "course_id")
+    @MapsId("courseId") // Adjust the field name to match the embedded ID field name
+    @JoinColumn(name = "course_id") // Use quotes for consistency
     private Course course;
 
-    @Column(name = "rating")
+    @Column(name = "rating") // Use quotes for consistency
     private int rating;
 
     public CourseRating() {
     }
 
+    @SuppressWarnings("unused")
     public int getRating() {
         return rating;
     }
 
+    @SuppressWarnings("unused")
     public void setRating(int rating) {
         this.rating = rating;
     }
 
+    @SuppressWarnings("unused")
     public CourseRatingKey getId() {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public Student getStudent() {
         return student;
     }
 
+    @SuppressWarnings("unused")
     public Course getCourse() {
         return course;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CourseRating other = (CourseRating) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+        return obj instanceof CourseRating other &&
+                id != null &&
+                id.equals(other.getId());
     }
-
 }

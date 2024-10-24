@@ -12,7 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull; // Replaced deprecated NotNull
 import org.hibernate.annotations.NaturalId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,21 +33,20 @@ public class Tag {
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
             },
             mappedBy = "tags")
     @JsonIgnore
     private Set<Post> posts = new HashSet<>();
 
     public Tag() {
-
     }
 
     public Tag(String name) {
         this.name = name;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -55,22 +54,17 @@ public class Tag {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof Tag)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         Tag other = (Tag) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+        return id != null && id.equals(other.id);
     }
 
     // Getters and Setters (Omitted for brevity)

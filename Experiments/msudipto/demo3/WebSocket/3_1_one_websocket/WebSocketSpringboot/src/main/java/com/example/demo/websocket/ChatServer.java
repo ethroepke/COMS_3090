@@ -3,6 +3,9 @@ package com.example.demo.websocket;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
@@ -29,49 +32,61 @@ import org.springframework.stereotype.Component;
  *
  * The server provides functionality for broadcasting messages to all connected
  * users and sending messages to specific users.
- */
-@ServerEndpoint("/chat/{username}")
+ **/
+
+@ServerEndpoint("/chat/{username}/{token}")
 @Component
 public class ChatServer {
 
     // Store all socket session and their corresponding username
-    // Two maps for the ease of retrieval by key
-    private static Map < Session, String > sessionUsernameMap = new Hashtable < > ();
-    private static Map < String, Session > usernameSessionMap = new Hashtable < > ();
+    private static Map<Session, String> sessionUsernameMap = new Hashtable<>();
+    private static Map<String, Session> usernameSessionMap = new Hashtable<>();
 
-    // server side logger
+    // Server side logger
     private final Logger logger = LoggerFactory.getLogger(ChatServer.class);
+
+    // Scheduled Executor for sending heartbeats
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /**
      * This method is called when a new WebSocket connection is established.
      *
-     * @param session represents the WebSocket session for the connected user.
-     * @param username username specified in path parameter.
-     */
+     * @param session  represents the WebSocket session for the connected user.
+     * @param username username specified in the path parameter.
+     * @param token    authentication token for the user.
+     **/
+
     @OnOpen
-    public void onOpen(Session session, @PathParam("username") String username) throws IOException {
-
-        // server side log
-        logger.info("[onOpen] " + username);
-
-        // Handle the case of a duplicate username
-        if (usernameSessionMap.containsKey(username)) {
-            session.getBasicRemote().sendText("Username already exists");
+    public void onOpen(Session session, @PathParam("username") String username, @PathParam("token") String token) throws IOException {
+        // Authenticate the user
+        if (!isValidToken(token)) {
+            session.getBasicRemote().sendText("Invalid authentication token. Connection rejected.");
             session.close();
+            return;
         }
-        else {
-            // map current session with username
-            sessionUsernameMap.put(session, username);
 
-            // map current username with session
-            usernameSessionMap.put(username, session);
+        // Log the connection
+        logger.info("[onOpen] Connection established for user: " + username);
 
-            // send to the user joining in
-            sendMessageToPArticularUser(username, "Welcome to the chat server, "+username);
-
-            // send to everyone in the chat
-            broadcast("User: " + username + " has Joined the Chat");
+        // Handle duplicate usernames
+        if (usernameSessionMap.containsKey(username)) {
+            session.getBasicRemote().sendText("Username already exists. Please choose a different one.");
+            session.close();
+            return;
         }
+
+        // Add user to the session map
+        sessionUsernameMap.put(session, username);
+        usernameSessionMap.put(username, session);
+
+        // Start sending heartbeat pings
+        startHeartbeat(session);
+
+        // Send a welcome message to the new user
+        sendMessageToUser(username, "Welcome to the chat server, " + username);
+
+        // Broadcast to other users
+        broadcast("User " + username + " has joined the chat.");
     }
 
     /**
@@ -79,33 +94,32 @@ public class ChatServer {
      *
      * @param session The WebSocket session representing the client's connection.
      * @param message The message received from the client.
-     */
+     **/
+
     @OnMessage
     public void onMessage(Session session, String message) throws IOException {
-
-        // get the username by session
         String username = sessionUsernameMap.get(session);
-
-        // server side log
         logger.info("[onMessage] " + username + ": " + message);
 
-        // Direct message to a user using the format "@username <message>"
-        if (message.startsWith("@")) {
-
-            // split by space
-            String[] split_msg =  message.split("\\s+");
-
-            // Combine the rest of message
-            StringBuilder actualMessageBuilder = new StringBuilder();
-            for (int i = 1; i < split_msg.length; i++) {
-                actualMessageBuilder.append(split_msg[i]).append(" ");
-            }
-            String destUserName = split_msg[0].substring(1);    //@username and get rid of @
-            String actualMessage = actualMessageBuilder.toString();
-            sendMessageToPArticularUser(destUserName, "[DM from " + username + "]: " + actualMessage);
-            sendMessageToPArticularUser(username, "[DM from " + username + "]: " + actualMessage);
+        if (message.equalsIgnoreCase("ping")) {
+            session.getBasicRemote().sendText("pong"); // Respond to pings for heartbeat
+            return;
         }
-        else { // Message to whole chat
+
+        if (message.startsWith("@")) {
+            // Handle direct message
+            String[] splitMessage = message.split("\\s+", 2);
+            String recipient = splitMessage[0].substring(1);  // Extract username
+            String actualMessage = splitMessage.length > 1 ? splitMessage[1] : "";
+
+            if (usernameSessionMap.containsKey(recipient)) {
+                sendMessageToUser(recipient, "[DM from " + username + "]: " + actualMessage);
+                sendMessageToUser(username, "[DM to " + recipient + "]: " + actualMessage);
+            } else {
+                sendMessageToUser(username, "User " + recipient + " not found.");
+            }
+        } else {
+            // Broadcast to all users
             broadcast(username + ": " + message);
         }
     }
@@ -114,66 +128,104 @@ public class ChatServer {
      * Handles the closure of a WebSocket connection.
      *
      * @param session The WebSocket session that is being closed.
-     */
+     **/
+
     @OnClose
     public void onClose(Session session) throws IOException {
-
-        // get the username from session-username mapping
-        String username = sessionUsernameMap.get(session);
-
-        // server side log
-        logger.info("[onClose] " + username);
-
-        // remove user from memory mappings
-        sessionUsernameMap.remove(session);
+        String username = sessionUsernameMap.remove(session);
         usernameSessionMap.remove(username);
 
-        // send the message to chat
-        broadcast(username + " disconnected");
+        // Log the closure
+        logger.info("[onClose] Connection closed for user: " + username);
+
+        // Notify other users
+        broadcast("User " + username + " has left the chat.");
     }
 
     /**
-     * Handles WebSocket errors that occur during the connection.
+     * Handles WebSocket errors.
      *
      * @param session   The WebSocket session where the error occurred.
      * @param throwable The Throwable representing the error condition.
-     */
+     **/
+
     @OnError
     public void onError(Session session, Throwable throwable) {
-
-        // get the username from session-username mapping
         String username = sessionUsernameMap.get(session);
-
-        // do error handling here
-        logger.info("[onError]" + username + ": " + throwable.getMessage());
+        logger.error("[onError] Error for user " + username + ": " + throwable.getMessage());
     }
 
     /**
-     * Sends a message to a specific user in the chat (DM).
+     * Sends a message to a specific user.
      *
      * @param username The username of the recipient.
      * @param message  The message to be sent.
-     */
-    private void sendMessageToPArticularUser(String username, String message) {
+     **/
+
+    private void sendMessageToUser(String username, String message) {
         try {
-            usernameSessionMap.get(username).getBasicRemote().sendText(message);
+            Session session = usernameSessionMap.get(username);
+            if (session != null) {
+                session.getBasicRemote().sendText(message);
+            }
         } catch (IOException e) {
-            logger.info("[DM Exception] " + e.getMessage());
+            logger.error("[sendMessageToUser] Error sending message to " + username + ": " + e.getMessage());
         }
     }
 
     /**
-     * Broadcasts a message to all users in the chat.
+     * Broadcasts a message to all connected users.
      *
-     * @param message The message to be broadcasted to all users.
-     */
+     * @param message The message to be broadcasted.
+     **/
+
     private void broadcast(String message) {
         sessionUsernameMap.forEach((session, username) -> {
             try {
                 session.getBasicRemote().sendText(message);
             } catch (IOException e) {
-                logger.info("[Broadcast Exception] " + e.getMessage());
+                logger.error("[broadcast] Error broadcasting message: " + e.getMessage());
             }
         });
+    }
+
+    /**
+     * Returns the list of currently connected users.
+     *
+     * @return List of connected usernames.
+     **/
+
+    public static String getConnectedUsers() {
+        return String.join(", ", usernameSessionMap.keySet());
+    }
+
+    /**
+     * Validates the user's authentication token.
+     *
+     * @param token The token to be validated.
+     * @return true if the token is valid, false otherwise.
+     **/
+
+    private boolean isValidToken(String token) {
+        // Placeholder for token validation logic
+        return "valid_token".equals(token);  // Replace with real validation
+    }
+
+    /**
+     * Starts the heartbeat mechanism to ensure live connections.
+     *
+     * @param session The session to which pings will be sent.
+     **/
+
+    private void startHeartbeat(Session session) {
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                if (session.isOpen()) {
+                    session.getBasicRemote().sendText("ping");
+                }
+            } catch (IOException e) {
+                logger.error("[startHeartbeat] Error sending ping: " + e.getMessage());
+            }
+        }, 0, 30, TimeUnit.SECONDS); // Ping every 30 seconds
     }
 }

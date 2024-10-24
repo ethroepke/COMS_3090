@@ -19,18 +19,18 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
+import jakarta.validation.constraints.NotNull; // Replaced deprecated NotNull
 import lombok.Data;
-import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 @Table(name = "posts")
-@Data // This annotation is from lombok. It creates getters and
+@Data // This annotation is from lombok. It creates getters and setters
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @org.jetbrains.annotations.NotNull
     @Column(unique = true)
     private String title;
 
@@ -51,23 +51,21 @@ public class Post {
     @Column(name = "last_updated_at")
     private Date lastUpdatedAt = new Date();
 
-
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
             })
     @JoinTable(name = "post_tags",
             joinColumns = { @JoinColumn(name = "post_id") },
             inverseJoinColumns = { @JoinColumn(name = "tag_id") })
     private Set<Tag> tags = new HashSet<>();
 
-
     public Post() {
-
+        // Default constructor
     }
 
-    public Post(String title, String description, String content) {
+    public Post(@org.jetbrains.annotations.NotNull String title, String description, String content) {
         this.title = title;
         this.description = description;
         this.content = content;

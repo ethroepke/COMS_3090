@@ -14,42 +14,41 @@ import java.util.List;
 @RequestMapping("/api/v1/user")
 public class UserController {
 
+    private final UserService userService;
+
+    // Constructor-based injection
     @Autowired
-    UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping(value = "/registerUser", produces = "application/json")
-    public @ResponseBody Message registerUser(@RequestBody User user){
+    public @ResponseBody Message registerUser(@RequestBody User user) {
         return userService.registerUser(user.getEmail(), user.getPassword(), user.getName(), user.getRole());
     }
 
-
     @PutMapping(value = "/updateUserName/{name}", produces = "application/json")
-    public @ResponseBody Message updateUserName(@RequestBody LoginVO loginVO, @PathVariable String name){
+    public @ResponseBody Message updateUserName(@RequestBody LoginVO loginVO, @PathVariable String name) {
         return userService.updateUserName(loginVO, name);
     }
 
-
     @GetMapping(value = "/getUser", produces = "application/json")
-    public @ResponseBody User getUser(@RequestBody LoginVO loginVO){
+    public @ResponseBody User getUser(@RequestBody LoginVO loginVO) {
         return userService.validateUser(loginVO);
     }
 
-
-
     @GetMapping(value = "/getAllUsers", produces = "application/json")
-    public @ResponseBody List<User> getAllUsers(){
+    public @ResponseBody List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-
-
     @GetMapping(value = "/getUserObjectExample", produces = "application/json")
-    public @ResponseBody User getUserObjectExample(){
-        return new User("email here","password here", "name here", Role.ADMIN);
+    public @ResponseBody User getUserObjectExample() {
+        return new User("email here", "password here", "name here", Role.ADMIN);
     }
 
     @GetMapping(value = "/getLoginVOExample", produces = "application/json")
-    public @ResponseBody LoginVO getLoginVOObjectExample(){
+    public @ResponseBody LoginVO getLoginVOObjectExample() {
         LoginVO example = new LoginVO();
         example.setEmail("email here");
         example.setPassword("password here");

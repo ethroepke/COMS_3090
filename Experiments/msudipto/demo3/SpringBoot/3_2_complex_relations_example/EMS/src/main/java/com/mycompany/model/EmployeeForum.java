@@ -1,7 +1,6 @@
 package com.mycompany.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,28 +23,30 @@ public class EmployeeForum {
     private Date modifiedOn;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "company_id")
+    @JoinColumn(name = "company_id", nullable = false) // Proper mapping for company_id
     @JsonIgnore
     private Company company;
 
-    @ManyToMany
-    @Column(nullable = true)
+    @ManyToMany(mappedBy = "employeeForums")
     @JsonIgnore
-    private List<Employee> employees;
+    private List<Employee> employees = new ArrayList<>();
 
+    // Constructor with parameters
     public EmployeeForum(long id, String name, Company company) {
         this.id = id;
         this.name = name;
         this.createdOn = new Date();
         this.modifiedOn = new Date();
         this.company = company;
-        this.employees = new ArrayList<>();
     }
 
-    public EmployeeForum(){
-
+    // No-arg constructor
+    public EmployeeForum() {
+        this.createdOn = new Date();
+        this.modifiedOn = new Date();
     }
 
+    // Getters and Setters
     public long getId() {
         return id;
     }
@@ -90,11 +91,7 @@ public class EmployeeForum {
         return employees;
     }
 
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
-    }
-
-    public void addEmployee(Employee employee){
+    public void addEmployee(Employee employee) {
         this.employees.add(employee);
     }
 }

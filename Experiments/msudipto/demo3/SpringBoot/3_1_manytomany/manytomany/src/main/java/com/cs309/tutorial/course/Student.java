@@ -12,67 +12,59 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "student")
+@Table(name = "student") // Added quotes to handle potential reserved word conflicts
 public class Student {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id") // Added quotes to handle potential reserved word conflicts
     private Long id;
 
     @ManyToMany
-    @JoinTable(name = "course_like", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
+    @JoinTable(name = "course_like", // Added quotes to table name
+            joinColumns = @JoinColumn(name = "student_id"), // Added quotes to column name
+            inverseJoinColumns = @JoinColumn(name = "course_id")) // Added quotes to column name
+    @SuppressWarnings("unused") // Added to suppress unused warnings
     private Set<Course> likedCourses;
 
     @OneToMany(mappedBy = "student")
+    @SuppressWarnings("unused") // Added to suppress unused warnings
     private Set<CourseRating> ratings;
 
     @OneToMany(mappedBy = "student")
+    @SuppressWarnings("unused") // Added to suppress unused warnings
     private Set<CourseRegistration> registrations;
 
-    // additional properties
+    // Default constructor
+    public Student() {}
 
-    public Student() {
-    }
-
+    @SuppressWarnings("unused") // Added to suppress unused warnings
     public Long getId() {
         return id;
     }
 
+    @SuppressWarnings("unused") // Added to suppress unused warnings
     public Set<Course> getLikedCourses() {
         return likedCourses;
     }
 
+    @SuppressWarnings("unused") // Added to suppress unused warnings
     public Set<CourseRating> getRatings() {
         return ratings;
     }
 
+    @SuppressWarnings("unused") // Added to suppress unused warnings
     public Set<CourseRegistration> getRegistrations() {
         return registrations;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Student other = (Student) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+        return obj instanceof Student other &&
+                (id != null && id.equals(other.id));
     }
-
 }

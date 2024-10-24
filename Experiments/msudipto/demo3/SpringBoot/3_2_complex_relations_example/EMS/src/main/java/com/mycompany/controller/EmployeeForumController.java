@@ -15,17 +15,21 @@ import java.util.List;
 @RequestMapping("/api/v1/company")
 public class EmployeeForumController {
 
+    private final EmployeeForumService employeeForumService;
+
+    // Constructor-based injection
     @Autowired
-    private EmployeeForumService employeeForumService;
+    public EmployeeForumController(EmployeeForumService employeeForumService) {
+        this.employeeForumService = employeeForumService;
+    }
 
     @GetMapping(value = "/{c_id}/forums", produces = "application/json")
-    List<EmployeeForum> getAllEmployeeForumsForCompany(@PathVariable long c_id){
+    public List<EmployeeForum> getAllEmployeeForumsForCompany(@PathVariable long c_id) {
         return employeeForumService.getAllForumsForCompany(c_id);
     }
 
     @GetMapping(value = "/{c_id}/employee/{e_id}/forums", produces = "application/json")
-    List<EmployeeForum> getAllForumForEmployee(@PathVariable long c_id, @PathVariable long e_id){
+    public List<EmployeeForum> getAllForumForEmployee(@PathVariable long c_id, @PathVariable long e_id) {
         return employeeForumService.getAllForumPerEmployee(c_id, e_id);
     }
-
 }

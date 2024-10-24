@@ -10,15 +10,19 @@ import java.util.List;
 @Service
 public class EmployeeForumService {
 
-    @Autowired
-    private EmployeeForumRepository employeeForumRepository;
+    private final EmployeeForumRepository employeeForumRepository;
 
-    public List<EmployeeForum> getAllForumsForCompany(long id){
+    // Constructor-based injection
+    @Autowired
+    public EmployeeForumService(EmployeeForumRepository employeeForumRepository) {
+        this.employeeForumRepository = employeeForumRepository;
+    }
+
+    public List<EmployeeForum> getAllForumsForCompany(long id) {
         return employeeForumRepository.findByCompany_Id(id);
     }
 
-    public List<EmployeeForum> getAllForumPerEmployee(long c_id, long e_id){
-        List<EmployeeForum> ef =  employeeForumRepository.findByCompany_IdAndEmployees_Id(c_id, e_id);
-        return ef;
+    public List<EmployeeForum> getAllForumPerEmployee(long c_id, long e_id) {
+        return employeeForumRepository.findByCompany_IdAndEmployees_Id(c_id, e_id);
     }
 }

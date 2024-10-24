@@ -15,32 +15,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final EmployeeForumRepository employeeForumRepository;
+    private final CompanyRepository companyRepository;
+    private final EmployeeRepository employeeRepository;
 
+    // Constructor-based injection
     @Autowired
-    private EmployeeForumRepository employeeForumRepository;
-
-    @Autowired
-    private CompanyRepository companyRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    public TestController(UserRepository userRepository,
+                          EmployeeForumRepository employeeForumRepository,
+                          CompanyRepository companyRepository,
+                          EmployeeRepository employeeRepository) {
+        this.userRepository = userRepository;
+        this.employeeForumRepository = employeeForumRepository;
+        this.companyRepository = companyRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     @GetMapping(value = "/enter", produces = "application/json")
-    Message enterDummyData(){
+    public Message enterDummyData() {
 
         System.out.println("--------------------------------------------------------------------------------");
         System.out.println("here");
 
-        userRepository.save(new User(1,"bvivek2@iastate.edu", "password", "Vivek", Role.ADMIN));
+        // Save initial User data
+        userRepository.save(new User(1, "bvivek2@iastate.edu", "password", "Vivek", Role.ADMIN));
 
-        companyRepository.save(new Company(1, "comapnyA", "C1"));
-        companyRepository.save(new Company(2, "comapnyB", "C2"));
+        // Save initial Company data
+        companyRepository.save(new Company(1, "companyA", "C1"));
+        companyRepository.save(new Company(2, "companyB", "C2"));
 
         Company c1 = companyRepository.findById(1);
         Company c2 = companyRepository.findById(2);
 
+        // Save initial EmployeeForum data
         employeeForumRepository.save(new EmployeeForum(1, "Dark Humour", c1));
         employeeForumRepository.save(new EmployeeForum(2, "Foodies", c1));
         employeeForumRepository.save(new EmployeeForum(3, "Something Boring", c2));
@@ -51,24 +59,26 @@ public class TestController {
         EmployeeForum ef3 = employeeForumRepository.findById(3);
         EmployeeForum ef4 = employeeForumRepository.findById(4);
 
-        employeeRepository.save(new Employee(1,"A", "a@z.com", "addr", c1));
-        employeeRepository.save(new Employee(2,"B", "b@z.com", "bddr", c1));
-        employeeRepository.save(new Employee(3,"C", "c@z.com", "cddr", c1));
-        employeeRepository.save(new Employee(4,"D", "d@z.com", "dddr", c1));
-        employeeRepository.save(new Employee(5,"E", "e@z.com", "eddr", c2));
-        employeeRepository.save(new Employee(6,"F", "f@z.com", "fddr", c2));
-        employeeRepository.save(new Employee(7,"G", "g@z.com", "gddr", c2));
-        employeeRepository.save(new Employee(8,"H", "h@z.com", "hddr", c2));
+        // Save initial Employee data
+        employeeRepository.save(new Employee(1, "A", "a@z.com", "addr", c1));
+        employeeRepository.save(new Employee(2, "B", "b@z.com", "bddr", c1));
+        employeeRepository.save(new Employee(3, "C", "c@z.com", "cddr", c1));
+        employeeRepository.save(new Employee(4, "D", "d@z.com", "dddr", c1));
+        employeeRepository.save(new Employee(5, "E", "e@z.com", "eddr", c2));
+        employeeRepository.save(new Employee(6, "F", "f@z.com", "fddr", c2));
+        employeeRepository.save(new Employee(7, "G", "g@z.com", "gddr", c2));
+        employeeRepository.save(new Employee(8, "H", "h@z.com", "hddr", c2));
 
         Employee e1 = employeeRepository.findById(1);
-        Employee e2 = employeeRepository.findById(1);
-        Employee e3 = employeeRepository.findById(1);
-        Employee e4 = employeeRepository.findById(1);
-        Employee e5 = employeeRepository.findById(1);
-        Employee e6 = employeeRepository.findById(1);
-        Employee e7 = employeeRepository.findById(1);
-        Employee e8 = employeeRepository.findById(1);
+        Employee e2 = employeeRepository.findById(2);
+        Employee e3 = employeeRepository.findById(3);
+        Employee e4 = employeeRepository.findById(4);
+        Employee e5 = employeeRepository.findById(5);
+        Employee e6 = employeeRepository.findById(6);
+        Employee e7 = employeeRepository.findById(7);
+        Employee e8 = employeeRepository.findById(8);
 
+        // Establish relationships between Employees and EmployeeForums
         e1.addEmployeeForum(ef1);
         ef1.addEmployee(e1);
 
@@ -105,6 +115,7 @@ public class TestController {
         e8.addEmployeeForum(ef4);
         ef4.addEmployee(e8);
 
+        // Save updated Employee data
         employeeRepository.save(e1);
         employeeRepository.save(e2);
         employeeRepository.save(e3);

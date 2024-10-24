@@ -1,7 +1,6 @@
 package com.mycompany.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,26 +27,27 @@ public class Company {
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore
-    private List<Employee> employees;
+    private List<Employee> employees = new ArrayList<>();
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore
-    private List<EmployeeForum> employeeForums;
+    private List<EmployeeForum> employeeForums = new ArrayList<>();
 
+    // Constructors
     public Company(long id, String name, String registrationNumber) {
         this.id = id;
         this.name = name;
         this.registrationNumber = registrationNumber;
         this.createdOn = new Date();
         this.modifiedOn = new Date();
-        this.employeeForums = new ArrayList<>();
-        this.employees = new ArrayList<>();
     }
 
-    public Company(){
-        createdOn = new Date();
+    public Company() {
+        this.createdOn = new Date();
+        this.modifiedOn = new Date();
     }
 
+    // Getters and setters
     public long getId() {
         return id;
     }
@@ -92,15 +92,15 @@ public class Company {
         return employees;
     }
 
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
+    public void addEmployee(Employee employee) {
+        this.employees.add(employee);
     }
 
     public List<EmployeeForum> getEmployeeForums() {
         return employeeForums;
     }
 
-    public void setEmployeeForums(List<EmployeeForum> employeeForums) {
-        this.employeeForums = employeeForums;
+    public void addEmployeeForum(EmployeeForum employeeForum) {
+        this.employeeForums.add(employeeForum);
     }
 }

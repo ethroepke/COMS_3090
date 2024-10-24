@@ -12,29 +12,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value="/person")
+@RequestMapping(value = "/person")
 public class PersonController {
-	
+
+	private final PersonRepository personRepo;
+
+	// Constructor injection
 	@Autowired
-	PersonRepository personRepo;
-	
+	public PersonController(PersonRepository personRepo) {
+		this.personRepo = personRepo;
+	}
+
 	@PostMapping("/add")
 	public void addPerson(@RequestBody Person p) {
 		personRepo.save(p);
 	}
-	
+
 	@PostMapping("/addFriend")
 	public void addFriend(@RequestParam String name, @RequestParam String fName) {
 		Person person = personRepo.findByName(name);
 		Person friend = personRepo.findByName(fName);
-		if(person!= null && friend != null) {
+		if (person != null && friend != null) {
 			person.getFriends().add(friend);
 			personRepo.save(person);
 		}
 	}
-	
+
 	@GetMapping("/allPeople")
-	public List<Person> getAll(){
+	public List<Person> getAll() {
 		return personRepo.findAll();
 	}
 }

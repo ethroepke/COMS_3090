@@ -8,28 +8,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value="/student")
+@RequestMapping(value = "/student")
 public class StudentController {
-	
+
+	private final StudentRepository studentRepo;
+	private final CourseRepository courseRepository;
+
+	// Constructor-based injection to replace field injection
 	@Autowired
-	StudentRepository studentRepo;
-	
-	@Autowired
-	CourseRepository CourseRepository;
-	
+	public StudentController(StudentRepository studentRepo, CourseRepository courseRepository) {
+		this.studentRepo = studentRepo;
+		this.courseRepository = courseRepository;
+	}
+
 	@PostMapping("/create")
 	public void createStudent() {
 		Student student = new Student();
 		studentRepo.save(student);
 	}
-	
+
 	@GetMapping("/get")
 	public Student getStudent(@RequestParam Long id) {
-		return studentRepo.getOne(id);
+		return studentRepo.findById(id).orElse(null); // Replaced deprecated getOne() with findById()
 	}
-	
+
 	@PostMapping("/registerCourse")
 	public void registerCourse() {
-		
+		// Implement registration logic
 	}
 }

@@ -12,39 +12,41 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull; // Updated import for NotNull
 import org.hibernate.annotations.NaturalId;
 
 import lombok.Data;
+import lombok.Getter; // Import Lombok Getter
 
 @Entity
 @Table(name = "tags")
 @Data
 public class Tag {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull // Replaced deprecated NotNull
     @NaturalId
     private String name;
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
             },
             mappedBy = "tags")
+    @Getter // Added Lombok Getter
     private Set<Post> posts = new HashSet<>();
 
     public Tag() {
-
     }
 
     public Tag(String name) {
         this.name = name;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -52,26 +54,12 @@ public class Tag {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         Tag other = (Tag) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
-    }
-
-    // Getters and Setters (Omitted for brevity)
-    public Set<Post> getPosts() {
-        return posts;
+        return id != null && id.equals(other.id);
     }
 }

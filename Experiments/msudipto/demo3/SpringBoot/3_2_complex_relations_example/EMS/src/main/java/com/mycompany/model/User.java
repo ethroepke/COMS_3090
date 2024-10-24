@@ -29,6 +29,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // Constructor with all parameters
     public User(long id, String email, String password, String name, Role role) {
         this.id = id;
         this.email = email;
@@ -39,6 +40,7 @@ public class User {
         this.role = role;
     }
 
+    // Constructor without ID
     public User(String email, String password, String name, Role role) {
         this.email = email;
         this.password = password;
@@ -48,9 +50,13 @@ public class User {
         this.role = role;
     }
 
-    public User(){
+    // Default no-arg constructor
+    public User() {
+        this.createdOn = new Date();
+        this.modifiedOn = new Date();
     }
 
+    // Getters and Setters
     public long getId() {
         return id;
     }

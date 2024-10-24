@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = {"com.mycompany.service","com.mycompany.controller"})
 public class App {
     public static void main( String[] args ){
+
         SpringApplication.run(App.class);
     }
 }

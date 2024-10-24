@@ -3,7 +3,8 @@ package com.example.demo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The main application class for the WebSocket server.
@@ -13,15 +14,32 @@ import org.springframework.context.annotation.ComponentScan;
  * and its subpackages for Spring components, such as WebSocket endpoints and
  * controllers.
  *
- * Include this annotation as per your project structure needs
- * common case:
- * websocket-related files placed in sub-directory
- * all http controllers work except the websocket ones
- */
+ * It also handles application startup logging and provides support for graceful
+ * shutdown to ensure proper resource cleanup.
+ **/
+
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.example.demo.websocket"})
 public class WebSocketSpringbootApplication {
+
+	// Logger for application startup
+	private static final Logger logger = LoggerFactory.getLogger(WebSocketSpringbootApplication.class);
+
 	public static void main(String[] args) {
-		SpringApplication.run(WebSocketSpringbootApplication.class, args);
+		try {
+			// Log application startup
+			logger.info("[WebSocketSpringbootApplication] Starting WebSocket server application...");
+			SpringApplication.run(WebSocketSpringbootApplication.class, args);
+			logger.info("[WebSocketSpringbootApplication] Application started successfully.");
+		} catch (Exception e) {
+			logger.error("[WebSocketSpringbootApplication] Error during startup: " + e.getMessage(), e);
+		}
+
+		// Add shutdown hook for graceful termination
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			logger.info("[WebSocketSpringbootApplication] Application is shutting down...");
+			// Additional cleanup tasks can be performed here
+			logger.info("[WebSocketSpringbootApplication] Shutdown complete.");
+		}));
 	}
 }
