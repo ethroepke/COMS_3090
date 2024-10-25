@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Bottom layer: Border -->
@@ -7,7 +6,7 @@
             <solid android:color="@android:color/transparent"/> <!-- Transparent background for the border -->
             <stroke
                 android:width="4dp"
-            android:color="#B0B0B0"/>           <!-- Light black color -->
+                android:color="#B0B0B0"/>           <!-- Initial color for border -->
             <corners android:radius="0dp"/>       <!-- Square corners -->
         </shape>
     </item>
@@ -20,4 +19,5 @@
         </shape>
     </item>
 </layer-list>
+
 

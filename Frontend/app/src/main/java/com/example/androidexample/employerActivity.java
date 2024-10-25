@@ -1,34 +1,43 @@
 package com.example.androidexample;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.FrameLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.androidexample.R;
-import com.example.androidexample.loginActivity;
-
-import java.util.concurrent.TimeUnit;
-
 public class employerActivity extends AppCompatActivity {
+    private FrameLayout frameChange;
+    private Button checkButton;
 
-    private Button checkInOut;
-
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.employer);
+        setContentView(R.layout.employer); // Replace with your actual layout file name
+
+        frameChange = findViewById(R.id.frameChange);
+        checkButton = findViewById(R.id.checkButton);
+
+        checkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Access the LayerDrawable background
+                LayerDrawable layerDrawable = (LayerDrawable) frameChange.getBackground();
+
+                // Access the bottom layer (the border layer) in the LayerDrawable
+                Drawable borderDrawable = layerDrawable.getDrawable(0);
+
+                // Check if it's a GradientDrawable
+                if (borderDrawable instanceof GradientDrawable) {
+                    // Cast to GradientDrawable and set the stroke color
+                    GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
+                    gradientDrawable.setStroke(4, Color.GREEN); // Set border color to green
+                }
+            }
+        });
     }
 }

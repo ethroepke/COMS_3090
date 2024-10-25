@@ -29,7 +29,8 @@ import org.springframework.stereotype.Component;
  *
  * The server provides functionality for broadcasting messages to all connected
  * users and sending messages to specific users.
- */
+ **/
+
 @ServerEndpoint("/chat/1/{username}")
 @Component
 public class ChatServer1 {
@@ -79,7 +80,8 @@ public class ChatServer1 {
      *
      * @param session The WebSocket session representing the client's connection.
      * @param message The message received from the client.
-     */
+     **/
+
     @OnMessage
     public void onMessage(Session session, String message) throws IOException {
 
@@ -114,7 +116,8 @@ public class ChatServer1 {
      * Handles the closure of a WebSocket connection.
      *
      * @param session The WebSocket session that is being closed.
-     */
+     **/
+
     @OnClose
     public void onClose(Session session) throws IOException {
 
@@ -137,7 +140,8 @@ public class ChatServer1 {
      *
      * @param session   The WebSocket session where the error occurred.
      * @param throwable The Throwable representing the error condition.
-     */
+     **/
+
     @OnError
     public void onError(Session session, Throwable throwable) {
 
