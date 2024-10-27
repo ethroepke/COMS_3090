@@ -11,7 +11,7 @@ import android.widget.FrameLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class employerActivity extends AppCompatActivity {
-    private FrameLayout frameChange;
+    private FrameLayout borderChange;
     private Button checkButton;
 
     @Override
@@ -19,16 +19,16 @@ public class employerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.employer); // Replace with your actual layout file name
 
-        frameChange = findViewById(R.id.frameChange);
+        borderChange = findViewById(R.id.frameChange);
         checkButton = findViewById(R.id.checkButton);
 
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Access the LayerDrawable background
-                LayerDrawable layerDrawable = (LayerDrawable) frameChange.getBackground();
+                LayerDrawable layerDrawable = (LayerDrawable) borderChange.getBackground();
 
-                // Access the bottom layer (the border layer) in the LayerDrawable
+                // Access the border layer in the LayerDrawable
                 Drawable borderDrawable = layerDrawable.getDrawable(0);
 
                 // Check if it's a GradientDrawable

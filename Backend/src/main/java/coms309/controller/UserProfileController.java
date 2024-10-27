@@ -29,15 +29,24 @@ public class UserProfileController {
         this.userProfileRepository = userProfileRepository;
     }
 
+    @GetMapping("/checkEmail")
+    public ResponseEntity<String> checkEmail(@RequestBody UserDTO email) {
+        Optional<UserProfile> user = userProfileRepository.findByEmail(email);
+        if (user.isPresent()) {
+            return ResponseEntity.ok("Email exists");
+        }
+        return ResponseEntity.badRequest().body("Email does not exist");
+    }
+
     @PutMapping("/forgotPassword")
     public ResponseEntity<String> forgotPassword(@RequestBody UserDTO forgotUser) {
         Optional<UserProfile> user = userProfileRepository.findByEmail(forgotUser.getEmail());
         if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user exists with this email");
+            return ResponseEntity.badRequest().body("No user exist");
         }
         user.get().setPassword(forgotUser.getPassword());
         userProfileRepository.save(user.get());
-        return ResponseEntity.ok("Password successfully changed");
+        return ResponseEntity.ok("Successfully change the password");
     }
 
     /**
@@ -55,8 +64,7 @@ public class UserProfileController {
      * @param id ID of the user profile
      * @return ResponseEntity with UserProfile or 404 if not found
      */
-
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserProfile> getUserProfileById(@PathVariable Long id) {
         logger.info("Fetching user profile with ID: {}", id);
 
@@ -75,28 +83,35 @@ public class UserProfileController {
                 });
     }
 
-    @GetMapping("/username/{username}")
-    public ResponseEntity<?> getUserProfileByUsername(@PathVariable String username) {
-        logger.info("Fetching user profile for username: " + username);
 
-        Optional<UserProfile> userProfile = userProfileRepository.findByUsername(username);
 
-        if (userProfile.isPresent()) {
-            // Convert the entity to a DTO to send back to the frontend
-            UserDTO userDTO = new UserDTO(
-                    userProfile.get().getUserId(),
-                    userProfile.get().getUsername(),
-                    userProfile.get().getEmail(),
-                    userProfile.get().getPassword()
-            );
-
-            logger.info("User profile found for username: " + username);
-            return new ResponseEntity<>(userDTO, HttpStatus.OK);
-        } else {
-            logger.error("User profile not found for username: " + username);
-            return new ResponseEntity<>("User profile not found", HttpStatus.NOT_FOUND);
+    @GetMapping("/login")
+    public ResponseEntity<String> login (@RequestBody UserDTO loginUser) {
+        Optional<UserProfile> existUser = userProfileRepository.findByUsernameAndPassword(loginUser.getUsername(), loginUser.getPassword());
+        if (existUser.isEmpty()) {
+            return ResponseEntity.badRequest().body("Login failed");
         }
+        UserProfile userProfile = userProfileRepository.save(existUser.get());
+        return ResponseEntity.ok("Login successfully");
     }
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup (@RequestBody UserSignupDTO signUpUserProfile){
+        //change it to check seperately the email pass and username
+
+        Optional<UserProfile> existingUsername = userProfileRepository.findByUsername(signUpUserProfile.getUsername());
+        Optional<UserProfile> existingEmail = userProfileRepository.findByEmail( signUpUserProfile.getEmail());
+        if(existingUsername.isPresent()){
+            return ResponseEntity.badRequest().body("Sign up fail");
+        }
+        if(existingEmail.isPresent()){
+            return ResponseEntity.badRequest().body("Sign up fail");
+        }
+        UserProfile userProfile = userProfileRepository.save(new UserProfile(signUpUserProfile.getUsername(), signUpUserProfile.getEmail(), signUpUserProfile.getPassword()));
+        return ResponseEntity.ok("Sign up successfully");
+    }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<UserProfile> updateUserProfile(@PathVariable Long id, @RequestBody UserProfile userProfileDetails) {
@@ -116,7 +131,6 @@ public class UserProfileController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserProfile(@PathVariable Long id) {
@@ -128,22 +142,69 @@ public class UserProfileController {
         }
     }
 
+    @Autowired
+    private PayDetailsRepository payDetailsRepository;
+
+    // Fetch PayDetails by user ID
+    @GetMapping("/paydetails/{id}")
+    public ResponseEntity<PayDetails> getPayDetailsByUserId(@PathVariable Long id) {
+        Optional<PayDetails> payDetails = payDetailsRepository.findByUserProfileId(id);
+        if (payDetails.isPresent()) {
+            return ResponseEntity.ok(payDetails.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // Update PayDetails
+    @PutMapping("/paydetails/{id}")
+    public ResponseEntity<PayDetails> updatePayDetails(@PathVariable Long id, @RequestBody PayDetails payDetailsDetails) {
+        Optional<PayDetails> payDetailsOptional = payDetailsRepository.findById(id);
+        if (payDetailsOptional.isPresent()) {
+            PayDetails payDetails = payDetailsOptional.get();
+            payDetails.setHoursWorked(payDetailsDetails.getHoursWorked());
+            payDetails.setPayRate(payDetailsDetails.getPayRate());
+            payDetails.setBonusPay(payDetailsDetails.getBonusPay());
+            payDetails.setDeductibles(payDetailsDetails.getDeductibles());
+
+            // Calculate gross pay and take-home pay
+            double grossPay = payDetails.getHoursWorked() * payDetails.getPayRate() + payDetails.getBonusPay();
+            double takeHomePay = grossPay - payDetails.getDeductibles();
+            payDetails.setGrossPay(grossPay);
+            payDetails.setTakeHomePay(takeHomePay);
+
+            PayDetails updatedPayDetails = payDetailsRepository.save(payDetails);
+            return ResponseEntity.ok(updatedPayDetails);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
     // Helper methods to create records for employee, employer, admin
     public void createEmployeeRecord(UserProfile userProfile, UserProfile userProfileDetails) {
+        // Insert record into employee table
         Employee employee = new Employee();
         employee.setUserProfile(userProfile);
-        // Save employee entity (assuming EmployeeRepository exists)
-    }
 
-    public void createEmployerRecord(UserProfile userProfile, UserProfile userProfileDetails) {
-        Employer employer = new Employer();
-        employer.setUserProfile(userProfile);
-        // Save employer entity (assuming EmployerRepository exists)
+        // Save employee entity (assuming you have an EmployeeRepository)
     }
-
-    public void createAdminRecord(UserProfile userProfile, UserProfile userProfileDetails) {
+    public void createEmployerRecord(UserProfile userProfile, UserProfile userProfileDetails){
+        Employer er = new Employer();
+        er.setUserProfile(userProfile);
+    }
+    public void createAdminRecord(UserProfile userProfile, UserProfile userProfileDetails){
         Admin admin = new Admin();
         admin.setUserProfile(userProfile);
-        // Save admin entity (assuming AdminRepository exists)
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUserProfile(@PathVariable Long id) {
+        if (userProfileRepository.existsById(id)) {
+            userProfileRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

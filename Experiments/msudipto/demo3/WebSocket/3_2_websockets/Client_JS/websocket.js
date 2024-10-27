@@ -1,28 +1,47 @@
 var ws;
 
 function connect() {
-    var username = document.getElementById("username").value;
-    var wsserver = document.getElementById("wsserver").value;
-    var url = wsserver + username;
-    //var url = "ws://echo.websocket.org";
+    var username = document.getElementById("username").value.trim();
+    var wsserver = document.getElementById("wsserver").value.trim();
 
+    if (!username || !wsserver) {
+        alert("Please enter both WebSocket URL and Username.");
+        return;
+    }
+
+    var url = wsserver + username;
     ws = new WebSocket(url);
 
-    ws.onmessage = function(event) { // Called when client receives a message from the server
-        console.log(event.data);
-
-        // display on browser
-        var log = document.getElementById("log");
-        log.innerHTML += "message from server: " + event.data + "\n";
+    ws.onopen = function(event) {
+        logMessage("Connected to " + event.currentTarget.url);
     };
 
-    ws.onopen = function(event) { // called when connection is opened
-        var log = document.getElementById("log");
-        log.innerHTML += "Connected to " + event.currentTarget.url + "\n";
+    ws.onmessage = function(event) {
+        logMessage("Server: " + event.data);
+    };
+
+    ws.onclose = function() {
+        logMessage("Disconnected from server.");
+    };
+
+    ws.onerror = function(error) {
+        logMessage("Error: " + error.message);
     };
 }
 
-function send() {  // this is how to send messages
-    var content = document.getElementById("msg").value;
-    ws.send(content);
+function send() {
+    var content = document.getElementById("msg").value.trim();
+    if (ws && content) {
+        ws.send(content);
+        logMessage("You: " + content);
+        document.getElementById("msg").value = '';
+    } else {
+        logMessage("Message not sent. Make sure you're connected and message is not empty.");
+    }
+}
+
+function logMessage(message) {
+    var log = document.getElementById("log");
+    log.value += message + "\n";
+    log.scrollTop = log.scrollHeight;  // Auto-scroll to the bottom
 }
