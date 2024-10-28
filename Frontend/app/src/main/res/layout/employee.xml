@@ -2,7 +2,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".employerActivity"
+    tools:context=".employeeActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
@@ -23,9 +23,9 @@
     <!-- Search Bar -->
     <LinearLayout
         android:layout_width="250dp"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="-95dp"
+        android:layout_marginTop="-100dp"
         android:layout_marginLeft="160dp">
 
         <LinearLayout
@@ -33,27 +33,31 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.SearchView
+            <SearchView
                 android:id="@+id/searchView"
-                android:layout_width="194dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:iconifiedByDefault="false"
-                android:queryHint="Search here..." />
+                android:queryHint="Search here...">
+            </SearchView>
 
             <Button
                 android:id="@+id/searchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#FFA500"
-                android:text="Search" />
+                android:text="Search">
+            </Button>
         </LinearLayout>
 
         <TextView
             android:id="@+id/resultTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:minHeight="50dp"
+            android:textColor="#000000">
         </TextView>
     </LinearLayout>
 
@@ -301,7 +305,7 @@
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:orientation="horizontal"
-        android:layout_marginTop="62dp">
+        android:layout_marginTop="40dp">
 
         <Button
             android:id="@+id/profileButton"

@@ -23,27 +23,59 @@ public class Salary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "salary_id")
     private Long salaryId;
-    @Column(name = "base_salary", nullable = false)
-    private Double baseSalary;
 
-    @Column(name = "bonus")
-    private Double bonus;
+    @NotNull(message = "User profile cannot be null")
+    @OneToOne
+    @JoinColumn(name = "user_profile_id", referencedColumnName = "user_id", nullable = false)
+    private UserProfile userProfile;
 
-    @Column(name = "deductions")
-    private Double deductions;
 
-    @Column(name = "pay_period", nullable = false)
-    private String payPeriod; // E.g., 'Monthly', 'Bi-weekly'
+    @NotNull(message = "Hours worked cannot be null")
+    @Column(name = "hours_worked", nullable = false)
+    private Double hoursWorked;
 
-    @Column(name = "total_compensation", nullable = false)
-    private Double totalCompensation;
+    @NotNull(message = "Pay rate cannot be null")
+    @Column(name = "pay_rate", nullable = false)
+    private Double payRate;
 
-    @NotNull(message = "Salary amount cannot be null")
-    @Column(name = "salary_amount")
-    private Double salaryAmount;
+    @Column(name = "bonus_pay")
+    private Double bonusPay = 0.0; // Default to 0 if not provided
+
+    @Column(name = "deductibles")
+    private Double deductibles = 0.0; // Default to 0 if not provided
+
+    @Column(name = "gross_pay")
+    private Double grossPay;
+
+    @Column(name = "take_home_pay")
+    private Double takeHomePay;
 
     @NotNull(message = "Employee cannot be null")
     @OneToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
     private Employee employee;
+
+
+
+    public Salary(UserProfile userProfile, Double hoursWorked, Double payRate, Double bonusPay, Double deductibles) {
+        this.userProfile = userProfile;
+        this.hoursWorked = hoursWorked;
+        this.payRate = payRate;
+        this.bonusPay = bonusPay != null ? bonusPay : 0.0; // Default to 0 if not provided
+        this.deductibles = deductibles != null ? deductibles : 0.0; // Default to 0 if not provided
+
+        // Calculate gross and take-home pay
+        this.grossPay = calculateGrossPay();
+        this.takeHomePay = calculateTakeHomePay();
+    }
+
+    public Double calculateGrossPay() {
+        return (this.hoursWorked * this.payRate) + this.bonusPay;
+    }
+
+    public Double calculateTakeHomePay() {
+        return this.grossPay - this.deductibles;
+    }
+
+
 }

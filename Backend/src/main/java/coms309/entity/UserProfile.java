@@ -50,30 +50,27 @@ public class UserProfile implements Serializable {
     @Column(name = "date_of_hire", nullable = true)
     private Date dateOfHire;
 
-    public UserProfile() {}
 
-    public UserProfile(String name, String username, String email, String password) {
-        this.name = name;
+    @Column(name="timeWorked", nullable = false)
+    private int timeWorked;
+
+    @Column(name = "nextShift", nullable = false)
+    private Date nextShift;
+
+
+
+    public UserProfile(Long userId, String username, String email, String password) {
+        this.userId = Long.valueOf(userId);
+        this.password = password;
         this.username = username;
         this.email = email;
-        this.password = password;
+        this.timeWorked= timeWorked;
+        this.nextShift= new Date();
         this.dateOfHire = new Date();
+
     }
 
-    // Setter methods if needed explicitly
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public UserProfile(){}
 }
