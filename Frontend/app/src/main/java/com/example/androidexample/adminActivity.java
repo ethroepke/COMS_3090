@@ -12,16 +12,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.androidexample.R;
+import com.example.androidexample.loginActivity;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-public class employerActivity extends AppCompatActivity {
+public class adminActivity extends AppCompatActivity {
     private boolean isClockedIn = false;
 
     private long clockInTime;
@@ -43,11 +51,17 @@ public class employerActivity extends AppCompatActivity {
     private TextView checkInMsg;
     private Chronometer timeClockMsg;
 
+    private SearchView searchView;
+    private Button searchButton;
+    private TextView resultTextView;
+
+    private List<String> sampleData;
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.employer);
+        setContentView(R.layout.admin);
 
         borderChange = findViewById(R.id.frameChange);
         checkButton = findViewById(R.id.checkButton);
@@ -63,7 +77,19 @@ public class employerActivity extends AppCompatActivity {
         projButton = findViewById(R.id.projButton);
         selfServiceButton = findViewById(R.id.selfServiceButton);
         payButton = findViewById(R.id.payButton);
+        searchView = findViewById(R.id.searchView);
+        searchButton = findViewById(R.id.searchButton);
+        resultTextView = findViewById(R.id.resultTextView);
 
+        initializeSampleData();
+
+        // Search button listener
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performSearch();
+            }
+        });
 
         //Clock In/Out functionality
         checkButton.setOnClickListener(new View.OnClickListener() {
@@ -103,74 +129,114 @@ public class employerActivity extends AppCompatActivity {
         projectStatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         assignProjButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         employeeAttendanceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         employeeStatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         messageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         performanceReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         projButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         selfServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, loginActivity.class);
                 startActivity(intent);
             }
         });
     }
+
+    // Initialize sample data for searching
+    private void initializeSampleData() {
+        sampleData = new ArrayList<>();
+        sampleData.add("Project A");
+        sampleData.add("Project B");
+        sampleData.add("Employee 1");
+        sampleData.add("Employee 2");
+        sampleData.add("Attendance Report");
+        sampleData.add("Performance Review");
+    }
+
+    // Search functionality
+    private void performSearch() {
+        String query = searchView.getQuery().toString().toLowerCase();
+        if (!query.isEmpty()) {
+            StringBuilder results = new StringBuilder("Search Results:\n");
+            boolean found = false;
+
+            for (String item : sampleData) {
+                if (item.toLowerCase().contains(query)) {
+                    results.append(item).append("\n");
+                    found = true;
+                }
+            }
+
+            if (found) {
+                resultTextView.setText(results.toString());
+                resultTextView.setVisibility(View.VISIBLE); // Show results
+            } else {
+                resultTextView.setText("No results found for: " + query);
+                resultTextView.setVisibility(View.VISIBLE); // Show no results found
+            }
+        } else {
+            resultTextView.setText("Please enter a search term.");
+            resultTextView.setVisibility(View.VISIBLE); // Show prompt
+        }
+    }
+
+
 
     //Pop up page to show hours worked after clocking out
     private void showClockOutPopup(long clockInTime, long elapsedMillis, String clockOutTime) {
