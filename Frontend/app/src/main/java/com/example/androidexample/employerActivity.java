@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,15 +25,15 @@ import java.util.Locale;
 
 public class employerActivity extends AppCompatActivity {
     private boolean isClockedIn = false;
+    private boolean isShiftDetailsVisible = false;
+    private boolean isPayDetailsVisible = false;
+
     private long clockInTime;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
 
-    //CheckIn and checkOut border color change
     private FrameLayout borderChange;
 
-    //Buttons for changing screens
     private Button checkButton;
-    /*
     private Button projectStatButton;
     private Button assignProjButton;
     private Button employeeAttendanceButton;
@@ -44,12 +44,7 @@ public class employerActivity extends AppCompatActivity {
     private Button projButton;
     private Button selfServiceButton;
     private Button payButton;
-
-    //ImageButtons for shifts and pay
-    private ImageButton shiftArrow;
-    private ImageButton payArrow;
-
-    //Text that will get modified when GET users info
+    /*
     private TextView welcomeMsg;
     */
     private TextView checkInMsg;
@@ -67,14 +62,14 @@ public class employerActivity extends AppCompatActivity {
     private TextView extraPayMsg;
     private TextView extraHoursWorkedMsg;
     private TextView extraPayDateMsg;
-
-    //Placeholders for drop down arrows
-    private LinearLayout shiftDetails;
-    private LinearLayout payDetails;
     */
 
+    private ImageView shiftArrow;
+    private ImageView payArrow;
+    private LinearLayout shiftDetails;
+    private LinearLayout payDetails;
 
-    @SuppressLint({"WrongViewCast"})
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +77,12 @@ public class employerActivity extends AppCompatActivity {
 
         borderChange = findViewById(R.id.frameChange);
         checkButton = findViewById(R.id.checkButton);
-        /*
+        shiftArrow = findViewById(R.id.downArrowShift);
+        payArrow = findViewById(R.id.downArrowPay);
+        checkInMsg = findViewById(R.id.checkText);
+        timeClockMsg = findViewById(R.id.timeText);
+        shiftDetails = findViewById(R.id.shiftDetails);
+        payDetails = findViewById(R.id.payDetails);
         projectStatButton = findViewById(R.id.projStatusButton);
         assignProjButton = findViewById(R.id.assignProjButton);
         employeeAttendanceButton = findViewById(R.id.employeeAttendanceButton);
@@ -93,30 +93,15 @@ public class employerActivity extends AppCompatActivity {
         projButton = findViewById(R.id.projButton);
         selfServiceButton = findViewById(R.id.selfServiceButton);
         payButton = findViewById(R.id.payButton);
-        shiftArrow = findViewById(R.id.downArrowShift);
-        payArrow = findViewById(R.id.downArrowPay);
+
+
+        /*
         welcomeMsg = findViewById(R.id.welcomeMessage);
         */
-        checkInMsg = findViewById(R.id.checkText);
-        timeClockMsg = findViewById(R.id.timeText);
-        /*
-        shiftDateMsg = findViewById(R.id.nextShiftText);
-        shiftHoursMsg = findViewById(R.id.shiftHoursText);
-        assignedProjMsg = findViewById(R.id.assignedProjText);
-        extraShiftMsg = findViewById(R.id.moreShiftText);
-        extraHoursMsg = findViewById(R.id.moreHoursText);
-        extraProjMsg = findViewById(R.id.moreProjText);
-        payMsg = findViewById(R.id.payText);
-        hoursWorkedMsg = findViewById(R.id.hoursWorkedText);
-        payDateMsg = findViewById(R.id.payDateText);
-        extraPayMsg = findViewById(R.id.morePaytext);
-        extraHoursWorkedMsg = findViewById(R.id.moreHoursWorkedText);
-        extraPayDateMsg = findViewById(R.id.morePayDateText);
 
-        shiftDetails = findViewById(R.id.shiftDetails);
-        payDetails = findViewById(R.id.payDetails);
-        */
 
+
+        //Clock In/Out functionality
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,58 +112,126 @@ public class employerActivity extends AppCompatActivity {
                     GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
 
                     if (isClockedIn) {
-                        // Clock out: Stop the timer, set border to gray, reset Chronometer, and show clock-out popup
                         gradientDrawable.setStroke(15, Color.GRAY);
                         checkInMsg.setText("Clock In");
 
-                        timeClockMsg.stop();  // Stop the chronometer
-                        timeClockMsg.setBase(SystemClock.elapsedRealtime());  // Reset to 00:00
+                        timeClockMsg.stop();
+                        timeClockMsg.setBase(SystemClock.elapsedRealtime());
 
-                        // Get clock-out time and show popup with details
                         String clockOutTime = dateFormat.format(new Date());
                         showClockOutPopup(clockInTime, SystemClock.elapsedRealtime() - timeClockMsg.getBase(), clockOutTime);
                     } else {
-                        // Clock in: Start timer, set border to green, and record clock-in time
                         gradientDrawable.setStroke(15, Color.GREEN);
                         checkInMsg.setText("Clock Out");
 
-                        timeClockMsg.setBase(SystemClock.elapsedRealtime());  // Start from 00:00
-                        timeClockMsg.start();  // Start the chronometer
+                        timeClockMsg.setBase(SystemClock.elapsedRealtime());
+                        timeClockMsg.start();
 
                         clockInTime = System.currentTimeMillis();
                     }
 
-                    // Toggle the clock-in state
                     isClockedIn = !isClockedIn;
                 }
             }
         });
 
+        //Shift arrow functionality
+        shiftArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleShiftDetails();
+            }
+        });
 
-        /*
-        // Intents for all pages
-        projectStatButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, projectStatusActivity.class)));
-        assignProjButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, assignProjectActivity.class)));
-        employeeAttendanceButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, employeeAttendanceActivity.class)));
-        employeeStatButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, employeeStatusActivity.class)));
-        messageButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, messageActivity.class)));
-        performanceReviewButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, performanceReviewActivity.class)));
-        profileButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, profileActivity.class)));
-        projButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, projectActivity.class)));
-        selfServiceButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, selfServiceActivity.class)));
-        payButton.setOnClickListener(v -> startActivity(new Intent(employerActivity.this, payActivity.class)));
-        */
+        //Pay arrow functionality
+        payArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                togglePayDetails();
+            }
+        });
+
+        //All Intents for buttons to new pages down below
+        projectStatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        assignProjButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        employeeAttendanceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        employeeStatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        messageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        performanceReviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        projButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        selfServiceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
+        payButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
+    //Pop up page to show hours worked after clocking out
     private void showClockOutPopup(long clockInTime, long elapsedMillis, String clockOutTime) {
-        // Format elapsed time in hours and minutes
-        long elapsedHours = (elapsedMillis / 3600000);
+        long elapsedHours = elapsedMillis / 3600000;
         long elapsedMinutes = (elapsedMillis % 3600000) / 60000;
 
         String clockInTimeFormatted = dateFormat.format(new Date(clockInTime));
         String workedHours = String.format(Locale.getDefault(), "%02d:%02d", elapsedHours, elapsedMinutes);
 
-        // Create a dialog with clock-in/out times and hours worked
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Clock Out Summary");
         builder.setMessage("Clock In Time: " + clockInTimeFormatted +
@@ -188,4 +241,28 @@ public class employerActivity extends AppCompatActivity {
         builder.show();
     }
 
+    //Toggle shift details when arrow pressed
+    private void toggleShiftDetails() {
+        if (isShiftDetailsVisible) {
+            shiftDetails.setVisibility(View.GONE);
+            shiftArrow.setImageResource(R.drawable.arrowdown);
+        } else {
+            shiftDetails.setVisibility(View.VISIBLE);
+            shiftArrow.setImageResource(R.drawable.uparrow);
+        }
+        isShiftDetailsVisible = !isShiftDetailsVisible;
+    }
+
+    //Toggle pay details when arrow pressed
+    private void togglePayDetails() {
+        if (isPayDetailsVisible) {
+            payDetails.setVisibility(View.GONE);
+            payArrow.setImageResource(R.drawable.arrowdown);
+        } else {
+            payDetails.setVisibility(View.VISIBLE);
+            payArrow.setImageResource(R.drawable.uparrow);
+        }
+        isPayDetailsVisible = !isPayDetailsVisible;
+    }
 }
+

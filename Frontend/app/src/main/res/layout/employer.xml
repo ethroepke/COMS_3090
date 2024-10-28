@@ -198,7 +198,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/square_button_border"
-            android:clickable="false">
+            android:clickable="false"
+            android:focusable="false">
         </FrameLayout>
 
 
@@ -208,7 +209,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/square_button_border"
-            android:clickable="false">
+            android:clickable="false"
+            android:focusable="false">
         </FrameLayout>
 
 
@@ -218,7 +220,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/square_button_border"
-            android:clickable="false">
+            android:clickable="false"
+            android:focusable="false">
         </FrameLayout>
 
     </LinearLayout>
@@ -237,7 +240,8 @@
             android:text="Project \nStatus"
             android:gravity="center"
             android:textSize="17dp"
-            android:textColor="@color/black">
+            android:textColor="@color/black"
+            android:clickable="false">
         </TextView>
 
         <!-- Spacer between text -->
@@ -253,7 +257,9 @@
             android:text="Assign \nProject"
             android:gravity="center"
             android:textSize="17dp"
-            android:textColor="@color/black">
+            android:textColor="@color/black"
+            android:clickable="false"
+            android:focusable="false">
         </TextView>
 
         <!-- Spacer between buttons -->
@@ -269,7 +275,9 @@
             android:text="Employee \nAttendance"
             android:gravity="center"
             android:textSize="17dp"
-            android:textColor="@color/black">
+            android:textColor="@color/black"
+            android:clickable="false"
+            android:focusable="false">
         </TextView>
 
         <!-- Spacer between buttons -->
@@ -285,7 +293,9 @@
             android:text="Employee \nStatus"
             android:gravity="center"
             android:textSize="17dp"
-            android:textColor="@color/black">
+            android:textColor="@color/black"
+            android:clickable="false"
+            android:focusable="false">
         </TextView>
     </LinearLayout>
 
@@ -363,8 +373,9 @@
                 android:text="Next Shift: 11/24/2024"
                 android:textSize="18dp"
                 android:textColor="@color/black"
-                android:gravity="center"
-                android:layout_marginTop="10dp">
+                android:gravity="left"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp">
             </TextView>
 
             <TextView
@@ -374,7 +385,8 @@
                 android:text="Shift Hours: 7:30AM - 3:00PM"
                 android:textSize="18dp"
                 android:textColor="@color/black"
-                android:gravity="center">
+                android:gravity="left"
+                android:layout_marginLeft="30dp">
             </TextView>
 
             <TextView
@@ -384,8 +396,8 @@
                 android:text="Assigned Projects: Update Presentation"
                 android:textSize="18dp"
                 android:textColor="@color/black"
-                android:gravity="center"
-                android:layout_marginTop="5dp">
+                android:gravity="left"
+                android:layout_marginLeft="30dp">
             </TextView>
         </LinearLayout>
     </LinearLayout>
@@ -462,8 +474,8 @@
                 android:text="Pay: $750.00"
                 android:textSize="18dp"
                 android:textColor="@color/black"
-                android:gravity="center"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="30dp">
             </TextView>
 
             <TextView
@@ -473,7 +485,7 @@
                 android:text="Hours Worked: 28.75 hours"
                 android:textSize="18dp"
                 android:textColor="@color/black"
-                android:gravity="center">
+                android:layout_marginLeft="30dp">
             </TextView>
 
             <TextView
@@ -483,8 +495,7 @@
                 android:text="Payday: 12/30/2022"
                 android:textSize="18dp"
                 android:textColor="@color/black"
-                android:gravity="center"
-                android:layout_marginTop="5dp">
+                android:layout_marginLeft="30dp">
             </TextView>
         </LinearLayout>
     </LinearLayout>
