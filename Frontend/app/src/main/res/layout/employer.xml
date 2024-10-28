@@ -93,7 +93,7 @@
         android:id="@+id/checkText"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:text="Check In"
+        android:text="Clock In"
         android:textColor="@color/black"
         android:textSize="23dp"
         android:gravity="center"
@@ -101,17 +101,17 @@
         android:layout_marginTop="-90dp">
     </TextView>
 
-    <TextView
+    <Chronometer
         android:id="@+id/timeText"
         android:layout_width="250dp"
         android:layout_height="60dp"
+        android:format="Time: %s"
         android:gravity="center"
         android:layout_gravity="center"
-        android:text="00:00 - 00:00"
         android:textSize="20dp"
         android:textColor="@color/black"
         android:layout_marginTop="-25dp">
-    </TextView>
+    </Chronometer>
 
     <LinearLayout
         android:layout_width="400dp"
@@ -477,7 +477,7 @@
             </TextView>
 
             <TextView
-                android:id="@+id/morePayText"
+                android:id="@+id/morePayDateText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Payday: 12/30/2022"
@@ -498,7 +498,7 @@
 
         <!-- First Button -->
         <Button
-            android:id="@+id/timeButton"
+            android:id="@+id/messageButton"
             android:layout_width="198dp"
             android:layout_height="100dp"
             android:background="@drawable/square_button"
@@ -513,7 +513,7 @@
 
         <!-- Second Button -->
         <Button
-            android:id="@+id/extrasButton"
+            android:id="@+id/performanceButton"
             android:layout_width="198dp"
             android:layout_height="100dp"
             android:background="@drawable/square_button">
@@ -586,7 +586,7 @@
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:orientation="horizontal"
-        android:layout_marginTop="39dp">
+        android:layout_marginTop="17dp">
 
         <Button
             android:id="@+id/profileButton"
@@ -604,7 +604,7 @@
         </View>
 
         <Button
-            android:id="@+id/tasksButton"
+            android:id="@+id/projButton"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="1"
@@ -619,7 +619,7 @@
         </View>
 
         <Button
-            android:id="@+id/timeTracking"
+            android:id="@+id/selfServiceButton"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="1"

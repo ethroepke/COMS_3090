@@ -9,6 +9,9 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //SUPPOSE TO BE PROGRESS BAR BUT CANT CONNECT TO SERVER
+
+
     private Button uploadBtn, imgBtn;
 
     @Override
