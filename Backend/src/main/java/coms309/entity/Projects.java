@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,26 +32,14 @@ public class Projects {
 
     @NotNull(message = "Project description cannot be null")
     @Column(name = "project_description")
-    private String Description;
-    
-    @Column(name = "Due_date")
-    private Date dueDate ;
+    private String projectDescription;
 
+    @ManyToMany(mappedBy = "projects")
+    private List<Employer> employers;
 
     @Column(name = "status", nullable = false)
     private String status;
 
-
-
-    public Projects(String Description, Date dueDate, String projectName, String status ){
-        this.Description= Description;
-        this.projectName=projectName;
-        this.status= status;
-        this.dueDate= new Date();
-
-    }
-
-
-
-
+    @OneToMany(mappedBy = "projects")
+    private List<Employee> employees;
 }

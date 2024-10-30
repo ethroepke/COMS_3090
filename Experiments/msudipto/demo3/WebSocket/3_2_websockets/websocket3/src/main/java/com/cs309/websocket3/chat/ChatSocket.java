@@ -1,9 +1,9 @@
 package com.cs309.websocket3.chat;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
@@ -18,116 +18,137 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-@Controller  // Required for Spring Boot endpoint
-@ServerEndpoint(value = "/chat/{username}")  // WebSocket URL
+@Controller      // this is needed for this to be an endpoint to springboot
+@ServerEndpoint(value = "/chat/{username}")  // this is Websocket url
 public class ChatSocket {
 
-	private static MessageRepository msgRepo;
+  // cannot autowire static directly (instead we do it by the below
+  // method
+	private static MessageRepository msgRepo; 
 
+	/*
+   * Grabs the MessageRepository singleton from the Spring Application
+   * Context.  This works because of the @Controller annotation on this
+   * class and because the variable is declared as static.
+   * There are other ways to set this. However, this approach is
+   * easiest.
+	 */
 	@Autowired
 	public void setMessageRepository(MessageRepository repo) {
-		msgRepo = repo;  // Setting the static variable
+		msgRepo = repo;  // we are setting the static variable
 	}
 
-	// Thread-safe maps for session and username management
-	private static final Map<Session, String> sessionUsernameMap = new ConcurrentHashMap<>();
-	private static final Map<String, Session> usernameSessionMap = new ConcurrentHashMap<>();
+	// Store all socket session and their corresponding username.
+	private static Map<Session, String> sessionUsernameMap = new Hashtable<>();
+	private static Map<String, Session> usernameSessionMap = new Hashtable<>();
 
 	private final Logger logger = LoggerFactory.getLogger(ChatSocket.class);
 
 	@OnOpen
-	public void onOpen(Session session, @PathParam("username") String username) throws IOException {
-		logger.info("User {} connected", username);
+	public void onOpen(Session session, @PathParam("username") String username) 
+      throws IOException {
 
-		// Store connecting user information
+		logger.info("Entered into Open");
+
+    // store connecting user information
 		sessionUsernameMap.put(session, username);
 		usernameSessionMap.put(username, session);
 
-		// Send chat history to the newly connected user
-		sendMessageToParticularUser(username, getChatHistory());
-
-		// Broadcast that a new user joined
-		broadcast("User: " + username + " has joined the chat.");
+		//Send chat history to the newly connected user
+		sendMessageToPArticularUser(username, getChatHistory());
+		
+    // broadcast that new user joined
+		String message = "User:" + username + " has Joined the Chat";
+		broadcast(message);
 	}
+
 
 	@OnMessage
 	public void onMessage(Session session, String message) throws IOException {
-		String username = sessionUsernameMap.get(session);
-		logger.info("Message received from {}: {}", username, message);
 
+		// Handle new messages
+		logger.info("Entered into Message: Got Message:" + message);
+		String username = sessionUsernameMap.get(session);
+
+    // Direct message to a user using the format "@username <message>"
 		if (message.startsWith("@")) {
-			// Direct message handling
-			String destUsername = message.split(" ")[0].substring(1);
-			String directMessage = "[DM] " + username + ": " + message.substring(destUsername.length() + 2);
-			sendMessageToParticularUser(destUsername, directMessage);
-			sendMessageToParticularUser(username, directMessage);
-		} else {
-			// Broadcast message
+			String destUsername = message.split(" ")[0].substring(1); 
+
+      // send the message to the sender and receiver
+			sendMessageToPArticularUser(destUsername, "[DM] " + username + ": " + message);
+			sendMessageToPArticularUser(username, "[DM] " + username + ": " + message);
+
+		} 
+    else { // broadcast
 			broadcast(username + ": " + message);
 		}
 
-		// Save chat history to repository
+		// Saving chat history to repository
 		msgRepo.save(new Message(username, message));
 	}
 
+
 	@OnClose
 	public void onClose(Session session) throws IOException {
-		String username = sessionUsernameMap.remove(session);
-		usernameSessionMap.remove(username);
-		logger.info("User {} disconnected", username);
+		logger.info("Entered into Close");
 
-		// Broadcast that the user disconnected
-		broadcast(username + " disconnected");
+    // remove the user connection information
+		String username = sessionUsernameMap.get(session);
+		sessionUsernameMap.remove(session);
+		usernameSessionMap.remove(username);
+
+    // broadcase that the user disconnected
+		String message = username + " disconnected";
+		broadcast(message);
 	}
+
 
 	@OnError
 	public void onError(Session session, Throwable throwable) {
-		String username = sessionUsernameMap.get(session);
-		logger.error("Error occurred for user {}: {}", username, throwable.getMessage());
+		// Do error handling here
+		logger.info("Entered into Error");
 		throwable.printStackTrace();
 	}
 
-	private void sendMessageToParticularUser(String username, String message) {
+
+	private void sendMessageToPArticularUser(String username, String message) {
 		try {
-			Session session = usernameSessionMap.get(username);
-			if (session != null && session.isOpen()) {
-				session.getBasicRemote().sendText(message);
-			}
-		} catch (IOException e) {
-			logger.error("Failed to send message to {}: {}", username, e.getMessage());
+			usernameSessionMap.get(username).getBasicRemote().sendText(message);
+		} 
+    catch (IOException e) {
+			logger.info("Exception: " + e.getMessage().toString());
+			e.printStackTrace();
 		}
 	}
 
+
 	private void broadcast(String message) {
-		sessionUsernameMap.keySet().parallelStream().forEach(session -> {
+		sessionUsernameMap.forEach((session, username) -> {
 			try {
 				session.getBasicRemote().sendText(message);
-			} catch (IOException e) {
-				logger.error("Failed to broadcast message: {}", e.getMessage());
+			} 
+      catch (IOException e) {
+				logger.info("Exception: " + e.getMessage().toString());
+				e.printStackTrace();
 			}
-		});
-	}
 
+		});
+
+	}
+	
+
+  // Gets the Chat history from the repository
 	private String getChatHistory() {
 		List<Message> messages = msgRepo.findAll();
+    
+    // convert the list to a string
 		StringBuilder sb = new StringBuilder();
-		if (messages != null && !messages.isEmpty()) {
-			messages.forEach(message -> sb.append(message.getUserName())
-					.append(": ")
-					.append(message.getContent())
-					.append("\n"));
+		if(messages != null && messages.size() != 0) {
+			for (Message message : messages) {
+				sb.append(message.getUserName() + ": " + message.getContent() + "\n");
+			}
 		}
 		return sb.toString();
 	}
 
-	// New Feature: List active users
-	public String listActiveUsers() {
-		return String.join(", ", usernameSessionMap.keySet());
-	}
-
-	// New Feature: Clear chat history
-	public void clearChatHistory() {
-		msgRepo.deleteAll();
-		logger.info("Chat history cleared.");
-	}
-}
+} // end of Class
