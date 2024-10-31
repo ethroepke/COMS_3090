@@ -1,8 +1,9 @@
 package coms309.service;
 
-import coms309.entity.User;
-import coms309.repository.UserRepository;
+import coms309.entity.UserProfile;
+import coms309.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -13,22 +14,24 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserProfileRepository userRepository;
 
     /**
      * Retrieve all users from the database.
      * @return List of users
      */
-    public List<User> getAllUsers() {
+    public List<UserProfile> getAllUsers() {
         return userRepository.findAll();
     }
+
+
 
     /**
      * Get a user by ID.
      * @param id User ID
      * @return Optional containing the user if found, empty otherwise
      */
-    public Optional<User> getUserById(Long id) {
+    public Optional<UserProfile> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -37,7 +40,7 @@ public class UserService {
      * @param username The username of the user
      * @return Optional containing the user if found, empty otherwise
      */
-    public Optional<User> getUserByUsername(String username) {
+    public Optional<UserProfile> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
@@ -46,7 +49,7 @@ public class UserService {
      * @param email The email of the user
      * @return Optional containing the user if found, empty otherwise
      */
-    public Optional<User> getUserByEmail(String email) {
+    public Optional<UserProfile> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -55,7 +58,7 @@ public class UserService {
      * @param user The user entity to create
      * @return The created user entity
      */
-    public User createUser(User user) {
+    public UserProfile createUser(UserProfile user) {
         return userRepository.save(user);
     }
 
@@ -65,14 +68,14 @@ public class UserService {
      * @param userDetails The updated user details
      * @return The updated user entity
      */
-    public User updateUser(Long id, User userDetails) {
-        Optional<User> existingUser = userRepository.findById(id);
+    public UserProfile updateUser(Long id, UserProfile userDetails) {
+        Optional<UserProfile> existingUser = userRepository.findById(id);
         if (existingUser.isPresent()) {
-            User user = existingUser.get();
+            UserProfile user = existingUser.get();
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
             user.setPassword(userDetails.getPassword());
-            user.setRole(userDetails.getRole());
+            user.setUserType(userDetails.getUserType());
             user.setTimeWorked(userDetails.getTimeWorked());  // Set the updated timeWorked
             return userRepository.save(user);
         }
@@ -85,10 +88,10 @@ public class UserService {
      * @param timeWorked The updated time worked value
      * @return The updated user entity, or null if the user is not found
      */
-    public User updateTimeWorked(Long id, Long timeWorked) {
-        Optional<User> existingUser = userRepository.findById(id);
+    public UserProfile updateTimeWorked(Long id, int timeWorked) {
+        Optional<UserProfile> existingUser = userRepository.findById(id);
         if (existingUser.isPresent()) {
-            User user = existingUser.get();
+            UserProfile user = existingUser.get();
             user.setTimeWorked(timeWorked);  // Update timeWorked field
             return userRepository.save(user);
         }
@@ -108,11 +111,11 @@ public class UserService {
         return false;
     }
 
-    public boolean submitTimeForWeek(@Valid User user) {
+    public boolean submitTimeForWeek(@Valid UserProfile user) {
         // Check if the user exists in the repository
-        Optional<User> existingUser = userRepository.findById(user.getId());
+        Optional<UserProfile> existingUser = userRepository.findById(user.getUserId());
         if (existingUser.isPresent()) {
-            User updatedUser = existingUser.get();
+            UserProfile updatedUser = existingUser.get();
 
             // Update the user's time worked
             updatedUser.setTimeWorked(user.getTimeWorked());
@@ -124,19 +127,39 @@ public class UserService {
         return false; // User not found, return false
     }
 
-    public boolean unsubmitTimeForWeek(@Valid User user) {
+    public boolean unsubmitTimeForWeek(@Valid UserProfile user) {
         // Check if the user exists in the repository
-        Optional<User> existingUser = userRepository.findById(user.getId());
+        Optional<UserProfile> existingUser =  userRepository.findById(user.getUserId());
         if (existingUser.isPresent()) {
-            User updatedUser = existingUser.get();
+            UserProfile updatedUser = existingUser.get();
 
             // Reset the timeWorked field to 0 or a default value
-            updatedUser.setTimeWorked(0L);
+            updatedUser.setTimeWorked(0);
 
             // Save the updated user back to the repository
             userRepository.save(updatedUser);
             return true;
         }
         return false; // User not found, return false
+    }
+
+    public ResponseEntity<String> getNextShift(Long userId) {
+        Optional<UserProfile> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            UserProfile userProfile = user.get();
+            String message = "Next shift for user: " + userProfile.getNextShift();
+            return ResponseEntity.ok(message);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    public ResponseEntity<String> getTimeWorked(Long userId) {
+        Optional<UserProfile> user = userRepository .findById(userId);
+        if (user.isPresent()) {
+            UserProfile userProfile = user.get();
+            String message = "Hours worked for user: " + userProfile.getTimeWorked();
+            return ResponseEntity.ok(message);
+        }
+        return ResponseEntity.notFound().build();
     }
 }

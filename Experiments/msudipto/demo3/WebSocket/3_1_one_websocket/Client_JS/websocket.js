@@ -2,27 +2,41 @@ var ws;
 
 function connect() {
     var username = document.getElementById("username").value;
+    var token = document.getElementById("token").value;
     var wsserver = document.getElementById("wsserver").value;
-    var url = wsserver + username;
-    //var url = "ws://echo.websocket.org";
+    var url = wsserver + username + "/" + token;
 
     ws = new WebSocket(url);
 
-    ws.onmessage = function(event) { // Called when client receives a message from the server
-        console.log(event.data);
-
-        // display on browser
+    ws.onopen = function(event) {
         var log = document.getElementById("log");
-        log.innerHTML += "message from server: " + event.data + "\n";
+        log.innerHTML += "Connected to " + event.currentTarget.url + "\\n";
     };
 
-    ws.onopen = function(event) { // called when connection is opened
+    ws.onmessage = function(event) {
+        console.log(event.data);
         var log = document.getElementById("log");
-        log.innerHTML += "Connected to " + event.currentTarget.url + "\n";
+        log.innerHTML += "Server: " + event.data + "\\n";
+    };
+
+    ws.onerror = function(event) {
+        var log = document.getElementById("log");
+        log.innerHTML += "Error: " + event.message + "\\n";
+    };
+
+    ws.onclose = function(event) {
+        var log = document.getElementById("log");
+        log.innerHTML += "Disconnected from server.\\n";
     };
 }
 
-function send() {  // this is how to send messages
+function send() {
     var content = document.getElementById("msg").value;
-    ws.send(content);
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(content);
+        document.getElementById("msg").value = "";
+    } else {
+        var log = document.getElementById("log");
+        log.innerHTML += "Unable to send message. Not connected.\\n";
+    }
 }

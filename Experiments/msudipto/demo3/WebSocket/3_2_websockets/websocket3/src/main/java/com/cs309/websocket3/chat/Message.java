@@ -1,7 +1,6 @@
 package com.cs309.websocket3.chat;
 
-import java.util.Date;
-
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,35 +10,45 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-
 import lombok.Data;
 
 @Entity
 @Table(name = "messages")
 @Data
 public class Message {
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String userName;
 
     @Lob
+    @Column(nullable = false)
     private String content;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "sent")
-    private Date sent = new Date();
-	
-	
-	public Message() {};
-	
-	public Message(String userName, String content) {
-		this.userName = userName;
-		this.content = content;
-	}
+    @Column(name = "sent", nullable = false)
+    private LocalDateTime sent = LocalDateTime.now();
 
+    // Default constructor
+    public Message() {}
+
+    // Constructor for userName and content
+    public Message(String userName, String content) {
+        this.userName = userName;
+        this.content = content;
+        this.sent = LocalDateTime.now();
+    }
+
+    // Constructor for userName, content, and sent timestamp
+    public Message(String userName, String content, LocalDateTime sent) {
+        this.userName = userName;
+        this.content = content;
+        this.sent = sent;
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -64,13 +73,11 @@ public class Message {
         this.content = content;
     }
 
-    public Date getSent() {
+    public LocalDateTime getSent() {
         return sent;
     }
 
-    public void setSent(Date sent) {
+    public void setSent(LocalDateTime sent) {
         this.sent = sent;
     }
-
-    
 }

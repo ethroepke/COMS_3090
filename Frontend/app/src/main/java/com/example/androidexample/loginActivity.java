@@ -22,6 +22,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class loginActivity extends AppCompatActivity {
 
@@ -32,6 +35,8 @@ public class loginActivity extends AppCompatActivity {
     private ImageButton showPassword;
     private Button forgotPasswordButton;
     private Button newUserButton;
+
+    private String user_id;
 
     boolean isPasswordVisible = false;
 
@@ -70,7 +75,9 @@ public class loginActivity extends AppCompatActivity {
                                 public void onResponse(String response) {
                                     // Login successful
                                     if (response.equals("Login successful")) {
+
                                         Intent intent = new Intent(loginActivity.this, employeeActivity.class);
+                                        intent.putExtra("user_id", user_id);
                                         startActivity(intent);
                                     } else {
                                         messageText.setText(response);
@@ -124,5 +131,49 @@ public class loginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void getUserId() {
+        JsonObjectRequest post_join = new JsonObjectRequest(
+                Request.Method.GET,
+                "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/"
+                        + usernameInput.getText().toString().trim(),
+                null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            user_id = response.getString("id");
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        Log.d("Volley Response", response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+
+        )
+        {
+            // dont know if necessary
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(post_join);
     }
 }
