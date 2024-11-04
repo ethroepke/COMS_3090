@@ -88,7 +88,7 @@ public class UserService {
      * @param timeWorked The updated time worked value
      * @return The updated user entity, or null if the user is not found
      */
-    public UserProfile updateTimeWorked(Long id, int timeWorked) {
+    public UserProfile updateTimeWorked(Long id, Long timeWorked) {
         Optional<UserProfile> existingUser = userRepository.findById(id);
         if (existingUser.isPresent()) {
             UserProfile user = existingUser.get();
@@ -134,7 +134,7 @@ public class UserService {
             UserProfile updatedUser = existingUser.get();
 
             // Reset the timeWorked field to 0 or a default value
-            updatedUser.setTimeWorked(0);
+            updatedUser.setTimeWorked(0L);
 
             // Save the updated user back to the repository
             userRepository.save(updatedUser);

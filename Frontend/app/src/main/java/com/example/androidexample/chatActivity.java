@@ -50,7 +50,7 @@ public class chatActivity extends AppCompatActivity {
         String chatId = getIntent().getStringExtra("chatId"); // Assuming you pass chatId as well
         chatTitle.setText(isGroup ? "Group: " + name : name);
 
-        // Setup RecyclerView
+
         messageList = new ArrayList<>();
         messageAdapter = new messageAdapter(this, messageList, true);
         recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
@@ -68,11 +68,10 @@ public class chatActivity extends AppCompatActivity {
 
             @Override
             public void onError(VolleyError error) {
-                // Handle error
             }
         });
 
-        // Send button click listener
+        // Send button for messages
         sendButton.setOnClickListener(v -> {
             String message = messageInput.getText().toString().trim();
             if (!message.isEmpty()) {
@@ -87,7 +86,6 @@ public class chatActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(VolleyError error) {
-                        // Handle error
                     }
                 });
             }

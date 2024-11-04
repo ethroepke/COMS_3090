@@ -129,28 +129,28 @@ public class adminActivity extends AppCompatActivity {
         projectStatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, projectStatusActivity.class);
                 startActivity(intent);
             }
         });
         assignProjButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, createProject.class);
                 startActivity(intent);
             }
         });
         employeeAttendanceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, employeeAttendanceActivity.class);
                 startActivity(intent);
             }
         });
         employeeStatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, employeeStatusActivity.class);
                 startActivity(intent);
             }
         });
@@ -164,14 +164,14 @@ public class adminActivity extends AppCompatActivity {
         performanceReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, performanceReviewActivity.class);
                 startActivity(intent);
             }
         });
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, profileActivity.class);
                 startActivity(intent);
             }
         });
@@ -185,14 +185,14 @@ public class adminActivity extends AppCompatActivity {
         selfServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, selfServiceActivity.class);
                 startActivity(intent);
             }
         });
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, loginActivity.class);
+                Intent intent = new Intent(adminActivity.this, payCheckOverviewActivity.class);
                 startActivity(intent);
             }
         });

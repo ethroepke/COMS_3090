@@ -52,15 +52,15 @@ public class UserProfile implements Serializable {
 
 
     @Column(name="timeWorked", nullable = false)
-    private int timeWorked;
+    private Long timeWorked;
 
     @Column(name = "nextShift", nullable = false)
     private Date nextShift;
 
 
 
-    public UserProfile(Long userId, String username, String email, String password) {
-        this.userId = Long.valueOf(userId);
+    public UserProfile(String password, String username, String email) {
+        this.userId = userId;
         this.password = password;
         this.username = username;
         this.email = email;

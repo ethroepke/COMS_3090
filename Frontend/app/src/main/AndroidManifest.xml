@@ -101,6 +101,9 @@
         <activity
             android:name=".createProject"
             android:exported="true" />
+        <activity
+            android:name=".createScheduleActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

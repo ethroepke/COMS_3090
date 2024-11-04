@@ -7,10 +7,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="#FFF0E0"
-    tools:context=".createProject">
+    tools:context=".createScheduleActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolBarCreate"
+        android:id="@+id/toolBarScheduler"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#FFA500"
@@ -19,84 +19,54 @@
         tools:ignore="MissingConstraints">
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Project Name Field -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Project Name:"
-        android:padding="16dp">
-    </TextView>
-
-    <EditText
-        android:id="@+id/project_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter project name"
-        android:padding="16dp">
-    </EditText>
-
-    <!-- Project Description Field -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Project Description:"
-        android:padding="16dp">
-    </TextView>
-
-    <EditText
-        android:id="@+id/project_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter project description"
-        android:padding="16dp">
-    </EditText>
-
-    <!-- Due Date Field -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Due Date:"
-        android:padding="16dp">
-    </TextView>
-
-    <EditText
-        android:id="@+id/due_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter due date (e.g., MM/DD/YYYY)"
-        android:padding="16dp">
-    </EditText>
-
     <!-- Priority Level Dropdown -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Priority Level:"
+        android:text="Name:"
         android:padding="16dp">
     </TextView>
 
     <Spinner
-        android:id="@+id/priority_level"
+        android:id="@+id/nameSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
     </Spinner>
 
-    <!-- Employer Assigned Field -->
+    <!-- Due Date Field -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Employer Assigned To:"
+        android:text="Date:"
         android:padding="16dp">
     </TextView>
 
+    <!-- Date Schedule -->
     <EditText
-        android:id="@+id/employer_assigned"
+        android:id="@+id/dateScheduled"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter employer's name"
-        android:padding="16dp">
+        android:hint="Enter date (e.g., MM/DD/YYYY)"
+        android:padding="16dp"
+        android:focusable="false">
     </EditText>
+
+    <TextView
+        android:id="@+id/startTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Time"
+        android:padding="16dp">
+    </TextView>
+
+    <TextView
+        android:id="@+id/endTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Time"
+        android:padding="16dp">
+    </TextView>
 
     <!-- Save Button -->
     <Button

@@ -37,14 +37,12 @@ public class messageActivity extends AppCompatActivity {
         apiService.getMessages("user_chat_id", new Apiservice.MessageCallback() {
             @Override
             public void onSuccess(List<String> messages) {
-                // Update UI with messages
                 recyclerViewIndividual.setLayoutManager(new LinearLayoutManager(messageActivity.this));
                 recyclerViewIndividual.setAdapter(new messageAdapter(messageActivity.this, messages, false));
             }
 
             @Override
             public void onError(VolleyError error) {
-                // Handle error
             }
         });
     }
@@ -54,7 +52,7 @@ public class messageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             //For permissions this will be chang depending on users (Admin or Employer or Employee) to make sure send back to right page
-            Intent intent = new Intent(this, adminActivity.class);
+            Intent intent = new Intent(messageActivity.this, adminActivity.class);
             startActivity(intent);
             return true;
         }
