@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import coms309.service.UserService;
 import coms309.exception.ResourceNotFoundException;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/timeWorked")

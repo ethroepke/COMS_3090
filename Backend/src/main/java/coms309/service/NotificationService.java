@@ -28,8 +28,8 @@ public class NotificationService {
         Optional<Projects> project = projectRepository.findById(projectId);
         if (project.isPresent()) {
             Projects proj = project.get();
-            String message = "Notification for project: " + proj.getProjectName();
-            Notification notification = new Notification(message, "Project Information");
+            String message = "Notification for project: " + proj.getName(); // Updated method
+            Notification notification = new Notification(message, "Projects Information");
             notificationRepository.save(notification);
             return ResponseEntity.ok("Notification sent successfully");
         }

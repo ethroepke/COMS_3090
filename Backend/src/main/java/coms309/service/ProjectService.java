@@ -2,10 +2,7 @@ package coms309.service;
 
 import coms309.dto.ProjectDTO;
 import coms309.entity.Projects;
-import coms309.entity.UserProfile;
-import coms309.entity.UserType;
 import coms309.repository.ProjectRepository;
-import coms309.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProjectsService {
+public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
@@ -32,25 +29,25 @@ public class ProjectsService {
     }
 
     public ResponseEntity<String> createProject(ProjectDTO newProject) {
-        Optional<Projects> existingProject = projectRepository.findByProjectName(newProject.getProjectName());
+        Optional<Projects> existingProject = projectRepository.findByName(newProject.getProjectName());
         if (existingProject.isPresent()) {
-            return ResponseEntity.badRequest().body("Project with the same name already exists");
+            return ResponseEntity.badRequest().body("Projects with the same name already exists");
         }
-        Projects project = new Projects(newProject.getDescription(), newProject.getDueDate(), newProject.getProjectName(), newProject.getStatus());
-        projectRepository.save(project);
-        return ResponseEntity.ok("Project created successfully");
+        Projects projects = new Projects(newProject.getDescription(), newProject.getDueDate(), newProject.getProjectName(), newProject.getStatus());
+        projectRepository.save(projects);
+        return ResponseEntity.ok("Projects created successfully");
     }
 
-    public ResponseEntity<String> updateProject(Long id, Projects updatedProject) {
+    public ResponseEntity<String> updateProject(Long id, Projects updatedProjects) {
         Optional<Projects> existingProject = projectRepository.findById(id);
         if (existingProject.isPresent()) {
-            Projects project = existingProject.get();
-            project.setDescription(updatedProject.getDescription());
-            project.setDueDate(updatedProject.getDueDate());
-            project.setProjectName(updatedProject.getProjectName());
-            project.setStatus(updatedProject.getStatus());
-            projectRepository.save(project);
-            return ResponseEntity.ok("Project updated successfully");
+            Projects projects = existingProject.get();
+            projects.setDescription(updatedProjects.getDescription());
+            projects.setDueDate(updatedProjects.getDueDate());
+            projects.setName(updatedProjects.getName());
+            projects.setStatus(updatedProjects.getStatus());
+            projectRepository.save(projects);
+            return ResponseEntity.ok("Projects updated successfully");
         }
         return ResponseEntity.notFound().build();
     }

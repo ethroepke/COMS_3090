@@ -14,7 +14,7 @@
 .gradle
 .idea
 .metadata
-.project
+.projects
 .recommenders
 .settings
 .springBeans
@@ -87,7 +87,7 @@ cmake-build-*/
 # Mongo Explorer plugin
 .idea/**/mongoSettings.xml
 
-# File-based project format
+# File-based projects format
 *.iws
 
 # IntelliJ
