@@ -2,18 +2,19 @@ package coms309.controller;
 
 import coms309.dto.SignUpDTO;
 import coms309.dto.UserDTO;
-import coms309.entity.Admin;
-import coms309.entity.Employee;
-import coms309.entity.Employer;
+import coms309.dto.SignUpDTO;
 import coms309.entity.UserProfile;
-import coms309.repository.UserProfileRepository;
+import coms309.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+// Import other necessary packages
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,129 +25,236 @@ public class UserProfileController {
     private static final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
     @Autowired
-    private final UserProfileRepository userProfileRepository;
-
-    public UserProfileController(UserProfileRepository userProfileRepository) {
-        this.userProfileRepository = userProfileRepository;
-    }
-
-    @GetMapping("/checkEmail")
-    public ResponseEntity<String> checkEmail(@RequestBody UserDTO CheckEmail) {
-        Optional<UserProfile> user = userProfileRepository.findByEmail(CheckEmail.getEmail());
-        if (user.isPresent()) {
-            return ResponseEntity.ok("Email exists");
-        }
-        return ResponseEntity.badRequest().body("Email does not exist");
-    }
-
-    @PutMapping("/forgotPassword")
-    public ResponseEntity<String> forgotPassword(@RequestBody UserDTO forgotUser) {
-        Optional<UserProfile> user = userProfileRepository.findByEmail(forgotUser.getEmail());
-        if (user.isEmpty()) {
-            return ResponseEntity.badRequest().body("No user exist");
-        }
-        user.get().setPassword(forgotUser.getPassword());
-        userProfileRepository.save(user.get());
-        return ResponseEntity.ok("Successfully change the password");
-    }
+    private UserService userService;
 
     /**
-     * Get all user profiles.
-     * @return List of UserProfile
+     * Retrieve all user profiles.
+     *
+     * @return List of all users.
      */
     @GetMapping("/all")
-    public List<UserProfile> getAllUserProfiles() {
-        logger.info("Fetching all user profiles");
-        return userProfileRepository.findAll();
+    public ResponseEntity<List<UserProfile>> getAllUserProfiles() {
+        logger.info("Controller: Fetching all user profiles");
+        List<UserProfile> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
     /**
-     * Get a user profile by its ID.
-     * @param id ID of the user profile
-     * @return ResponseEntity with UserProfile or 404 if not found
+     * Retrieve a user profile by ID.
+     *
+     * @param id The user ID.
+     * @return The user profile if found.
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserProfile> getUserProfileById(@PathVariable Long id) {
-        logger.info("Fetching user profile with ID: {}", id);
-
-        // Validate ID input
-        if (id <= 0) {
-            logger.warn("Invalid ID supplied: {}", id);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        Optional<UserProfile> userProfile = userProfileRepository.findById(id);
-
-        return userProfile.map(ResponseEntity::ok)
+        logger.info("Controller: Fetching user profile with ID: {}", id);
+        Optional<UserProfile> userProfileOpt = userService.getUserById(id);
+        return userProfileOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> {
-                    logger.warn("User profile not found for ID: {}", id);
+                    logger.warn("Controller: User profile not found for ID: {}", id);
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
                 });
     }
 
-
-
-    @GetMapping("/login")
-    public ResponseEntity<String> login (@RequestBody UserDTO loginUser) {
-        Optional<UserProfile> existUser = userProfileRepository.findByUsernameAndPassword(loginUser.getUsername(), loginUser.getPassword());
-        if (existUser.isEmpty()) {
-            return ResponseEntity.badRequest().body("Login failed");
-        }
-        UserProfile userProfile = userProfileRepository.save(existUser.get());
-        return ResponseEntity.ok("Login successfully");
+    /**
+     * Retrieve a user profile by username.
+     *
+     * @param username The username of the user.
+     * @return The user profile if found.
+     */
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserProfile> getUserProfileByUsername(@PathVariable String username) {
+        logger.info("Controller: Fetching user profile with username: {}", username);
+        Optional<UserProfile> userProfileOpt = userService.getUserByUsername(username);
+        return userProfileOpt.map(ResponseEntity::ok)
+                .orElseGet(() -> {
+                    logger.warn("Controller: User profile not found for username: {}", username);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                });
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup (@RequestBody SignUpDTO signUpUserProfile){
-        //change it to check seperately the email pass and username
-
-        Optional<UserProfile> existingUsername = userProfileRepository.findByUsername(signUpUserProfile.getUsername());
-        Optional<UserProfile> existingEmail = userProfileRepository.findByEmail( signUpUserProfile.getEmail());
-        if(existingUsername.isPresent()){
-            return ResponseEntity.badRequest().body("Sign up fail");
-        }
-        if(existingEmail.isPresent()){
-            return ResponseEntity.badRequest().body("Sign up fail");
-        }
-        UserProfile userProfile = new UserProfile(
-                signUpUserProfile.getUsername(),
-                signUpUserProfile.getEmail(),
-                signUpUserProfile.getPassword()
-        );
-        userProfileRepository.save(userProfile);
-        return ResponseEntity.ok("Sign up successfully");
+    /**
+     * Retrieve a user profile by email.
+     *
+     * @param email The email of the user.
+     * @return The user profile if found.
+     */
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserProfile> getUserProfileByEmail(@PathVariable String email) {
+        logger.info("Controller: Fetching user profile with email: {}", email);
+        Optional<UserProfile> userProfileOpt = userService.getUserByEmail(email);
+        return userProfileOpt.map(ResponseEntity::ok)
+                .orElseGet(() -> {
+                    logger.warn("Controller: User profile not found for email: {}", email);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                });
     }
 
+    /**
+     * Create a new user profile.
+     *
+     * @param user The user profile to create.
+     * @return The created user profile.
+     */
+    @PostMapping("/create")
+    public ResponseEntity<UserProfile> createUserProfile( @RequestBody UserProfile user) {
+        logger.info("Controller: Creating new user profile");
+        UserProfile createdUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
 
-
+    /**
+     * Update an existing user profile by ID.
+     *
+     * @param id   The ID of the user to update.
+     * @param user The updated user profile details.
+     * @return The updated user profile if successful.
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<UserProfile> updateUserProfile(@PathVariable Long id, @RequestBody UserProfile userProfileDetails) {
-        Optional<UserProfile> userProfileOptional = userProfileRepository.findById(id);
-        if (userProfileOptional.isPresent()) {
-            UserProfile userProfile = userProfileOptional.get();
-            userProfile.setUsername(userProfileDetails.getUsername());
-            userProfile.setPassword(userProfileDetails.getPassword());
-            userProfile.setUserType(userProfileDetails.getUserType());
-            userProfile.setEmail(userProfileDetails.getEmail());
-            userProfile.setJobTitle(userProfileDetails.getJobTitle());
-            userProfile.setDepartment(userProfileDetails.getDepartment());
-            userProfile.setDateOfHire(userProfileDetails.getDateOfHire());
-
-            UserProfile updatedUserProfile = userProfileRepository.save(userProfile);
-            return ResponseEntity.ok(updatedUserProfile);
+    public ResponseEntity<UserProfile> updateUserProfile(
+            @PathVariable Long id,
+            @RequestBody UserProfile user) {
+        logger.info("Controller: Updating user profile with ID: {}", id);
+        UserProfile updatedUser = userService.updateUser(id, user);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
         } else {
-            return ResponseEntity.notFound().build();
+            logger.warn("Controller: User profile not found for ID: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
+    /**
+     * Update the time worked for a user by ID.
+     *
+     * @param id         The ID of the user.
+     * @param timeWorked The new time worked value.
+     * @return The updated user profile if successful.
+     */
+    @PutMapping("/{id}/timeWorked")
+    public ResponseEntity<UserProfile> updateTimeWorked(
+            @PathVariable Long id,
+            @RequestParam Integer timeWorked) {
+        logger.info("Controller: Updating time worked for user ID: {}", id);
+        UserProfile updatedUser = userService.updateTimeWorked(id, timeWorked);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            logger.warn("Controller: User profile not found for ID: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
+    /**
+     * Delete a user profile by ID.
+     *
+     * @param id The ID of the user to delete.
+     * @return ResponseEntity indicating the outcome.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserProfile(@PathVariable Long id) {
-        if (userProfileRepository.existsById(id)) {
-            userProfileRepository.deleteById(id);
+        logger.info("Controller: Deleting user profile with ID: {}", id);
+        boolean deleted = userService.deleteUser(id);
+        if (deleted) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.notFound().build();
+            logger.warn("Controller: User profile not found for ID: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    /**
+     * Submit time for a week for a user.
+     *
+     * @param user The user profile with updated time.
+     * @return ResponseEntity indicating the outcome.
+     */
+    @PostMapping("/submitTime")
+    public ResponseEntity<String> submitTimeForWeek(@Valid @RequestBody UserProfile user) {
+        logger.info("Controller: Submitting time for week for user ID: {}", user.getUserId());
+        boolean success = userService.submitTimeForWeek(user);
+        if (success) {
+            return ResponseEntity.ok("Time submitted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+    }
+
+    /**
+     * Unsubmit time for a week for a user.
+     *
+     * @param user The user profile.
+     * @return ResponseEntity indicating the outcome.
+     */
+    @PostMapping("/unsubmitTime")
+    public ResponseEntity<String> unsubmitTimeForWeek(@Valid @RequestBody UserProfile user) {
+        logger.info("Controller: Unsubmitting time for week for user ID: {}", user.getUserId());
+        boolean success = userService.unsubmitTimeForWeek(user);
+        if (success) {
+            return ResponseEntity.ok("Time unsubitted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+    }
+
+    /**
+     * Retrieve the next shift for a user.
+     *
+     * @param userId The ID of the user.
+     * @return The next shift details if found.
+     */
+    @GetMapping("/{userId}/nextShift")
+    public ResponseEntity<String> getNextShift(@PathVariable Long userId) {
+        logger.info("Controller: Retrieving next shift for user ID: {}", userId);
+        return userService.getNextShift(userId);
+    }
+
+    /**
+     * Retrieve the time worked for a user.
+     *
+     * @param userId The ID of the user.
+     * @return The time worked details if found.
+     */
+    @GetMapping("/{userId}/timeWorked")
+    public ResponseEntity<String> getTimeWorked(@PathVariable Long userId) {
+        logger.info("Controller: Retrieving time worked for user ID: {}", userId);
+        return userService.getTimeWorked(userId);
+    }
+
+    /**
+     * Handle password reset for a user.
+     *
+     * @param forgotUserDTO DTO containing email and new password.
+     * @return ResponseEntity indicating the outcome.
+     */
+    @PutMapping("/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@Valid @RequestBody UserDTO forgotUserDTO) {
+        logger.info("Controller: Attempting to reset password for email: {}", forgotUserDTO.getEmail());
+        return userService.forgotPassword(forgotUserDTO);
+    }
+
+    /**
+     * Handle user login.
+     *
+     * @param loginUserDTO DTO containing username and password.
+     * @return ResponseEntity indicating the outcome.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<String> login( @RequestBody UserDTO loginUserDTO) {
+        logger.info("Controller: Attempting login for username: {}", loginUserDTO.getUsername());
+        return userService.login(loginUserDTO);
+    }
+
+    /**
+     * Handle user signup.
+     *
+     * @param signUpUserProfileDTO DTO containing signup information.
+     * @return ResponseEntity indicating the outcome.
+     */
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup(@RequestBody SignUpDTO signUpUserProfileDTO) {
+        logger.info("Controller: Attempting signup for username: {}", signUpUserProfileDTO.getUsername());
+        return userService.signup(signUpUserProfileDTO);
+    }
+
 }

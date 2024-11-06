@@ -1,6 +1,9 @@
 
 package coms309.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,6 +20,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "salary")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "salaryId")
 public class Salary {
 
     @Id
@@ -25,8 +31,8 @@ public class Salary {
     private Long salaryId;
 
     @NotNull(message = "User profile cannot be null")
-    @OneToOne
-    @JoinColumn(name = "user_profile_id", referencedColumnName = "user_id", nullable = false)
+    @OneToOne(mappedBy="salary" , cascade = CascadeType.ALL)
+    @JsonIgnore
     private UserProfile userProfile;
 
 
@@ -50,10 +56,6 @@ public class Salary {
     @Column(name = "take_home_pay")
     private Double takeHomePay;
 
-    @NotNull(message = "Employee cannot be null")
-    @OneToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
-    private Employee employee;
 
 
 
@@ -69,6 +71,10 @@ public class Salary {
         this.takeHomePay = calculateTakeHomePay();
     }
 
+
+
+    public Salary(){}
+
     public Double calculateGrossPay() {
         return (this.hoursWorked * this.payRate) + this.bonusPay;
     }
@@ -76,6 +82,4 @@ public class Salary {
     public Double calculateTakeHomePay() {
         return this.grossPay - this.deductibles;
     }
-
-
 }

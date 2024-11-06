@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Entity class representing an Admin.
  *
@@ -21,12 +24,17 @@ public class Admin {
     @Column(name = "admin_id")
     private Long adminId;
 
-    @NotNull(message = "UserProfile cannot be null")
-    @OneToOne
-    @JoinColumn(name = "u_id", referencedColumnName = "user_id")
+    @ManyToMany
+    @JoinTable(
+            name = "admin_projects",
+            joinColumns = @JoinColumn(name = "admin_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
+    private Set<Projects> projects = new HashSet<>();
+
+    @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_profile_id", referencedColumnName = "user_id", unique = true)
     private UserProfile userProfile;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_type")
-    private UserType userType;
+    public Admin(){}
 }

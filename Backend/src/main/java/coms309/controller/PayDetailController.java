@@ -1,70 +1,71 @@
 package coms309.controller;
 
-import coms309.dto.SalaryDTO;
 import coms309.entity.Salary;
-import coms309.entity.UserProfile;
-import coms309.repository.SalaryRepository;
+import coms309.service.PayDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-
-import java.util.Optional;
-
+/**
+ * REST controller for managing salary details.
+ */
 @RestController
-@RequestMapping("/api/paydetails")
+@RequestMapping("/api/salary")
 public class PayDetailController {
 
     @Autowired
-    private SalaryRepository salaryRepository;
+    private PayDetailService payDetailService;
 
-    // Create PayDetails
-    @PostMapping("/create")
-    public ResponseEntity<Salary> createPayDetails(@Valid @RequestBody SalaryDTO salaryDTO) {
-        UserProfile userProfile = new UserProfile();
-        userProfile.setUsername(salaryDTO.getUsername());
-
-        Salary payDetails = new Salary(userProfile, salaryDTO.getHoursWorked(), salaryDTO.getPayRate(), salaryDTO.getBonusPay(), salaryDTO.getDeductibles());
-        // Assume you have a method to get the UserProfile based on some ID
-//         payDetails.setUserProfile(getUserProfileById(someUserProfileId));
-
-        Salary savedPayDetails = salaryRepository.save(payDetails);
-        return ResponseEntity.status(201).body(savedPayDetails);
-    }
-    @GetMapping("/search/{userName}")
-    public ResponseEntity<Salary> getPayDetailsByUserName(@PathVariable UserProfile userName) {
-        Optional<Salary> payDetails = salaryRepository.findByUserProfile(userName);
-        return payDetails.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    /**
+     * Get salary details for a user.
+     *
+     * @param userId the user ID
+     * @return the salary details
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getSalaryForUser(@PathVariable Long userId) {
+        return payDetailService.getSalaryForUserResponse(userId);
     }
 
-    // Update PayDetails
-    @PutMapping("/{payUserName}")
-    public ResponseEntity<Salary> updatePayDetails(@PathVariable UserProfile user, @Valid @RequestBody SalaryDTO salaryDTO) {
-        Optional<Salary> optionalPayDetails = salaryRepository.findByUserProfile(user);
-
-        if (optionalPayDetails.isPresent()) {
-            Salary payDetails = optionalPayDetails.get();
-            payDetails.setHoursWorked(salaryDTO.getHoursWorked());
-            payDetails.setPayRate(salaryDTO.getPayRate());
-            payDetails.setBonusPay(salaryDTO.getBonusPay());
-            payDetails.setDeductibles(salaryDTO.getDeductibles());
-
-            // Recalculate gross and take-home pay if needed
-            payDetails.setGrossPay(payDetails.calculateGrossPay());
-            payDetails.setTakeHomePay(payDetails.calculateTakeHomePay());
-
-            Salary updatedPayDetails = salaryRepository.save(payDetails);
-            return ResponseEntity.ok(updatedPayDetails);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    /**
+     * Get all salaries for a user.
+     *
+     * @param userId the user ID
+     * @return all salaries
+     */
+    @GetMapping("/all/{userId}")
+    public ResponseEntity<?> getAllSalariesForUser(@PathVariable Long userId) {
+        return payDetailService.getAllSalariesForUserResponse(userId);
     }
 
-
-    @PostMapping("/sendRequest")
-    public ResponseEntity<Salary> sendRequest(@RequestBody UserProfile user ){
-            return null;
-
+    /**
+     * Create or update salary details.
+     *
+     * @param salary the salary details
+     * @return the updated or created salary
+     */
+    @PostMapping("/update")
+    public ResponseEntity<?> createOrUpdateSalary(@RequestBody Salary salary) {
+        return payDetailService.createOrUpdateSalaryResponse(salary);
+    }
+    /**
+     * Get salary details for a user by username.
+     *
+     * @param username the username
+     * @return the salary details
+     */
+    @GetMapping("/username/{username}")
+    public ResponseEntity<?> getSalaryByUsername(@PathVariable String username) {
+        return payDetailService.getSalaryByUsernameResponse(username);
+    }
+    /**
+     * Delete salary details by ID.
+     *
+     * @param salaryId the salary ID
+     * @return the response indicating success or failure
+     */
+    @DeleteMapping("/delete/{salaryId}")
+    public ResponseEntity<?> deleteSalary(@PathVariable Long salaryId) {
+        return payDetailService.deleteSalaryResponse(salaryId);
     }
 }

@@ -20,6 +20,7 @@ public class TimeWorkedController {
     private static final Logger logger = LoggerFactory.getLogger(TimeWorkedController.class);
 
     @Autowired
+
     private UserService userService;
 
     // Get user by ID and return timeWorked along with other details

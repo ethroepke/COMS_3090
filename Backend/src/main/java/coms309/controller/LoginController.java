@@ -19,7 +19,6 @@ public class LoginController {
     @Autowired
     private UserProfileRepository userProfileRepository;
 
-    // Login: GET username and password
     @GetMapping
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
         Optional<UserProfile> existUser = userProfileRepository.findByUsernameAndPassword(username, password);
@@ -38,7 +37,7 @@ public class LoginController {
         }
         // Create a new user and save to the database
         UserProfile newUser = new UserProfile();
-        newUser.setName(signUpUser.getName());
+        newUser.setFullName(signUpUser.getFull_name());
         newUser.setEmail(signUpUser.getEmail());
         newUser.setUsername(signUpUser.getUsername());
         newUser.setPassword(signUpUser.getPassword());

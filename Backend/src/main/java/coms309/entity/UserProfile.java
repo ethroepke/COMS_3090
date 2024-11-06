@@ -1,12 +1,19 @@
 
 package coms309.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Entity class representing a user's profile.
@@ -18,6 +25,9 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "user_profiles")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "userId")
 public class UserProfile implements Serializable {
 
     @Id
@@ -25,8 +35,8 @@ public class UserProfile implements Serializable {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name= "full_name", nullable = false)
+    private String fullName;
 
     @Column(name = "user_name", nullable = false)
     private String username;
@@ -51,25 +61,30 @@ public class UserProfile implements Serializable {
     private Date dateOfHire;
 
 
-    @Column(name="timeWorked", nullable = false)
-    private Long timeWorked;
+    @Column(name= "time_worked", nullable = true)
+    private int timeWorked;
 
-    @Column(name = "nextShift", nullable = false)
+    @Column(name = "next_shift", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date nextShift;
 
+    @NotNull(message = "Salary cannot be null")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "salary_id", referencedColumnName = "salary_id", nullable = false)
+    @JsonManagedReference
+    private Salary salary;
 
 
-    public UserProfile(String password, String username, String email) {
-        this.userId = userId;
+
+    public UserProfile(Long userId, String password, String username, String email ) {
+        this.userId = Long.valueOf(userId);
         this.password = password;
         this.username = username;
         this.email = email;
-        this.timeWorked= timeWorked;
-        this.nextShift= new Date();
         this.dateOfHire = new Date();
-
+        this.timeWorked=0;
+        this.nextShift= new Date();
     }
-
 
 
     public UserProfile(){}

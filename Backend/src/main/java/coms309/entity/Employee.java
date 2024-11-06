@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Entity class representing an Employee.
  */
@@ -19,17 +22,21 @@ public class Employee {
     @Column(name = "employee_id")
     private Long employeeId;
 
-    @NotNull(message = "UserProfile cannot be null")
-    @OneToOne
-    @JoinColumn(name = "u_id", referencedColumnName = "user_id")
+   @OneToMany(mappedBy="employee", cascade = CascadeType.ALL)
+   private List<LeaveRequests> leaveRequestsList = new ArrayList<>();
+
+   @OneToMany(mappedBy = "employee" , cascade = CascadeType.ALL)
+   private List<TimeLog> timeLogs= new ArrayList<>();
+
+    @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_profile_id", unique = true)
     private UserProfile userProfile;
 
     @NotNull(message = "Project assignment cannot be null")
-    @ManyToOne
-    @JoinColumn(name = "e_projects", referencedColumnName = "project_id")
-    private Projects projects;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
+    private Projects project;
 
-        @Enumerated(EnumType.STRING)
-        @Column(name = "user_type")
-        private UserType userType;
+
+    public Employee(){}
 }

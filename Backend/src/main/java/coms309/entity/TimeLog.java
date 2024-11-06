@@ -39,4 +39,6 @@ public class TimeLog {
     @ManyToOne
     @JoinColumn(name = "timeTrackingForEmployee", referencedColumnName = "employee_id")
     private Employee employee;
+
+
 }

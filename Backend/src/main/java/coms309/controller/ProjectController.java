@@ -36,8 +36,6 @@ public class ProjectController {
 
     }
 
-
-
     @GetMapping("/all")
     public List<Projects> getAllProjects() {
         return projectsService.getAllProjects();
