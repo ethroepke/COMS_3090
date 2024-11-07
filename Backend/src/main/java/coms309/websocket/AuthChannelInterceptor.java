@@ -5,8 +5,10 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 @Component
+@EnableWebSocketMessageBroker
 public class AuthChannelInterceptor implements ChannelInterceptor {
 
     @Override

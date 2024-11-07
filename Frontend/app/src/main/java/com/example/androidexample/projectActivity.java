@@ -109,7 +109,6 @@ public class projectActivity extends AppCompatActivity {
                                 dueDateView.setText(dueDateText);
                                 dueDateView.setPadding(0, 8, 0, 8);
 
-                                // TextView for Priority
                                 TextView priorityView = new TextView(projectActivity.this);
                                 priorityView.setText("Priority: " + priority);
                                 priorityView.setPadding(8, 4, 8, 4); // padding for a badge-like look
@@ -130,22 +129,17 @@ public class projectActivity extends AppCompatActivity {
                                         priorityBackgroundColor = ContextCompat.getColor(projectActivity.this, android.R.color.darker_gray);
                                 }
                                 priorityView.setBackgroundColor(priorityBackgroundColor);
-                                priorityView.setTextColor(ContextCompat.getColor(projectActivity.this, android.R.color.white)); // set text color to white for better contrast
+                                priorityView.setTextColor(ContextCompat.getColor(projectActivity.this, android.R.color.white));
                                 priorityView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-                                // Add TextViews to the card layout
                                 cardLayout.addView(nameView);
                                 cardLayout.addView(descriptionView);
                                 cardLayout.addView(dueDateView);
                                 cardLayout.addView(priorityView);
 
-                                // Add the card layout to the CardView
                                 cardView.addView(cardLayout);
-
-                                // Add the CardView to the main layout
                                 projectListLayout.addView(cardView);
 
-                                // Optional: add a margin between cards
                                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) cardView.getLayoutParams();
                                 layoutParams.setMargins(16, 16, 16, 16);
                                 cardView.setLayoutParams(layoutParams);

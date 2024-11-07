@@ -76,6 +76,7 @@ public class loginActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(String response) {
                                     if (response.equals("Login successful")) {
+
                                         // Save username in SharedPreferences
                                         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                                         SharedPreferences.Editor editor = sharedPreferences.edit();

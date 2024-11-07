@@ -1,4 +1,4 @@
-package com.cs309.websocket3;
+package coms309.websocket3;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
