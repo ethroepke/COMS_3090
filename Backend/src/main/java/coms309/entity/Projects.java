@@ -1,6 +1,9 @@
 package coms309.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -26,6 +29,9 @@ import java.util.*;
 @Getter
 @Setter
 @Table(name = "projects")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "projectId")
 public class Projects {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +40,12 @@ public class Projects {
 
     @NotBlank(message = "Projects name is required")
     @Size(max = 100, message = "Projects name must not exceed 100 characters")
-    private String name;
+    private String projectName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", nullable = false)
+    @NotNull(message = "Priority level is required")
+    private Priority priority;
 
     @Size(max = 500, message = "Description must not exceed 500 characters")
     private String description;
@@ -44,10 +55,13 @@ public class Projects {
     private Date dueDate;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Tasks> tasks = new ArrayList<>();
 
     @ManyToMany(mappedBy = "projects")
+    @JsonManagedReference
     private Set<Employer> employers = new HashSet<>();
+
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -57,11 +71,12 @@ public class Projects {
     private String status;
 
     // Constructors
-    public Projects(String description, Date dueDate, String name, String status) {
-        this.name = name;
+    public Projects(String description, Date dueDate, String projectName, String status , Priority priority) {
+        this.projectName = projectName;
         this.description = description;
         this.dueDate = dueDate;
         this.status = status;
+        this.priority=priority;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -71,70 +86,6 @@ public class Projects {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Tasks> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Tasks> tasks) {
-        this.tasks = tasks;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     // Utility methods to manage bidirectional relationship with Tasks
     public void addTask(Tasks task) {

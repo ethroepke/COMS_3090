@@ -46,8 +46,8 @@ public class ProjectController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createProject(@RequestBody ProjectDTO newProject) {
-        return projectService.createProject(newProject);
+    public ResponseEntity<String> createProject(@PathVariable Long id , @RequestBody ProjectDTO updatedProjectDTO) {
+        return projectService.createProject(id, updatedProjectDTO);
     }
 
     @PutMapping("/update/{id}")

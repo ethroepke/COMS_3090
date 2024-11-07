@@ -28,14 +28,24 @@ public class ProjectService {
         }
     }
 
-    public ResponseEntity<String> createProject(ProjectDTO newProject) {
-        Optional<Projects> existingProject = projectRepository.findByName(newProject.getProjectName());
-        if (existingProject.isPresent()) {
-            return ResponseEntity.badRequest().body("Projects with the same name already exists");
+    public ResponseEntity<String> createProject(Long id, ProjectDTO updatedProjectDTO) {
+        Optional<Projects> existingProjectOpt = projectRepository.findById(id);
+        if (existingProjectOpt.isPresent()) {
+            Projects existingProject = existingProjectOpt.get();
+            existingProject.setDescription(updatedProjectDTO.getDescription());
+            existingProject.setDueDate(updatedProjectDTO.getDueDate());
+            existingProject.setProjectName(updatedProjectDTO.getProjectName());
+            existingProject.setStatus(updatedProjectDTO.getStatus());
+
+            // Update priority if provided
+            if (updatedProjectDTO.getPriority() != null) {
+                existingProject.setPriority(updatedProjectDTO.getPriority());
+            }
+
+            projectRepository.save(existingProject);
+            return ResponseEntity.ok("Project updated successfully");
         }
-        Projects projects = new Projects(newProject.getDescription(), newProject.getDueDate(), newProject.getProjectName(), newProject.getStatus());
-        projectRepository.save(projects);
-        return ResponseEntity.ok("Projects created successfully");
+        return ResponseEntity.notFound().build();
     }
 
     public ResponseEntity<String> updateProject(Long id, Projects updatedProjects) {
@@ -44,7 +54,7 @@ public class ProjectService {
             Projects projects = existingProject.get();
             projects.setDescription(updatedProjects.getDescription());
             projects.setDueDate(updatedProjects.getDueDate());
-            projects.setName(updatedProjects.getName());
+            projects.setProjectName(updatedProjects.getProjectName());
             projects.setStatus(updatedProjects.getStatus());
             projectRepository.save(projects);
             return ResponseEntity.ok("Projects updated successfully");
@@ -54,34 +64,6 @@ public class ProjectService {
 
 
 
-//    public Projects getProjects(Long projectId, Long userProfileId) {
-//        Optional<Projects> projectOpt = projectRepository.findById(projectId);
-//        Optional<Projects> userIdOpt = projectRepository.findById(userProfileId);
-//
-//
-//            return null;
-//    }
-//
-//
-//    // view project with limit access for each user
-//    private boolean canViewProject(UserProfile userProfile, Projects project) {
-//        if (userProfile.getUserType() == UserType.EMPLOYER || userProfile.getUserType() == UserType.ADMIN) {
-//            return true;
-//        } else if (userProfile.getUserType() == UserType.EMPLOYEE) {
-//            return project.getProjectId().equals(userProfile.getUserId()); // Employees can view only their own projects
-//        }
-//        return false;
-//
-//    }
-//
-//
-//    private boolean canCommentOnProject(UserProfile userProfile, Projects project) {
-//        if (userProfile.getUserType() == UserType.EMPLOYER || userProfile.getUserType() == UserType.EMPLOYEE) {
-//            return true;
-//        } else if (userProfile.getUserType() == UserType.ADMIN) {
-//            return false;
-//        }
-//        return false;
-//    }
+
 
 }
