@@ -1,10 +1,13 @@
 package com.example.androidexample;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,6 +25,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.androidexample.adminActivity;
 
@@ -31,15 +35,19 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class createScheduleActivity extends AppCompatActivity {
     private EditText dateEditText;
     private TextView startTimeText, endTimeText;
-    private Spinner names;
+    //private Spinner names;
     private ArrayList<String> teamMembers;
     private ArrayAdapter<String> adapter;
     private RequestQueue requestQueue;
     private Button saveButton;
+    private EditText nameEntry;
+    private boolean does_not_exist;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -50,7 +58,7 @@ public class createScheduleActivity extends AppCompatActivity {
         dateEditText = findViewById(R.id.dateScheduled);
         startTimeText = findViewById(R.id.startTimeText);
         endTimeText = findViewById(R.id.endTimeText);
-        names = findViewById(R.id.nameSearch);
+        //names = findViewById(R.id.nameSearch);
         saveButton = findViewById(R.id.saveButton);
 
         Toolbar toolbar = findViewById(R.id.toolBarScheduler);
@@ -59,9 +67,10 @@ public class createScheduleActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Create Schedule");
 
         requestQueue = Volley.newRequestQueue(this);
+        nameEntry = findViewById(R.id.nameEntry);
 
         // Spinner to call names
-        spinnerNames();
+        //spinnerNames();
 
         // Set up the date picker for the EditText
         dateEditText.setOnClickListener(v -> {
@@ -86,8 +95,11 @@ public class createScheduleActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(createScheduleActivity.this, selfServiceActivity.class);
-                startActivity(intent);
+                checkUserExists();
+                if (!does_not_exist) {
+                    Intent intent = new Intent(createScheduleActivity.this, employerActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -114,6 +126,59 @@ public class createScheduleActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    /*
+
+    -------- API REQUESTS -------
+
+
+     */
+    public void checkUserExists() {
+        JsonObjectRequest post_join = new JsonObjectRequest(
+                Request.Method.GET,
+                "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/"
+                        + nameEntry.getText().toString().trim(),
+                null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //user_id = response.getString("id");
+                        if (response.toString().equals("")) {
+                            does_not_exist = true;
+                        } else {
+                            does_not_exist = false;
+                        }
+                        Log.d("Volley Response", response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        does_not_exist = true;
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+
+        )
+        {
+            // dont know if necessary
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(post_join);
+    }
+
+    /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -125,6 +190,7 @@ public class createScheduleActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     // Spinner for all names from the database
     private void spinnerNames() {
         teamMembers = new ArrayList<>();
@@ -133,6 +199,8 @@ public class createScheduleActivity extends AppCompatActivity {
         names.setAdapter(adapter);
         namesInTeam();
     }
+
+
 
     // API for names to add into the spinner
     private void namesInTeam() {
@@ -167,7 +235,10 @@ public class createScheduleActivity extends AppCompatActivity {
 
         requestQueue.add(jsonArrayRequest);
     }
+
+     */
 }
+
 
 
 

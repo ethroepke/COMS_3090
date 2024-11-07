@@ -74,6 +74,9 @@ public class UserProfile implements Serializable {
     @JsonManagedReference
     private Salary salary;
 
+    @OneToOne(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Employer employer;
 
 
     public UserProfile(Long userId, String password, String username, String email ) {

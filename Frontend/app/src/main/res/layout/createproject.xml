@@ -90,13 +90,13 @@
         android:padding="16dp">
     </TextView>
 
-    <EditText
-        android:id="@+id/employer_assigned"
+    <Spinner
+        android:id="@+id/employer_Assigned"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter employer's name"
         android:padding="16dp">
-    </EditText>
+    </Spinner>
 
     <!-- Save Button -->
     <Button

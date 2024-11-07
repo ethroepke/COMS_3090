@@ -41,7 +41,7 @@ public class employeeActivity extends AppCompatActivity {
     private Button messageButton;
     private Button performanceReviewButton;
     private Button profileButton;
-    private Button projButton;
+    private Button taskButton;
     private Button selfServiceButton;
     private Button payButton;
     private TextView checkInMsg;
@@ -66,7 +66,7 @@ public class employeeActivity extends AppCompatActivity {
         messageButton = findViewById(R.id.messageButton);
         performanceReviewButton = findViewById(R.id.performanceButton);
         profileButton = findViewById(R.id.profileButton);
-        projButton = findViewById(R.id.projButton);
+        taskButton = findViewById(R.id.projButton);
         selfServiceButton = findViewById(R.id.selfServiceButton);
         payButton = findViewById(R.id.payButton);
         searchView = findViewById(R.id.searchView);
@@ -128,35 +128,35 @@ public class employeeActivity extends AppCompatActivity {
         performanceReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, loginActivity.class);
+                Intent intent = new Intent(employeeActivity.this, performanceReviewActivity.class);
                 startActivity(intent);
             }
         });
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, loginActivity.class);
+                Intent intent = new Intent(employeeActivity.this, profileActivity.class);
                 startActivity(intent);
             }
         });
-        projButton.setOnClickListener(new View.OnClickListener() {
+        taskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, loginActivity.class);
+                Intent intent = new Intent(employeeActivity.this, taskEmployeeActivity.class);
                 startActivity(intent);
             }
         });
         selfServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, loginActivity.class);
+                Intent intent = new Intent(employeeActivity.this, selfServiceActivity.class);
                 startActivity(intent);
             }
         });
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, loginActivity.class);
+                Intent intent = new Intent(employeeActivity.this, payActivity.class);
                 startActivity(intent);
             }
         });
@@ -219,132 +219,3 @@ public class employeeActivity extends AppCompatActivity {
         builder.show();
     }
 }
-
-    /*
-
-    -------------------- API REQUESTS ------------------------
-
-
-    // POST
-    public void postRequest(JSONObject j) {
-        String post_url = "http://coms-3090-046.class.las.iastate.edu:8080/api/timeWorked/";
-        JsonObjectRequest post_time = new JsonObjectRequest(
-                Request.Method.POST,
-                post_url,
-                j,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
-                    }
-                }
-
-        )
-        {
-            // dont know if necessary
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                return params;
-            }
-        };
-
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(post_time);
-    }
-
-    // GET
-    public void getRequest() {
-        String get_url = "http://coms-3090-046.class.las.iastate.edu:8080/api/timeWorked/";
-        JsonObjectRequest get_time = new JsonObjectRequest(
-                Request.Method.GET,
-                get_url,
-                null, // get request
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
-                    }
-                }
-
-        )
-        {
-            // dont know if necessary
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                return params;
-            }
-        };
-
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(get_time);
-    }
-
-    // PUT
-    public void putRequest(JSONObject j) {
-        String put_url = "http://coms-3090-046.class.las.iastate.edu:8080/timeWorked/2";
-        JsonObjectRequest put_time = new JsonObjectRequest(
-                Request.Method.POST,
-                put_url,
-                j,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", response.toString());
-                        checkText.setText(response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
-                        //checkText.setText(error.toString());
-                    }
-                }
-
-        )
-        {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                return params;
-            }
-        };
-
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(put_time);
-    }
-
-     */
-

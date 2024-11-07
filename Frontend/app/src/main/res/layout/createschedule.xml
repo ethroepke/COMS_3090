@@ -27,12 +27,13 @@
         android:padding="16dp">
     </TextView>
 
-    <Spinner
-        android:id="@+id/nameSearch"
+    <EditText
+        android:id="@+id/nameEntry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="Enter the username of an employee"
         android:padding="16dp">
-    </Spinner>
+    </EditText>
 
     <!-- Due Date Field -->
     <TextView

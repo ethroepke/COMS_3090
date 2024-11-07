@@ -31,7 +31,7 @@ public class projectActivity extends AppCompatActivity {
     private Button createProjButton;
 
     // Replace when backend finishes
-    private static final String API_URL = "";
+    private static final String API_URL = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/allproject";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

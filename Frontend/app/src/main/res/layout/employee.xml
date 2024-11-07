@@ -87,7 +87,7 @@
         android:id="@+id/frameChange"
         android:layout_width="400dp"
         android:layout_height="90dp"
-        android:background="@drawable/square_button_border"
+        android:background="@drawable/square_button"
         android:layout_gravity="center"
         android:layout_marginTop="-90dp"
         android:clickable="false">
@@ -436,7 +436,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="1"
-            android:text="Projects"
+            android:text="Tasks"
             android:gravity="center"
             android:textSize="17dp"
             android:textColor="@color/black">

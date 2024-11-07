@@ -7,6 +7,7 @@ import coms309.entity.Projects;
 
 import coms309.service.NotificationService;
 import coms309.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,25 +36,25 @@ public class ProjectController {
 
     }
 
-    @GetMapping("/all")
+    @GetMapping("/allproject")
     public List<Projects> getAllProjects() {
         return projectService.getAllProjects();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/projectId/{id}")
     public ResponseEntity<Projects> getProjectById(@PathVariable Long id) {
         return projectService.getProjectById(id);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createProject(@PathVariable Long id , @RequestBody ProjectDTO updatedProjectDTO) {
-        return projectService.createProject(id, updatedProjectDTO);
+    public ResponseEntity<String> createProject(@Valid @RequestBody ProjectDTO projectDTO) {
+        return projectService.createProject(projectDTO);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateProject(@PathVariable Long id, @RequestBody Projects updatedProjects) {
-        return projectService.updateProject(id, updatedProjects);
-    }
+//    @PutMapping("/update/{id}")
+//    public ResponseEntity<String> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectDTO projectDTO) {
+//        return projectService.updateProject(id, projectDTO);
+//    }
 
     @PostMapping("/notify/{id}")
     public ResponseEntity<String> notifyEmployees(@PathVariable Long id) {

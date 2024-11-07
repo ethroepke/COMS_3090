@@ -48,35 +48,63 @@ public class Projects {
     private Priority priority;
 
     @Size(max = 500, message = "Description must not exceed 500 characters")
+    @Column(name = "project_description", nullable = false)
     private String description;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "Due_date")
     private Date dueDate;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "start_date", nullable = false)
+    @NotNull(message = "Start date is required")
+    private Date startDate;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "end_date", nullable = false)
+    @NotNull(message = "End date is required")
+    private Date endDate;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Tasks> tasks = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "projects")
-    @JsonManagedReference
+    @ManyToMany
+    @JoinTable(
+            name = "employer_project",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "employer_id")
+    )
+    @JsonBackReference
     private Set<Employer> employers = new HashSet<>();
+
+    public void addEmployer(Employer employer) {
+        this.employers.add(employer);
+        employer.getProjects().add(this);
+    }
+
+    public void removeEmployer(Employer employer) {
+        this.employers.remove(employer);
+        employer.getProjects().remove(this);
+    }
 
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Column(name = "status", nullable = false)
-    // Additional fields based on the constructor
+
     private String status;
 
-    // Constructors
-    public Projects(String description, Date dueDate, String projectName, String status , Priority priority) {
+
+    public Projects(String description, Date dueDate, String projectName, String status, Priority priority, Date startDate, Date endDate) {
         this.projectName = projectName;
         this.description = description;
         this.dueDate = dueDate;
         this.status = status;
         this.priority=priority;
+        this.endDate=endDate;
+        this.startDate=startDate;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
