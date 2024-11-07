@@ -75,7 +75,7 @@ public class Projects {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "employer_id")
     )
-    @JsonBackReference
+    @JsonManagedReference
     private Set<Employer> employers = new HashSet<>();
 
     public void addEmployer(Employer employer) {
@@ -118,12 +118,12 @@ public class Projects {
     // Utility methods to manage bidirectional relationship with Tasks
     public void addTask(Tasks task) {
         this.tasks.add(task);
-        task.setProjects(this);
+        task.setProject(this);
     }
 
     public void removeTask(Tasks task) {
         this.tasks.remove(task);
-        task.setProjects(null);
+        task.setProject(null);
     }
 
     // Lifecycle hooks to update timestamps

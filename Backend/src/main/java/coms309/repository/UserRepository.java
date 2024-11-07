@@ -18,12 +18,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByName(String name);
 
     // Find users assigned to a specific task ID
-    List<User> findByTasks_Id(Long taskId);
+    List<User> findByTasksSet_Id(Long taskId);
 
     // Find users with schedules within a certain date range (join with schedules)
     // Additional query methods may be necessary in a custom repository or query annotation
-    List<User> findBySchedules_StartTimeBetween(LocalDateTime start, LocalDateTime end);
+    List<User> findBySchedulesList_StartTimeBetween(LocalDateTime start, LocalDateTime end);
 
     // Find users who have been assigned at least one task
-    List<User> findByTasksIsNotEmpty();
+    List<User> findByTasksSetIsNotEmpty();
 }

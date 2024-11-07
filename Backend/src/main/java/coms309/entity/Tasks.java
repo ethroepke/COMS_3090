@@ -2,7 +2,6 @@ package coms309.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -19,34 +18,36 @@ public class Tasks {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @NotBlank(message = "Tasks name is required")
-    @Size(max = 100, message = "Tasks name must not exceed 100 characters")
+    @NotBlank(message = "Task name is required")
+    @Size(max = 100, message = "Task name must not exceed 100 characters")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Size(max = 500, message = "Description must not exceed 500 characters")
+    @Column(name = "description")
     private String description;
 
     @NotBlank(message = "Status is required")
+    @Size(max = 50, message = "Status must not exceed 50 characters")
+    @Column(name = "status", nullable = false)
     private String status;  // e.g., "Assigned", "In Progress", "Completed"
 
     @Min(value = 0, message = "Progress must be between 0 and 100")
     @Max(value = 100, message = "Progress must be between 0 and 100")
-    private int progress;  // Represented as percentage (0-100)
+    @Column(name = "progress")
+    private Integer progress;  // Represented as a percentage (0-100)
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // instead of FetchType.LAZY
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
     @JsonManagedReference
     private Projects project;
-
-    @ManyToMany
-    @JoinTable(
-            name = "task_employee",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "employee_id")
-    )
+    @ManyToMany(fetch = FetchType.EAGER) // instead of FetchType.LAZY
     private Set<User> assignedEmployees = new HashSet<>();
 
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
     // Constructors
@@ -55,12 +56,12 @@ public class Tasks {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Tasks(String name, String description, String status, int progress, Projects projects) {
+    public Tasks(String name, String description, String status, int progress, Projects project) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.progress = progress;
-        this.project = projects;
+        this.project = project;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -98,20 +99,20 @@ public class Tasks {
         this.status = status;
     }
 
-    public int getProgress() {
+    public Integer getProgress() {
         return progress;
     }
 
-    public void setProgress(int progress) {
+    public void setProgress(Integer progress) {
         this.progress = progress;
     }
 
-    public Projects getProjects() {
+    public Projects getProject() {
         return project;
     }
 
-    public void setProjects(Projects projects) {
-        this.project = projects;
+    public void setProject(Projects project) {
+        this.project = project;
     }
 
     public Set<User> getAssignedEmployees() {
@@ -141,12 +142,12 @@ public class Tasks {
     // Utility methods to manage bidirectional relationship with User
     public void addEmployee(User employee) {
         assignedEmployees.add(employee);
-        employee.getTasks().add(this);
+        employee.getTasksSet().add(this);
     }
 
     public void removeEmployee(User employee) {
         assignedEmployees.remove(employee);
-        employee.getTasks().remove(this);
+        employee.getTasksSet().remove(this);
     }
 
     // Lifecycle hooks to update timestamps

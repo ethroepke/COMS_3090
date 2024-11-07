@@ -1,7 +1,7 @@
 package coms309.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -25,11 +25,13 @@ public class User {
     @Size(max = 50, message = "Role must not exceed 50 characters")
     private String role; // e.g., "Admin", "Employer", "Employee"
 
-    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Schedule> schedules = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Schedules> schedulesList = new ArrayList<>();
 
     @ManyToMany(mappedBy = "assignedEmployees")
-    private Set<Tasks> tasks = new HashSet<>();
+    @JsonManagedReference
+    private Set<Tasks> tasksSet = new HashSet<>();
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -72,20 +74,20 @@ public class User {
         this.role = role;
     }
 
-    public List<Schedule> getSchedules() {
-        return schedules;
+    public List<Schedules> getSchedulesList() {
+        return schedulesList;
     }
 
-    public void setSchedules(List<Schedule> schedules) {
-        this.schedules = schedules;
+    public void setSchedulesList(List<Schedules> schedulesList) {
+        this.schedulesList = schedulesList;
     }
 
-    public Set<Tasks> getTasks() {
-        return tasks;
+    public Set<Tasks> getTasksSet() {
+        return tasksSet;
     }
 
-    public void setTasks(Set<Tasks> tasks) {
-        this.tasks = tasks;
+    public void setTasksSet(Set<Tasks> tasksSet) {
+        this.tasksSet = tasksSet;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -104,26 +106,26 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    // Utility methods to manage bidirectional relationship with Schedule
-    public void addSchedule(Schedule schedule) {
-        schedules.add(schedule);
-        schedule.setAssignedUser(this);
+    // Utility methods to manage bidirectional relationship with Schedules
+    public void addSchedule(Schedules schedule) {
+        schedulesList.add(schedule);
+        schedule.setUser(this);
     }
 
-    public void removeSchedule(Schedule schedule) {
-        schedules.remove(schedule);
-        schedule.setAssignedUser(null);
+    public void removeSchedule(Schedules schedule) {
+        schedulesList.remove(schedule);
+        schedule.setUser(null);
     }
 
     // Utility methods to manage bidirectional relationship with Tasks
-    public void addTask(Tasks tasks) {
-        this.tasks.add(tasks);
-        tasks.getAssignedEmployees().add(this);
+    public void addTask(Tasks task) {
+        tasksSet.add(task);
+        task.getAssignedEmployees().add(this);
     }
 
-    public void removeTask(Tasks tasks) {
-        this.tasks.remove(tasks);
-        tasks.getAssignedEmployees().remove(this);
+    public void removeTask(Tasks task) {
+        tasksSet.remove(task);
+        task.getAssignedEmployees().remove(this);
     }
 
     // Lifecycle hooks to update timestamps

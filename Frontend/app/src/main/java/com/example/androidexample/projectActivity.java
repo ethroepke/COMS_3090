@@ -24,14 +24,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 public class projectActivity extends AppCompatActivity {
     private LinearLayout projectListLayout;
     private List<Map<String, String>> projectList;
     private Button createProjButton;
-
-    // Replace when backend finishes
-    private static final String API_URL = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/allproject";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,105 +54,122 @@ public class projectActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Fetch projects from the backend
         fetchProjects();
     }
 
+
     private void fetchProjects() {
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                API_URL,
-                null,
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/allproject";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        parseProjectData(response);
+                        try {
+                            System.out.println("JSON Response: " + response.toString());
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject projectObject = response.getJSONObject(i);
+
+                                // Extract fields from the JSON object
+                                String projectName = projectObject.optString("projectName", "Unnamed Project");
+                                String projectDescription = projectObject.optString("description", "No description available.");
+                                String priority = projectObject.optString("priority", "No priority");
+                                String dueDate = projectObject.optString("dueDate", "No due date");
+
+                                // Format text for each line
+                                String projectNameText = "Project: " + projectName;
+                                String projectDescriptionText = "Description: " + projectDescription;
+                                String dueDateText = "Due Date: " + dueDate;
+
+                                // Create a CardView for each project
+                                CardView cardView = new CardView(projectActivity.this);
+                                cardView.setCardElevation(8);
+                                cardView.setRadius(16);
+                                cardView.setUseCompatPadding(true);
+
+                                // Create a LinearLayout to hold the TextViews inside the CardView
+                                LinearLayout cardLayout = new LinearLayout(projectActivity.this);
+                                cardLayout.setOrientation(LinearLayout.VERTICAL);
+                                cardLayout.setPadding(16, 16, 16, 16);
+
+                                // Create TextViews for each line
+                                TextView nameView = new TextView(projectActivity.this);
+                                nameView.setText(projectNameText);
+                                nameView.setPadding(0, 0, 0, 8);
+
+                                TextView descriptionView = new TextView(projectActivity.this);
+                                descriptionView.setText(projectDescriptionText);
+                                descriptionView.setPadding(0, 8, 0, 8);
+
+                                // TextView for Due Date
+                                TextView dueDateView = new TextView(projectActivity.this);
+                                dueDateView.setText(dueDateText);
+                                dueDateView.setPadding(0, 8, 0, 8);
+
+                                // TextView for Priority
+                                TextView priorityView = new TextView(projectActivity.this);
+                                priorityView.setText("Priority: " + priority);
+                                priorityView.setPadding(8, 4, 8, 4); // padding for a badge-like look
+
+                                // Set background color based on priority level
+                                int priorityBackgroundColor;
+                                switch (priority.toLowerCase()) {
+                                    case "high":
+                                        priorityBackgroundColor = ContextCompat.getColor(projectActivity.this, android.R.color.holo_red_light);
+                                        break;
+                                    case "medium":
+                                        priorityBackgroundColor = ContextCompat.getColor(projectActivity.this, android.R.color.holo_orange_light);
+                                        break;
+                                    case "low":
+                                        priorityBackgroundColor = ContextCompat.getColor(projectActivity.this, android.R.color.holo_green_light);
+                                        break;
+                                    default:
+                                        priorityBackgroundColor = ContextCompat.getColor(projectActivity.this, android.R.color.darker_gray);
+                                }
+                                priorityView.setBackgroundColor(priorityBackgroundColor);
+                                priorityView.setTextColor(ContextCompat.getColor(projectActivity.this, android.R.color.white)); // set text color to white for better contrast
+                                priorityView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+                                // Add TextViews to the card layout
+                                cardLayout.addView(nameView);
+                                cardLayout.addView(descriptionView);
+                                cardLayout.addView(dueDateView);
+                                cardLayout.addView(priorityView);
+
+                                // Add the card layout to the CardView
+                                cardView.addView(cardLayout);
+
+                                // Add the CardView to the main layout
+                                projectListLayout.addView(cardView);
+
+                                // Optional: add a margin between cards
+                                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) cardView.getLayoutParams();
+                                layoutParams.setMargins(16, 16, 16, 16);
+                                cardView.setLayoutParams(layoutParams);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle error response
-                        TextView errorText = new TextView(projectActivity.this);
-                        errorText.setText("Error fetching projects: " + error.getMessage());
-                        projectListLayout.addView(errorText);
+                        error.printStackTrace();
                     }
-                }
-        );
+                });
+
+        // Add the request to the RequestQueue
         Volley.newRequestQueue(this).add(jsonArrayRequest);
     }
 
-    private void parseProjectData(JSONArray projectsArray) {
-        projectList.clear();
-        for (int i = 0; i < projectsArray.length(); i++) {
-            try {
-                JSONObject project = projectsArray.getJSONObject(i);
-                String name = project.getString("name");
-                String description = project.getString("description");
-                String assignedTo = project.getString("assignedTo");
-                String dueDate = project.getString("dueDate");
-                String importance = project.getString("importance");
-
-                addProjectToList(name, description, assignedTo, dueDate, importance);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void addProjectToList(String name, String description, String assignedTo, String dueDate, String importance) {
-        Map<String, String> newProject = new HashMap<>();
-        newProject.put("name", name);
-        newProject.put("description", description);
-        newProject.put("assignedTo", assignedTo);
-        newProject.put("dueDate", dueDate);
-        newProject.put("importance", importance);
-
-        projectList.add(newProject);
-        displayProjects();
-    }
-
-    private void displayProjects() {
-        projectListLayout.removeAllViews();
-        if (projectList.isEmpty()) {
-            TextView noProjectsText = new TextView(this);
-            noProjectsText.setText("No projects available. Please create a new project.");
-            noProjectsText.setTextSize(18);
-            projectListLayout.addView(noProjectsText);
-        } else {
-            for (Map<String, String> project : projectList) {
-                View projectView = createProjectView(project);
-                projectListLayout.addView(projectView);
-            }
-        }
-    }
-
-    private View createProjectView(Map<String, String> project) {
-        LinearLayout projectView = new LinearLayout(this);
-        projectView.setOrientation(LinearLayout.VERTICAL);
-        TextView nameText = new TextView(this);
-        nameText.setText("Name: " + project.get("name"));
-        TextView descText = new TextView(this);
-        descText.setText("Description: " + project.get("description"));
-        TextView assignedText = new TextView(this);
-        assignedText.setText("Assigned to: " + project.get("assignedTo"));
-        TextView dueText = new TextView(this);
-        dueText.setText("Due Date: " + project.get("dueDate"));
-        TextView importanceText = new TextView(this);
-        importanceText.setText("Importance: " + project.get("importance"));
-
-        projectView.addView(nameText);
-        projectView.addView(descText);
-        projectView.addView(assignedText);
-        projectView.addView(dueText);
-        projectView.addView(importanceText);
-
-        return projectView;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            //For permissions this will be chang depending on users (Admin or Employer or Employee) to make sure send back to right page
             Intent intent = new Intent(projectActivity.this, adminActivity.class);
             startActivity(intent);
             return true;
@@ -160,6 +177,7 @@ public class projectActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+
 
 
 

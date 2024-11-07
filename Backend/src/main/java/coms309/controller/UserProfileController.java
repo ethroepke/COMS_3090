@@ -257,4 +257,13 @@ public class UserProfileController {
         return userService.signup(signUpUserProfileDTO);
     }
 
+    /**
+     * Gets all usernames
+     */
+    @GetMapping("/usernames")
+    public ResponseEntity<List<UserProfile>> getAllUsernames() {
+        logger.info("Controller: Fetching all usernames");
+        List<UserProfile> usernames = userService.getAllUsernames();
+        return ResponseEntity.ok(usernames);
+    }
 }

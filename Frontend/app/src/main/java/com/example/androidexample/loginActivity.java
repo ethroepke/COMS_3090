@@ -2,6 +2,7 @@ package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import android.content.SharedPreferences;
 
 
 public class loginActivity extends AppCompatActivity {
@@ -61,11 +63,11 @@ public class loginActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the users username/password inputs, trim to remove whitespace
+                // Get the user's username/password inputs, trim to remove whitespace
                 String username = usernameInput.getText().toString().trim();
                 String password = passwordInput.getText().toString().trim();
 
-                // Check if fields filled, then either successful login or failed login
+                // Check if fields are filled, then attempt login
                 if (!username.isEmpty() && !password.isEmpty()) {
                     String url = "http://coms-3090-046.class.las.iastate.edu:8080/login?username=" + username + "&password=" + password;
 
@@ -73,12 +75,21 @@ public class loginActivity extends AppCompatActivity {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    // Login successful
                                     if (response.equals("Login successful")) {
+                                        // Save username in SharedPreferences
+                                        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString("username", username);  // Save username
+                                        editor.apply();
 
+                                        // Call method to get the user ID if necessary
+                                        getUserId();
+
+                                        // Navigate to employeeActivity
                                         Intent intent = new Intent(loginActivity.this, employeeActivity.class);
                                         intent.putExtra("user_id", user_id);
                                         startActivity(intent);
+
                                     } else {
                                         messageText.setText(response);
                                     }
@@ -95,7 +106,6 @@ public class loginActivity extends AppCompatActivity {
                     Volley.newRequestQueue(loginActivity.this).add(loginRequest);
 
                 } else {
-                    // If fields not filled, message
                     messageText.setText("Please enter both username and password.");
                 }
             }

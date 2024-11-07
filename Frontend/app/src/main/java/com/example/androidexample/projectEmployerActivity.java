@@ -1,7 +1,7 @@
 package com.example.androidexample;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,139 +22,167 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 public class projectEmployerActivity extends AppCompatActivity {
     private LinearLayout projectListLayout;
-    private List<Map<String, String>> projectList;
-    private Button createTaskButton;
+    private Button createProjButton;
 
-    // Replace when backend finishes
-    private static final String API_URL = "";
-
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.projectemployer);
 
-        createTaskButton = findViewById(R.id.createTasks);
+        createProjButton = findViewById(R.id.createTasks);
         projectListLayout = findViewById(R.id.projectlayoutEmployer);
-        projectList = new ArrayList<>();
 
         Toolbar toolbar = findViewById(R.id.toolbarEmployer);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Project");
+        getSupportActionBar().setTitle("Projects");
 
-        createTaskButton.setOnClickListener(new View.OnClickListener() {
+        createProjButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(projectEmployerActivity.this, createProject.class);
+                Intent intent = new Intent(projectEmployerActivity.this, createTasksActivity.class);
                 startActivity(intent);
             }
         });
+
+        // Fetch all projects from the backend
         fetchProjects();
     }
 
     private void fetchProjects() {
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                API_URL,
-                null,
+        // Retrieve the logged-in employee's username from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        String username = sharedPreferences.getString("username", "");
+
+        // Ensure that the username is present
+        if (username.isEmpty()) {
+            // Log or handle the missing username scenario as needed
+            return;
+        }
+
+        // URL to fetch all projects
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/allproject";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        parseProjectData(response);
+                        try {
+                            System.out.println("JSON Response: " + response.toString());
+                            projectListLayout.removeAllViews(); // Clear previous views
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject projectObject = response.getJSONObject(i);
+
+                                // Extract fields from the JSON object
+                                String projectName = projectObject.optString("projectName", "Unnamed Project");
+                                String projectDescription = projectObject.optString("description", "No description available.");
+                                String priority = projectObject.optString("priority", "No priority");
+                                String dueDate = projectObject.optString("dueDate", "No due date");
+
+                                // Check if the logged-in username is in the assigned employees list
+                                JSONArray assignedEmployees = projectObject.optJSONArray("assignedEmployees");
+                                if (assignedEmployees != null) {
+                                    for (int j = 0; j < assignedEmployees.length(); j++) {
+                                        String assignedUsername = assignedEmployees.getString(j);
+                                        if (assignedUsername.equals(username)) {
+                                            // Create and configure a CardView for the matching project
+                                            createProjectCard(projectName, projectDescription, priority, dueDate);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle error response
-                        TextView errorText = new TextView(projectEmployerActivity.this);
-                        errorText.setText("Error fetching projects: " + error.getMessage());
-                        projectListLayout.addView(errorText);
+                        error.printStackTrace();
                     }
-                }
-        );
+                });
+
+        // Add the request to the RequestQueue
         Volley.newRequestQueue(this).add(jsonArrayRequest);
     }
 
-    private void parseProjectData(JSONArray projectsArray) {
-        projectList.clear();
-        for (int i = 0; i < projectsArray.length(); i++) {
-            try {
-                JSONObject project = projectsArray.getJSONObject(i);
-                String name = project.getString("name");
-                String description = project.getString("description");
-                String assignedTo = project.getString("assignedTo");
-                String dueDate = project.getString("dueDate");
-                String importance = project.getString("importance");
+    private void createProjectCard(String projectName, String description, String priority, String dueDate) {
+        CardView cardView = new CardView(projectEmployerActivity.this);
+        cardView.setCardElevation(8);
+        cardView.setRadius(16);
+        cardView.setUseCompatPadding(true);
 
-                addProjectToList(name, description, assignedTo, dueDate, importance);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        // Create a LinearLayout to hold the TextViews inside the CardView
+        LinearLayout cardLayout = new LinearLayout(projectEmployerActivity.this);
+        cardLayout.setOrientation(LinearLayout.VERTICAL);
+        cardLayout.setPadding(16, 16, 16, 16);
+
+        // Create TextViews for each line
+        TextView nameView = new TextView(projectEmployerActivity.this);
+        nameView.setText("Project: " + projectName);
+        nameView.setPadding(0, 0, 0, 8);
+
+        TextView descriptionView = new TextView(projectEmployerActivity.this);
+        descriptionView.setText("Description: " + description);
+        descriptionView.setPadding(0, 8, 0, 8);
+
+        TextView dueDateView = new TextView(projectEmployerActivity.this);
+        dueDateView.setText("Due Date: " + dueDate);
+        dueDateView.setPadding(0, 8, 0, 8);
+
+        TextView priorityView = new TextView(projectEmployerActivity.this);
+        priorityView.setText("Priority: " + priority);
+        priorityView.setPadding(8, 4, 8, 4);
+
+        // Set background color based on priority level
+        int priorityBackgroundColor;
+        switch (priority.toLowerCase()) {
+            case "high":
+                priorityBackgroundColor = ContextCompat.getColor(projectEmployerActivity.this, android.R.color.holo_red_light);
+                break;
+            case "medium":
+                priorityBackgroundColor = ContextCompat.getColor(projectEmployerActivity.this, android.R.color.holo_orange_light);
+                break;
+            case "low":
+                priorityBackgroundColor = ContextCompat.getColor(projectEmployerActivity.this, android.R.color.holo_green_light);
+                break;
+            default:
+                priorityBackgroundColor = ContextCompat.getColor(projectEmployerActivity.this, android.R.color.darker_gray);
         }
-    }
+        priorityView.setBackgroundColor(priorityBackgroundColor);
+        priorityView.setTextColor(ContextCompat.getColor(projectEmployerActivity.this, android.R.color.white));
+        priorityView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-    private void addProjectToList(String name, String description, String assignedTo, String dueDate, String importance) {
-        Map<String, String> newProject = new HashMap<>();
-        newProject.put("name", name);
-        newProject.put("description", description);
-        newProject.put("assignedTo", assignedTo);
-        newProject.put("dueDate", dueDate);
-        newProject.put("importance", importance);
+        // Add TextViews to the card layout
+        cardLayout.addView(nameView);
+        cardLayout.addView(descriptionView);
+        cardLayout.addView(dueDateView);
+        cardLayout.addView(priorityView);
 
-        projectList.add(newProject);
-        displayProjects();
-    }
+        // Add the card layout to the CardView
+        cardView.addView(cardLayout);
 
-    private void displayProjects() {
-        projectListLayout.removeAllViews();
-        if (projectList.isEmpty()) {
-            TextView noProjectsText = new TextView(this);
-            noProjectsText.setText("No projects assigned");
-            noProjectsText.setTextSize(18);
-            projectListLayout.addView(noProjectsText);
-        } else {
-            for (Map<String, String> project : projectList) {
-                View projectView = createTasksView(project);
-                projectListLayout.addView(projectView);
-            }
-        }
-    }
+        // Add the CardView to the main layout
+        projectListLayout.addView(cardView);
 
-    private View createTasksView(Map<String, String> project) {
-        LinearLayout projectView = new LinearLayout(this);
-        projectView.setOrientation(LinearLayout.VERTICAL);
-        TextView nameText = new TextView(this);
-        nameText.setText("Name: " + project.get("name"));
-        TextView descText = new TextView(this);
-        descText.setText("Description: " + project.get("description"));
-        TextView assignedText = new TextView(this);
-        assignedText.setText("Assigned to: " + project.get("assignedTo"));
-        TextView dueText = new TextView(this);
-        dueText.setText("Due Date: " + project.get("dueDate"));
-        TextView importanceText = new TextView(this);
-        importanceText.setText("Importance: " + project.get("importance"));
-
-        projectView.addView(nameText);
-        projectView.addView(descText);
-        projectView.addView(assignedText);
-        projectView.addView(dueText);
-        projectView.addView(importanceText);
-
-        return projectView;
+        // Optional: add a margin between cards
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) cardView.getLayoutParams();
+        layoutParams.setMargins(16, 16, 16, 16);
+        cardView.setLayoutParams(layoutParams);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            //For permissions this will be chang depending on users (Admin or Employer or Employee) to make sure send back to right page
             Intent intent = new Intent(projectEmployerActivity.this, employerActivity.class);
             startActivity(intent);
             return true;
@@ -162,3 +190,4 @@ public class projectEmployerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+

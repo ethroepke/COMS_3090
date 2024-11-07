@@ -36,13 +36,10 @@ public class createProject extends AppCompatActivity {
     private Spinner employerAssigned;
     private Button saveButton;
 
-
     private ArrayAdapter<String> adapter2;
     private ArrayList<String> employerNamesList;
 
-    // Replace with URL when they finish
-    private static final String URL = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/create";
-
+    private RequestQueue requestQueue;
 
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
     @Override
@@ -58,6 +55,7 @@ public class createProject extends AppCompatActivity {
         saveButton = findViewById(R.id.save_button);
 
         employerNamesList = new ArrayList<>();
+        requestQueue = Volley.newRequestQueue(this);
 
         @SuppressLint({"MissingInflatedId", "LocalSuppress"})
         Toolbar toolbar = findViewById(R.id.toolBarCreate);
@@ -74,109 +72,100 @@ public class createProject extends AppCompatActivity {
         adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, employerNamesList);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         employerAssigned.setAdapter(adapter2);
-        fetchEmployerNames();
 
+        // Fetch employers from API
+        fetchEmployers();
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Save project data
                 saveProject();
             }
         });
     }
 
-    //API to save Project
-    private void saveProject() {
-        // Retrieve user input
-        String projectName = projectNameEditText.getText().toString();
-        String description = projectDescriptionEditText.getText().toString();
-        String dueDate = dueDateEditText.getText().toString();
-        String priority = priorityLevelSpinner.getSelectedItem().toString();
-        String assignedTo = employerAssigned.getSelectedItem().toString();
+    private void fetchEmployers() {
+        String url = "hhttp://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/usernames";
 
-        // JSON to hold data
-        JSONObject projectData = new JSONObject();
-        try {
-            projectData.put("name", projectName);
-            projectData.put("description", description);
-            projectData.put("dueDate", dueDate);
-            projectData.put("priority", priority);
-            projectData.put("assignedTo", assignedTo);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to create project data", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // JSON to send data
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.POST,
-                URL,
-                projectData,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // success creating project
-                        Toast.makeText(createProject.this, "Project created successfully!", Toast.LENGTH_SHORT).show();
-                        setResult(RESULT_OK);
-                        finish();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error creating project
-                        Toast.makeText(createProject.this, "Error creating project: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-        Volley.newRequestQueue(this).add(jsonObjectRequest);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            //For permissions this will be chang depending on users (Admin or Employer or Employee) to make sure send back to right page
-            Intent intent = new Intent(createProject.this, projectActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    //API to fetch all names
-    private void fetchEmployerNames() {
-        String fetch_url = "";
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, fetch_url, null,
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        employerNamesList.clear();
-
                         try {
+                            employerNamesList.clear();
+
                             for (int i = 0; i < response.length(); i++) {
-                                String name = response.getString(i);
-                                employerNamesList.add(name);
+                                JSONObject employer = response.getJSONObject(i);
+                                String username = employer.getString("username");
+                                employerNamesList.add(username);
                             }
+
+                            // Update the spinner with the employer names
                             adapter2.notifyDataSetChanged();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Toast.makeText(createProject.this, "Failed to load employers", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
+                        Toast.makeText(createProject.this, "Error fetching employers: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
         requestQueue.add(jsonArrayRequest);
     }
 
+    private void saveProject() {
+        String projectName = projectNameEditText.getText().toString();
+        String projectDescription = projectDescriptionEditText.getText().toString();
+        String dueDate = dueDateEditText.getText().toString();
+        String priorityLevel = priorityLevelSpinner.getSelectedItem().toString();
+        String assignedEmployer = employerAssigned.getSelectedItem().toString();
 
+        // Validate inputs
+        if (projectName.isEmpty() || projectDescription.isEmpty() || dueDate.isEmpty() || assignedEmployer.isEmpty()) {
+            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        // Create project JSON object
+        JSONObject projectData = new JSONObject();
+        try {
+            projectData.put("name", projectName);
+            projectData.put("description", projectDescription);
+            projectData.put("due_date", dueDate);
+            projectData.put("priority_level", priorityLevel);
+            projectData.put("assigned_employer", assignedEmployer);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // POST request to save the project
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/create";
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, projectData,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(createProject.this, "Project saved successfully!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(createProject.this, projectEmployerActivity.class));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error response
+                        Toast.makeText(createProject.this, "Error saving project: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Add request to the queue
+        requestQueue.add(jsonObjectRequest);
+    }
 }
+
 
