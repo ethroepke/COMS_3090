@@ -1,8 +1,6 @@
 package coms309.repository;
 
-import coms309.entity.Employer;
-import coms309.entity.UserProfile;
-import coms309.entity.UserType;
+import coms309.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,5 +20,7 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
 
     @Query("SELECT e FROM Employer e WHERE e.userProfile.username IN :usernames AND e.userProfile.userType = :userType")
     List<Employer> findAllEmployersByUsernameInAndUserType(@Param("usernames") List<String> usernames, @Param("userType") UserType userType);
+
+    List<UserProfile> findAllByGroupChats(GroupChat groupChat);
 
 }

@@ -35,11 +35,22 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOrigins("*")
                 .withSockJS()
                 .setInterceptors(new HttpSessionHandshakeInterceptor());
+        registry.addEndpoint("/notifications-websocket")
+                .setAllowedOrigins("*")  // You can restrict allowed origins if needed for security
+                .withSockJS()            // SockJS fallback
+                .setInterceptors(new HttpSessionHandshakeInterceptor());
+        registry.addEndpoint("/chat-socket")
+                .setAllowedOrigins("*")
+                .withSockJS()
+                .setInterceptors(new HttpSessionHandshakeInterceptor());
     }
+
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         // Add an authentication interceptor to the inbound channel
         registration.interceptors(authChannelInterceptor);
     }
+
+
 }

@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Entity class representing a user's profile.
@@ -78,6 +79,8 @@ public class UserProfile implements Serializable {
     @JsonManagedReference
     private Employer employer;
 
+    @ManyToMany(mappedBy = "users")
+    private List<GroupChat> groupChats;
 
     public UserProfile(Long userId, String password, String username, String email ) {
         this.userId = Long.valueOf(userId);

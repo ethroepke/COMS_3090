@@ -1,5 +1,6 @@
 package com.example.androidexample;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,7 +97,9 @@ public class chatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            //For permissions this will be chang depending on users (Admin or Employer or Employee) to make sure send back to right page
+            Intent intent = new Intent(chatActivity.this, messageActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

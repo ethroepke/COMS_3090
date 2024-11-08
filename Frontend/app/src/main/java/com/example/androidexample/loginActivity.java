@@ -38,7 +38,7 @@ public class loginActivity extends AppCompatActivity {
     private Button forgotPasswordButton;
     private Button newUserButton;
 
-    private String user_id;
+    //private String user_id;
 
     boolean isPasswordVisible = false;
 
@@ -87,8 +87,8 @@ public class loginActivity extends AppCompatActivity {
                                         getUserId();
 
                                         // Navigate to employeeActivity
-                                        Intent intent = new Intent(loginActivity.this, employeeActivity.class);
-                                        intent.putExtra("user_id", user_id);
+                                        Intent intent = new Intent(loginActivity.this, adminActivity.class);
+                                        //intent.putExtra("user_id", user_id);
                                         startActivity(intent);
 
                                     } else {
@@ -154,11 +154,6 @@ public class loginActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        try {
-                            user_id = response.getString("id");
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
                         Log.d("Volley Response", response.toString());
                     }
                 },
