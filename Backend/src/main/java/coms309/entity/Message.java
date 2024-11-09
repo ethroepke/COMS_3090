@@ -17,16 +17,13 @@ public class Message {
     private String sender;
     private LocalDateTime timestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "group_chat")
-    private GroupChat groupChat;
 
     public Message(){}
-    public Message( String content , String sender , GroupChat groupChat){
+    public Message( String content , String sender ){
         this.content= content;
         this.sender= sender;
         this.timestamp = LocalDateTime.now();
-        this.groupChat=groupChat;
+     
 
     }
 }

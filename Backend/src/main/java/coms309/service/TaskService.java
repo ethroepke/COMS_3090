@@ -2,8 +2,10 @@ package coms309.service;
 
 import coms309.dto.TaskDTO;
 import coms309.entity.Tasks;
+import coms309.entity.Projects;
 import coms309.entity.User;
 import coms309.exception.ResourceNotFoundException;
+import coms309.repository.ProjectRepository;
 import coms309.repository.TaskRepository;
 import coms309.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +24,32 @@ public class TaskService {
     private UserRepository userRepository;
 
     @Autowired
+    private ProjectRepository projectRepository; // Add this line
+
+    @Autowired
     private TaskWebSocketService taskWebSocketService;
 
     // Create a new task
     public Tasks createTask(TaskDTO taskDTO) {
+        if (taskDTO.getProjectId() == null) {
+            throw new IllegalArgumentException("Project ID must not be null");
+        }
+
+        // Fetch the project associated with the task
+        Projects projects = projectRepository.findById(taskDTO.getProjectId())
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + taskDTO.getProjectId()));
+
         Tasks tasks = new Tasks();
         tasks.setName(taskDTO.getName());
         tasks.setDescription(taskDTO.getDescription());
         tasks.setStatus("Assigned");
         tasks.setProgress(0);
+        tasks.setProject(projects); // Set the project
+
         taskRepository.save(tasks);
 
-        // Notify all users about the new tasks creation
-        taskWebSocketService.sendTaskNotification("New tasks created: " + tasks.getName());
+        // Notify all users about the new task creation
+        taskWebSocketService.sendTaskNotification("New task created: " + tasks.getName());
 
         return tasks;
     }

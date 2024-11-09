@@ -23,7 +23,7 @@ public class TaskController {
     private TaskService taskService;
 
     // Create a new task
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createTask(@Valid @RequestBody TaskDTO taskDTO) {
         try {
             Tasks tasks = taskService.createTask(taskDTO);

@@ -21,10 +21,8 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectService {
 
-
     @Autowired
     private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
-
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -47,21 +45,19 @@ public class ProjectService {
 
     @Transactional
     public ResponseEntity<String> createProject(ProjectDTO projectDTO) {
-        // Check if a project with the same name already exists
+
         Optional<Projects> existingProject = projectRepository.findByProjectName(projectDTO.getProjectName());
         if (existingProject.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Project with the same name already exists");
         }
 
-        // Validate and fetch employers
         Set<Employer> employers;
         try {
             employers = validateAndFetchEmployers(projectDTO.getEmployerUsernames());
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
-
 
         Projects project = new Projects();
         project.setProjectName(projectDTO.getProjectName());
@@ -72,159 +68,36 @@ public class ProjectService {
         project.setPriority(projectDTO.getPriority());
         project.setStatus(projectDTO.getStatus());
 
-
-
         project.setEmployers(employers);
         employers.forEach(employer -> employer.getProjects().add(project));
 
-        // Save the project
         projectRepository.save(project);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Project created successfully");
     }
-//        Optional<Projects> existingProject = projectRepository.findByProjectName(projectDTO.getProjectName());
-//        if (existingProject.isPresent()) {
-//            return ResponseEntity.badRequest().body("Project with the same name already exists");
-//        }
-//
-//
-//        if (projectDTO.getPriority() == null) {
-//            return ResponseEntity.badRequest().body("Priority level is required");
-//        }
-//
-//
-//        Projects project = new Projects();
-//        project.setProjectName(projectDTO.getProjectName());
-//        project.setDescription(projectDTO.getDescription());
-//        project.setDueDate(projectDTO.getDueDate());
-//        project.setPriority(projectDTO.getPriority());
-//        project.setStatus(projectDTO.getStatus());
-//
-//
-//
-//
-//        Set<Employer> employers = validateAndFetchEmployers(projectDTO.getEmployerUsernames());
-//        project.setEmployers(employers);
-//        employers.forEach(employer -> employer.getProjects().add(project));
-//
-//        projectRepository.save(project);
-//        return ResponseEntity.ok("Project created successfully");
-
-
-    @Transactional
-    public ResponseEntity<String> updateProject(Long id, ProjectDTO projectDTO) {
-        // 1. Retrieve the existing project by ID
-        Optional<Projects> existingProjectOpt = projectRepository.findById(id);
-        if (!existingProjectOpt.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Projects existingProject = existingProjectOpt.get();
-
-        existingProject.setDescription(projectDTO.getDescription());
-        existingProject.setDueDate(projectDTO.getDueDate());
-        existingProject.setProjectName(projectDTO.getProjectName());
-        existingProject.setStatus(projectDTO.getStatus());
-
-        if (projectDTO.getPriority() != null) {
-            existingProject.setPriority(projectDTO.getPriority());
-        }
-
-
-        List<String> employerUsernames = projectDTO.getEmployerUsernames();
-
-        if (employerUsernames != null) {
-
-            Set<Employer> currentEmployers = existingProject.getEmployers();
-            for (Employer employer : currentEmployers) {
-                employer.getProjects().remove(existingProject);
-            }
-            existingProject.getEmployers().clear();
-
-
-            if (!employerUsernames.isEmpty()) {
-
-                List<Employer> newEmployers = userProfileRepository.findAllEmployersByUsernameInAndUserType(
-                        employerUsernames,
-                        UserType.EMPLOYER
-                );
-
-
-                if (newEmployers.size() != employerUsernames.size()) {
-
-                    List<String> notFoundUsernames = new ArrayList<>();
-
-                    for (String username : employerUsernames) {
-                        boolean found = false;
-                        for (Employer employer : newEmployers) {
-                            if (employer.getUserProfile().getUsername().equals(username)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            notFoundUsernames.add(username);
-                        }
-                    }
-
-
-                    return ResponseEntity.badRequest().body(
-                            "Employers not found or not of type EMPLOYER: " + String.join(", ", notFoundUsernames)
-                    );
-                }
-
-                Set<Employer> employerSet = new HashSet<>();
-                for (Employer employer : newEmployers) {
-                    employerSet.add(employer);
-                    employer.getProjects().add(existingProject); // Maintain bidirectional relationship
-                }
-                existingProject.setEmployers(employerSet);
-            }
-        }
-
-
-        projectRepository.save(existingProject);
-
-        return ResponseEntity.ok("Project updated successfully");
-    }
 
     private Set<Employer> validateAndFetchEmployers(List<String> employerUsernames) {
-
-
         if (employerUsernames == null || employerUsernames.isEmpty()) {
             logger.debug("No employer usernames provided.");
             return Collections.emptySet();
         }
-
         logger.debug("Validating employer usernames: {}", employerUsernames);
-
-        // Fetch employers from the EmployerRepository based on usernames and UserType
-        List<Employer> employers = userProfileRepository.findAllEmployersByUsernameInAndUserType(
+        List<Employer> employers = userProfileRepository.findAllByUserProfileUsernameInAndUserProfileUserType(
                 employerUsernames,
                 UserType.EMPLOYER
         );
-
         logger.debug("Employers fetched from repository: {}", employers);
-
-
         Set<String> foundUsernames = employers.stream()
                 .map(emp -> emp.getUserProfile().getUsername())
                 .collect(Collectors.toSet());
-
         logger.debug("Found usernames: {}", foundUsernames);
-
-        // Determine which usernames were not found or are not of type EMPLOYER
         Set<String> inputUsernames = new HashSet<>(employerUsernames);
         inputUsernames.removeAll(foundUsernames);
-
         if (!inputUsernames.isEmpty()) {
             logger.warn("Employers not found or not of type EMPLOYER: {}", String.join(", ", inputUsernames));
             throw new IllegalArgumentException("Employers not found or not of type EMPLOYER: " + String.join(", ", inputUsernames));
         }
-
         logger.debug("Successfully validated employers: {}", foundUsernames);
-
         return new HashSet<>(employers);
-
     }
 }

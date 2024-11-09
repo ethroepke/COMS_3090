@@ -13,6 +13,9 @@ public interface ScheduleRepository extends JpaRepository<Schedules, Long> {
     // Find schedules by the assigned user's ID
     List<Schedules> findByUserId(Long userId);
 
+    // Find schedules by project ID
+    List<Schedules> findByProject_ProjectId(Long projectId);
+
     // Find schedules within a specific start time range
     List<Schedules> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
 
@@ -24,4 +27,7 @@ public interface ScheduleRepository extends JpaRepository<Schedules, Long> {
 
     // Find schedules by user and date range
     List<Schedules> findByUserIdAndStartTimeBetween(Long userId, LocalDateTime start, LocalDateTime end);
+
+    // Find schedules by project and date range
+    List<Schedules> findByProject_ProjectIdAndStartTimeBetween(Long projectId, LocalDateTime start, LocalDateTime end);
 }

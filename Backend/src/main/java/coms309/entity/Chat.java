@@ -1,21 +1,14 @@
-package coms309.websocket3.chat;
+package coms309.entity;
 
 import java.time.LocalDateTime;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import coms309.image.Image;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Table(name = "messages")
 @Data
-public class Message {
+public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,18 +24,22 @@ public class Message {
     @Column(name = "sent", nullable = false)
     private LocalDateTime sent = LocalDateTime.now();
 
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
+
     // Default constructor
-    public Message() {}
+    public Chat() {}
 
     // Constructor for userName and content
-    public Message(String userName, String content) {
+    public Chat(String userName, String content) {
         this.userName = userName;
         this.content = content;
         this.sent = LocalDateTime.now();
     }
 
     // Constructor for userName, content, and sent timestamp
-    public Message(String userName, String content, LocalDateTime sent) {
+    public Chat(String userName, String content, LocalDateTime sent) {
         this.userName = userName;
         this.content = content;
         this.sent = sent;
@@ -79,5 +76,13 @@ public class Message {
 
     public void setSent(LocalDateTime sent) {
         this.sent = sent;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 }

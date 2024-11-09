@@ -28,7 +28,7 @@ h1 {
     margin-bottom: 15px;
 }
 
-#wsserver, #username, #msg {
+#wsserver, #username, #msg, #imageUpload, #chatType {
     width: calc(100% - 20px);
     padding: 10px;
     margin: 5px 0;

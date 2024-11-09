@@ -31,13 +31,14 @@ public class Employer{
     @JsonBackReference
     private UserProfile userProfile;
 
-
-
-    @ManyToMany(mappedBy = "employers")
+    @ManyToMany
+    @JoinTable(
+            name = "employer_projects",
+            joinColumns = @JoinColumn(name = "employer_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
     @JsonBackReference
     private Set<Projects> projects = new HashSet<>();
-
-
 
     public Employer(){}
 

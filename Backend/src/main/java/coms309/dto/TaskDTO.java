@@ -4,11 +4,12 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
 public class TaskDTO {
 
-    @NotBlank(message = "Tasks name is required")
-    @Size(max = 100, message = "Tasks name must not exceed 100 characters")
+    @NotBlank(message = "Task name is required")
+    @Size(max = 100, message = "Task name must not exceed 100 characters")
     private String name;
 
     @Size(max = 500, message = "Description must not exceed 500 characters")
@@ -21,14 +22,18 @@ public class TaskDTO {
     @Max(value = 100, message = "Progress must not exceed 100%")
     private int progress;  // Represented as percentage (0-100)
 
+    @NotNull(message = "Project ID is required") // Add this field to ensure it's provided
+    private Long projectId;
+
     // Constructors
     public TaskDTO() {}
 
-    public TaskDTO(String name, String description, String status, int progress) {
+    public TaskDTO(String name, String description, String status, int progress, Long projectId) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.progress = progress;
+        this.projectId = projectId;
     }
 
     // Getters and Setters
@@ -62,5 +67,13 @@ public class TaskDTO {
 
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

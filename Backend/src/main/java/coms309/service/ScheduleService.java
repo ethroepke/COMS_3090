@@ -1,9 +1,11 @@
 package coms309.service;
 
 import coms309.dto.ScheduleDTO;
+import coms309.entity.Projects;
 import coms309.entity.Schedules;
 import coms309.entity.User;
 import coms309.exception.ResourceNotFoundException;
+import coms309.repository.ProjectRepository;
 import coms309.repository.ScheduleRepository;
 import coms309.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +24,23 @@ public class ScheduleService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ProjectRepository projectRepository;
+
     // Create a new schedule
     public Schedules createSchedule(ScheduleDTO scheduleDTO) {
         User user = userRepository.findById(scheduleDTO.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + scheduleDTO.getUserId()));
+
+        Projects project = projectRepository.findById(scheduleDTO.getProjectId())
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + scheduleDTO.getProjectId()));
 
         Schedules schedule = new Schedules();
         schedule.setEventType(scheduleDTO.getEventType());
         schedule.setStartTime(scheduleDTO.getStartTime());
         schedule.setEndTime(scheduleDTO.getEndTime());
         schedule.setUser(user);
+        schedule.setProject(project); // Set the project
 
         return scheduleRepository.save(schedule);
     }
@@ -66,10 +75,14 @@ public class ScheduleService {
         User user = userRepository.findById(scheduleDTO.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + scheduleDTO.getUserId()));
 
+        Projects project = projectRepository.findById(scheduleDTO.getProjectId())
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + scheduleDTO.getProjectId()));
+
         schedule.setEventType(scheduleDTO.getEventType());
         schedule.setStartTime(scheduleDTO.getStartTime());
         schedule.setEndTime(scheduleDTO.getEndTime());
         schedule.setUser(user);
+        schedule.setProject(project); // Update the project
 
         return scheduleRepository.save(schedule);
     }

@@ -1,11 +1,12 @@
 package coms309.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,8 +14,8 @@ public class Schedules {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
-    private Long id;
+    @Column(name = "schedule_id")
+    private Long scheduleId;
 
     @NotBlank(message = "Event type is required")
     @Size(max = 255, message = "Event type must not exceed 255 characters")
@@ -32,8 +33,13 @@ public class Schedules {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference // Prevents recursion by indicating this side is the child
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    @JsonBackReference // Prevents recursion by indicating this side is the child
+    private Projects project; // Added project relationship
 
     @Column(name = "created_at", columnDefinition = "DATETIME(6)")
     private LocalDateTime createdAt;
@@ -47,22 +53,24 @@ public class Schedules {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Schedules(String eventType, LocalDateTime startTime, LocalDateTime endTime, User user) {
+    public Schedules(Long scheduleId, String eventType, LocalDateTime startTime, LocalDateTime endTime, User user, Projects project) {
+        this.scheduleId = scheduleId;
         this.eventType = eventType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.user = user;
+        this.project = project;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Long getScheduleId() {
+        return scheduleId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setScheduleId(Long scheduleId) {
+        this.scheduleId = scheduleId;
     }
 
     public String getEventType() {
@@ -95,6 +103,14 @@ public class Schedules {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Projects getProject() {
+        return project;
+    }
+
+    public void setProject(Projects project) {
+        this.project = project;
     }
 
     public LocalDateTime getCreatedAt() {

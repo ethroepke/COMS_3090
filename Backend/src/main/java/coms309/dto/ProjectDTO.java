@@ -2,16 +2,13 @@ package coms309.dto;
 
 
 import coms309.entity.Priority;
-import coms309.entity.UserProfile;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Setter
@@ -19,30 +16,28 @@ import java.util.List;
 @Data
 public class ProjectDTO {
 
-    @NotBlank(message = "Description is required")
-    @Size(max = 500, message = "Description must not exceed 500 characters")
-    private String description;
 
-    @NotBlank(message = "Project name is required")
-    @Size(max = 100, message = "Project name must not exceed 100 characters")
+    private String Description;
+
     private String projectName;
 
-    @NotBlank(message = "Status is required")
     private String status;
 
-    @NotNull(message = "Due date is required")
     private Date dueDate;
 
-    
-    private Date startDate;
+    public List<String> getEmployerUsernames() {
+        return getEmployerUsernames();
+    }
 
-    
-    private Date endDate;
+    public @NotNull(message = "Start date is required") LocalDate getStartDate() {
+        return getStartDate();
+    }
 
+    public @NotNull(message = "End date is required") LocalDate getEndDate() {
+        return getEndDate();
+    }
 
-    @NotNull(message = "Priority level is required")
-    private Priority priority;
-
-    @NotEmpty(message = "Employers list cannot be empty")
-    private List<@NotBlank(message = "Employer username cannot be blank") String> employerUsernames;
+    public @NotNull(message = "Priority level is required") Priority getPriority() {
+        return getPriority();
+    }
 }

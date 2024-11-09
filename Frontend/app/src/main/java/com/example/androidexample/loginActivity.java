@@ -80,7 +80,7 @@ public class loginActivity extends AppCompatActivity {
                                         // Save username in SharedPreferences
                                         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                                        editor.putString("username", username);  // Save username
+                                        editor.putString("username", username);
                                         editor.apply();
 
                                         // Call method to get the user ID if necessary

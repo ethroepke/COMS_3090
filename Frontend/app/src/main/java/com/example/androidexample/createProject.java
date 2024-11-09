@@ -158,7 +158,6 @@ public class createProject extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle the error response
                         Toast.makeText(createProject.this, "Error saving project: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });

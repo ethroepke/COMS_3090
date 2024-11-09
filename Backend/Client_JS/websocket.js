@@ -3,13 +3,14 @@ var ws;
 function connect() {
     var username = document.getElementById("username").value.trim();
     var wsserver = document.getElementById("wsserver").value.trim();
+    var chatType = document.getElementById("chatType").value;
 
     if (!username || !wsserver) {
         alert("Please enter both WebSocket URL and Username.");
         return;
     }
 
-    var url = wsserver + username;
+    var url = wsserver + chatType + "/" + username;
     ws = new WebSocket(url);
 
     ws.onopen = function(event) {
@@ -37,6 +38,25 @@ function send() {
         document.getElementById("msg").value = '';
     } else {
         logMessage("Message not sent. Make sure you're connected and message is not empty.");
+    }
+}
+
+function sendImage() {
+    var imageInput = document.getElementById("imageUpload");
+    if (ws && imageInput.files.length > 0) {
+        var file = imageInput.files[0];
+        if (file.size > 52428800) { // Check if file size is greater than 50MB
+            logMessage("Image not sent. File size exceeds 50MB.");
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function() {
+            ws.send("/image " + reader.result);
+            logMessage("You sent an image.");
+        };
+        reader.readAsDataURL(file);
+    } else {
+        logMessage("Image not sent. Make sure you're connected and an image is selected.");
     }
 }
 

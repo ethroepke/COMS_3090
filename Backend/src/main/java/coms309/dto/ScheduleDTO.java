@@ -1,5 +1,11 @@
 package coms309.dto;
 
+import coms309.dto.*;
+import coms309.entity.*;
+import coms309.entity.*;
+import coms309.exception.*;
+import coms309.repository.*;
+import coms309.service.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,14 +29,21 @@ public class ScheduleDTO {
     @NotNull(message = "User ID is required")
     private Long userId; // ID of the user assigned to this schedule
 
+    @NotNull(message = "Project ID is required") // Added for project association
+    private Long projectId; // ID of the project associated with this schedule
+
+    @NotNull
+    private UserDTO user;
+
     // Constructors
     public ScheduleDTO() {}
 
-    public ScheduleDTO(String eventType, LocalDateTime startTime, LocalDateTime endTime, Long userId) {
+    public ScheduleDTO(String eventType, LocalDateTime startTime, LocalDateTime endTime, Long userId, Long projectId) {
         this.eventType = eventType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.userId = userId;
+        this.projectId = projectId;
     }
 
     // Getters and Setters
@@ -64,5 +77,13 @@ public class ScheduleDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }
