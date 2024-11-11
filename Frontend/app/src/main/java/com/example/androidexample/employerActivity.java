@@ -202,7 +202,7 @@ public class employerActivity extends AppCompatActivity {
         projButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(employerActivity.this, projectEmployerActivity.class);
                 startActivity(intent);
             }
         });
