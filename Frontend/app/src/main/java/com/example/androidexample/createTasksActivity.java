@@ -1,6 +1,7 @@
 package com.example.androidexample;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -26,13 +27,12 @@ public class createTasksActivity extends AppCompatActivity {
 
     private EditText taskNameText;
     private EditText taskDescriptionText;
-    private EditText dueDateText;
     private Spinner priorityLevelSpinner;
     private EditText employeeAssignedText;
     private Button saveButton;
 
-    // Replace with URL when they finish
-    private static final String API_URL = "";
+    // Replace with your actual API URL
+    private static final String API_URL = "http://coms-3090-046.class.las.iastate.edu:8080/tasks/create";
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -42,12 +42,10 @@ public class createTasksActivity extends AppCompatActivity {
 
         taskNameText = findViewById(R.id.taskName);
         taskDescriptionText = findViewById(R.id.taskDescription);
-        dueDateText = findViewById(R.id.dueDate);
         priorityLevelSpinner = findViewById(R.id.priorityLevel);
         employeeAssignedText = findViewById(R.id.employeeAssigned);
         saveButton = findViewById(R.id.saveButton);
 
-        @SuppressLint({"MissingInflatedId", "LocalSuppress"})
         Toolbar toolbar = findViewById(R.id.toolBarCreate);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -58,47 +56,64 @@ public class createTasksActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         priorityLevelSpinner.setAdapter(adapter);
 
-
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveProject();
+                saveTask();
             }
         });
     }
 
-    private void saveProject() {
+    private void saveTask() {
         // Retrieve user input
         String taskName = taskNameText.getText().toString();
-        String projectDescription = taskDescriptionText.getText().toString();
-        String dueDate = dueDateText.getText().toString();
+        String taskDescription = taskDescriptionText.getText().toString();
         String priorityLevel = priorityLevelSpinner.getSelectedItem().toString();
         String employeeAssigned = employeeAssignedText.getText().toString();
 
-        // JSON to hold data
-        JSONObject projectData = new JSONObject();
+        // Get employerAssignedTo (username from SharedPreferences)
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String employerAssignedTo = sharedPreferences.getString("username", null);
+
+        if (taskName.isEmpty() || taskDescription.isEmpty() || employeeAssigned.isEmpty() || employerAssignedTo == null) {
+            Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Default values
+        String status = "Assigned";  // Default status for new tasks
+        int progress = 0;  // Progress starts at 0%
+
+        // Assume the project ID is passed or selected from somewhere.
+        // For now, we're assuming it's hardcoded to 101.
+        long projectId = 101;  // Replace with the actual project ID
+
+        // Prepare the JSON object
+        JSONObject taskData = new JSONObject();
         try {
-            projectData.put("name", taskName);
-            projectData.put("description", projectDescription);
-            projectData.put("dueDate", dueDate);
-            projectData.put("priority", priorityLevel);
-            projectData.put("assignedTo", employeeAssigned);
+            taskData.put("name", taskName);
+            taskData.put("description", taskDescription);
+            taskData.put("status", status);  // Status can be dynamic based on UI
+            taskData.put("progress", progress);  // Default progress
+            taskData.put("projectId", projectId);  // Ensure projectId is set correctly
+            taskData.put("employeeAssignedTo", employeeAssigned);  // Get the employee's username
+            taskData.put("employerAssignedTo", employerAssignedTo);  // Get employer from SharedPreferences
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Failed to create task data", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // JSON to send data
+        // Send the request via Volley
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 API_URL,
-                projectData,
+                taskData,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // success creating project
-                        Toast.makeText(createTasksActivity.this, "Project created successfully!", Toast.LENGTH_SHORT).show();
+                        // Success creating task
+                        Toast.makeText(createTasksActivity.this, "Task created successfully!", Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK);
                         finish();
                     }
@@ -106,8 +121,8 @@ public class createTasksActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // error creating project
-                        Toast.makeText(createTasksActivity.this, "Error creating project: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Error creating task
+                        Toast.makeText(createTasksActivity.this, "Error creating task: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -117,7 +132,7 @@ public class createTasksActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            //For permissions this will be chang depending on users (Admin or Employer or Employee) to make sure send back to right page
+            // Redirect based on permissions (Admin, Employer, etc.)
             Intent intent = new Intent(createTasksActivity.this, projectEmployerActivity.class);
             startActivity(intent);
             return true;

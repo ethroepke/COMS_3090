@@ -26,8 +26,8 @@ public class TaskController {
     @PostMapping("/create")
     public ResponseEntity<?> createTask(@Valid @RequestBody TaskDTO taskDTO) {
         try {
-            Tasks tasks = taskService.createTask(taskDTO);
-            return new ResponseEntity<>(tasks, HttpStatus.CREATED);
+            Tasks task = taskService.createTask(taskDTO);
+            return new ResponseEntity<>(task, HttpStatus.CREATED);
         } catch (Exception e) {
             logger.error("Error occurred while creating task", e);
             return new ResponseEntity<>("Internal Server Error: Unable to create task", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -62,6 +62,16 @@ public class TaskController {
     public ResponseEntity<?> getTasksAssignedTo(@PathVariable String username) {
         try {
             List<TaskDTO> tasks = taskService.getTasksAssignedTo(username);
+            return ResponseEntity.ok(tasks);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Internal Server Error: Unable to fetch tasks for the specified user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/assigned/employer/{employerId}")
+    public ResponseEntity<?> getTasksByEmployer(@PathVariable String employerId) {
+        try {
+            List<Tasks> tasks = taskService.getTasksByEmployer(employerId);
             return ResponseEntity.ok(tasks);
         } catch (Exception e) {
             return new ResponseEntity<>("Internal Server Error: Unable to fetch tasks for the specified user", HttpStatus.INTERNAL_SERVER_ERROR);

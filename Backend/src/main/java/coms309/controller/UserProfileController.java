@@ -15,8 +15,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/userprofile")
@@ -35,8 +38,31 @@ public class UserProfileController {
     @GetMapping("/all")
     public ResponseEntity<List<UserProfile>> getAllUserProfiles() {
         logger.info("Controller: Fetching all user profiles");
-        List<UserProfile> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+
+        try {
+            List<UserProfile> users = userService.getAllUsers();
+
+            if (users.isEmpty()) {
+                logger.info("No user profiles found.");
+                return ResponseEntity.noContent().build();
+            }
+
+            // Map to DTOs to prevent serialization issues
+            List<UserProfile> userDTOs = users.stream()
+                    .map(user -> new UserProfile(
+                            user.getUserId(),
+                            user.getFullName(),
+                            user.getUsername(),
+                            user.getEmail()
+                    ))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(userDTOs);
+
+        } catch (Exception e) {
+            logger.error("Error occurred while fetching user profiles: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
+        }
     }
 
     /**

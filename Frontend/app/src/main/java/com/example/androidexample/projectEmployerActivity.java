@@ -15,6 +15,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -22,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -52,68 +54,45 @@ public class projectEmployerActivity extends AppCompatActivity {
         });
 
         // Fetch all projects from the backend
-        fetchProjects();
+        List<Long> projectIds = Arrays.asList(124L, 125L, 126L);
+        fetchProjects(projectIds);
+
     }
 
-    private void fetchProjects() {
-        // Retrieve the logged-in employee's username from SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", "");
+    private void fetchProjects(List<Long> projectIds) {
+        projectListLayout.removeAllViews(); // Clear previous views
 
-        // Ensure that the username is present
-        if (username.isEmpty()) {
-            // Log or handle the missing username scenario as needed
-            return;
-        }
+        // Loop through each project ID and fetch the project data
+        for (Long projectId : projectIds) {
+            String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/projectId/" + projectId;
 
-        // URL to fetch all projects
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/allproject";
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            // Extract fields from the JSON object
+                            String projectName = response.optString("projectName", "Unnamed Project");
+                            String projectDescription = response.optString("description", "No description available.");
+                            String priority = response.optString("priority", "No priority");
+                            String dueDate = response.optString("dueDate", "No due date");
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            System.out.println("JSON Response: " + response.toString());
-                            projectListLayout.removeAllViews(); // Clear previous views
-
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject projectObject = response.getJSONObject(i);
-
-                                // Extract fields from the JSON object
-                                String projectName = projectObject.optString("projectName", "Unnamed Project");
-                                String projectDescription = projectObject.optString("description", "No description available.");
-                                String priority = projectObject.optString("priority", "No priority");
-                                String dueDate = projectObject.optString("dueDate", "No due date");
-
-                                // Check if the logged-in username is in the assigned employees list
-                                JSONArray assignedEmployees = projectObject.optJSONArray("assignedEmployees");
-                                if (assignedEmployees != null) {
-                                    for (int j = 0; j < assignedEmployees.length(); j++) {
-                                        String assignedUsername = assignedEmployees.getString(j);
-                                        if (assignedUsername.equals(username)) {
-                                            // Create and configure a CardView for the matching project
-                                            createProjectCard(projectName, projectDescription, priority, dueDate);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            // Create and configure a CardView for each project
+                            createProjectCard(projectName, projectDescription, priority, dueDate);
                         }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                });
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
 
-        // Add the request to the RequestQueue
-        Volley.newRequestQueue(this).add(jsonArrayRequest);
+            // Add the request to the RequestQueue
+            Volley.newRequestQueue(this).add(jsonObjectRequest);
+        }
     }
+
+
 
     private void createProjectCard(String projectName, String description, String priority, String dueDate) {
         CardView cardView = new CardView(projectEmployerActivity.this);
@@ -174,7 +153,7 @@ public class projectEmployerActivity extends AppCompatActivity {
         // Add the CardView to the main layout
         projectListLayout.addView(cardView);
 
-        // Optional: add a margin between cards
+
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) cardView.getLayoutParams();
         layoutParams.setMargins(16, 16, 16, 16);
         cardView.setLayoutParams(layoutParams);

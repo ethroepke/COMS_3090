@@ -76,8 +76,8 @@ public class TaskService {
         return taskRepository.findByStatus(status);
     }
 
-    public List<TaskDTO> getTasksAssignedTo(String userId) {
-        List<Tasks> tasks = taskRepository.findByEmployeeAssignedTo(userId);
+    public List<TaskDTO> getTasksAssignedTo(String taskId) {
+        List<Tasks> tasks = taskRepository.findByEmployeeAssignedTo(taskId);
         // Convert entity list to DTO list (using a mapping method or library)
         return tasks.stream().map(this::convertToTaskDTO).collect(Collectors.toList());
     }
@@ -92,6 +92,10 @@ public class TaskService {
                 task.getEmployeeAssignedTo(),
                 task.getEmployerAssignedTo()
         );
+    }
+
+    public List<Tasks> getTasksByEmployer(String employerId) {
+        return taskRepository.findByEmployerAssignedTo(employerId);
     }
 
     // Update an existing task
@@ -111,9 +115,9 @@ public class TaskService {
     }
 
     // Delete a task by ID
-    public void deleteTask(Long taskiId) {
-        Tasks tasks = taskRepository.findById(taskiId)
-                .orElseThrow(() -> new ResourceNotFoundException("Tasks not found with id: " + taskiId));
+    public void deleteTask(Long taskId) {
+        Tasks tasks = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tasks not found with id: " + taskId));
 
         taskRepository.delete(tasks);
 

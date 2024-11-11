@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -34,7 +35,8 @@ public class createScheduleActivity extends AppCompatActivity {
     private EditText dateEditText;
     private TextView startTimeText, endTimeText;
     private Button saveButton;
-    private EditText nameEntry;
+    private EditText nameEntry, employeeAssignedEditText;
+
     private boolean doesNotExist;
     private RequestQueue requestQueue;
 
@@ -54,6 +56,7 @@ public class createScheduleActivity extends AppCompatActivity {
         endTimeText = findViewById(R.id.endTimeText);
         saveButton = findViewById(R.id.saveButton);
         nameEntry = findViewById(R.id.nameEntry);
+        employeeAssignedEditText = findViewById(R.id.nameEntry);
 
         // Set up the toolbar
         Toolbar toolbar = findViewById(R.id.toolBarScheduler);
@@ -132,6 +135,13 @@ public class createScheduleActivity extends AppCompatActivity {
         String startDateTime = selectedDate + "T" + formatTimeTo24Hour(selectedStartTime);
         String endDateTime = selectedDate + "T" + formatTimeTo24Hour(selectedEndTime);
 
+        // Get employee (from text entry) and employer (from SharedPreferences)
+        String employeeAssignedTo = employeeAssignedEditText.getText().toString().trim();
+
+        // Fetch employerAssignedTo (username) from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String employerAssignedTo = sharedPreferences.getString("username", "");  // Default to empty string if no value is found
+
         // Prepare the schedule data to send in the POST request
         JSONObject scheduleData = new JSONObject();
         try {
@@ -140,6 +150,9 @@ public class createScheduleActivity extends AppCompatActivity {
             scheduleData.put("endTime", endDateTime); // Format: yyyy-MM-dd'T'HH:mm:ss
             scheduleData.put("userId", 101);  // Assuming userId is 101, modify as necessary
             scheduleData.put("projectId", 101); // Modify projectId as necessary
+            scheduleData.put("employeeAssignedTo", employeeAssignedTo);
+            scheduleData.put("employerAssignedTo", employerAssignedTo);
+
             Log.e("JSON RESPONSE", scheduleData.toString());
         } catch (JSONException e) {
             e.printStackTrace();

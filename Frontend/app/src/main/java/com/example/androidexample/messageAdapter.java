@@ -1,3 +1,4 @@
+// messageAdapter.java
 package com.example.androidexample;
 
 import android.content.Context;
@@ -57,3 +58,5 @@ public class messageAdapter extends RecyclerView.Adapter<messageAdapter.ViewHold
         }
     }
 }
+
+

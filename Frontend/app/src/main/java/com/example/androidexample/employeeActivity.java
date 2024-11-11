@@ -2,6 +2,7 @@ package com.example.androidexample;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -16,12 +17,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.androidexample.R;
 import com.example.androidexample.loginActivity;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +55,10 @@ public class employeeActivity extends AppCompatActivity {
     private Button payButton;
     private TextView checkInMsg;
     private Chronometer timeClockMsg;
+    private TextView payHome;
+    private TextView hoursHome;
+    private TextView payDayHome;
+    private String loggedInUsername;
 
     private SearchView searchView;
     private Button searchButton;
@@ -58,6 +71,13 @@ public class employeeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.employee);
+
+        // Retrieve username from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        loggedInUsername = sharedPreferences.getString("username", null);
+
+        // Fetch user data using the logged-in username
+        fetchUserData(loggedInUsername);
 
         borderChange = findViewById(R.id.frameChange);
         checkButton = findViewById(R.id.checkButton);
@@ -72,6 +92,9 @@ public class employeeActivity extends AppCompatActivity {
         searchView = findViewById(R.id.searchView);
         searchButton = findViewById(R.id.searchButton);
         resultTextView = findViewById(R.id.resultTextView);
+        payHome = findViewById(R.id.payText);
+        hoursHome = findViewById(R.id.hoursWorkedText);
+        payDayHome = findViewById(R.id.payDateText);
 
         initializeSampleData();
 
@@ -128,7 +151,7 @@ public class employeeActivity extends AppCompatActivity {
         performanceReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, performanceReviewActivity.class);
+                Intent intent = new Intent(employeeActivity.this, scheduleActivity.class);
                 startActivity(intent);
             }
         });
@@ -149,14 +172,14 @@ public class employeeActivity extends AppCompatActivity {
         selfServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, selfServiceActivity.class);
+                Intent intent = new Intent(employeeActivity.this, scheduleActivity.class);
                 startActivity(intent);
             }
         });
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, payActivity.class);
+                Intent intent = new Intent(employeeActivity.this, payCheckOverviewActivity.class);
                 startActivity(intent);
             }
         });
@@ -217,5 +240,47 @@ public class employeeActivity extends AppCompatActivity {
                 "\nHours Worked: " + workedHours);
         builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
         builder.show();
+    }
+
+    // Method to fetch user data from the backend and set it in the TextViews
+    private void fetchUserData(String username) {
+        if (username == null || username.isEmpty()) {
+            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/salary/username/" + username;
+
+        // Create a new request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Parse the response and set the values
+                            String takeHome = response.optString("takeHomePay", "0.00");
+                            String hours = response.optString("hoursWorked", "0.00");
+                            String payDay = response.optString("payday", "00/00/00");
+
+                            payHome.setText("Pay: $" + takeHome);
+                            hoursHome.setText("Hours worked: " + hours + " hours");
+                            payDayHome.setText("Payday: " + payDay);
+
+
+
+                        } catch (Exception e) {
+                            Toast.makeText(employeeActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(employeeActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Add the request to the RequestQueue
+        Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
 }

@@ -63,7 +63,7 @@
         android:id="@+id/due_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter due date (e.g., MM/DD/YYYY)"
+        android:hint="Enter due date (e.g., YYYY-MM-DD)"
         android:padding="16dp">
     </EditText>
 
@@ -90,13 +90,13 @@
         android:padding="16dp">
     </TextView>
 
-    <Spinner
+    <EditText
         android:id="@+id/employer_Assigned"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter employer's name"
+        android:hint="Enter employer's username"
         android:padding="16dp">
-    </Spinner>
+    </EditText>
 
     <!-- Save Button -->
     <Button
@@ -106,7 +106,8 @@
         android:text="Save"
         android:layout_gravity="center"
         android:padding="16dp"
-        android:backgroundTint="#FFA500">
+        android:backgroundTint="#FFA500"
+        android:layout_marginTop="10dp">
     </Button>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

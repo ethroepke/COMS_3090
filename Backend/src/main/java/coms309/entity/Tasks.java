@@ -40,7 +40,7 @@ public class Tasks {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
-    @JsonManagedReference
+    @JsonBackReference // Adjust to the correct side of the relationship
     private Projects project;
 
     @ManyToMany(fetch = FetchType.LAZY)
