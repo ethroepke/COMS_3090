@@ -319,7 +319,7 @@
             android:id="@+id/nextShiftText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Next Shift: 11/23/2024"
+            android:text="Next Shift: 00/00/0000"
             android:textSize="18dp"
             android:textColor="@color/black"
             android:layout_marginLeft="30dp">
@@ -330,7 +330,7 @@
             android:id="@+id/shiftHoursText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Shift Hours: 7:30AM - 3:00PM"
+            android:text="Shift Hours: 00:00 - 00:00"
             android:textSize="18dp"
             android:textColor="@color/black"
             android:gravity="left"
@@ -342,7 +342,7 @@
             android:id="@+id/assignedProjText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Assigned Projects: Submit Report"
+            android:text="Assigned Projects: N/A"
             android:textSize="18dp"
             android:textColor="@color/black"
             android:gravity="left"
@@ -365,7 +365,7 @@
             android:id="@+id/payText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pay: $839.23"
+            android:text="Pay: $0.00"
             android:textSize="18dp"
             android:textColor="@color/black"
             android:layout_marginLeft="30dp">
@@ -376,7 +376,7 @@
             android:id="@+id/hoursWorkedText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hours Worked: 32.34 hours"
+            android:text="Hours Worked: 0.00 hours"
             android:textSize="18dp"
             android:textColor="@color/black"
             android:layout_marginLeft="30dp">
@@ -387,7 +387,7 @@
             android:id="@+id/payDateText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Payday: 1/23/2023"
+            android:text="Payday: 00/00/0000"
             android:textSize="18dp"
             android:textColor="@color/black"
             android:layout_marginLeft="30dp">

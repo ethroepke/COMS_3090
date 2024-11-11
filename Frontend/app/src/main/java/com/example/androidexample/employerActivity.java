@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
@@ -25,14 +26,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.androidexample.R;
 import com.example.androidexample.loginActivity;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,6 +72,9 @@ public class employerActivity extends AppCompatActivity {
     private SearchView searchView;
     private Button searchButton;
     private TextView resultTextView;
+    private TextView shiftDateNextHome;
+    private TextView shiftHoursNextHome;
+    private TextView shiftProjectNextHome;
 
     private List<String> sampleData;
 
@@ -81,7 +89,8 @@ public class employerActivity extends AppCompatActivity {
         loggedInUsername = sharedPreferences.getString("username", null);
 
         // Fetch user data using the logged-in username
-        fetchUserData(loggedInUsername);
+        fetchPayData(loggedInUsername);
+        fetchScheduleData(loggedInUsername);
 
         borderChange = findViewById(R.id.frameChange);
         checkButton = findViewById(R.id.checkButton);
@@ -103,6 +112,9 @@ public class employerActivity extends AppCompatActivity {
         payHome = findViewById(R.id.payText);
         hoursHome = findViewById(R.id.hoursWorkedText);
         payDayHome = findViewById(R.id.payDateText);
+        shiftDateNextHome = findViewById(R.id.nextShiftText);
+        shiftHoursNextHome = findViewById(R.id.shiftHoursText);
+        shiftProjectNextHome = findViewById(R.id.assignedProjText);
 
         initializeSampleData();
 
@@ -152,14 +164,14 @@ public class employerActivity extends AppCompatActivity {
         projectStatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(employerActivity.this, projectStatusActivity.class);
                 startActivity(intent);
             }
         });
         assignProjButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(employerActivity.this, createTasksActivity.class);
                 startActivity(intent);
             }
         });
@@ -167,14 +179,14 @@ public class employerActivity extends AppCompatActivity {
         employeeAttendanceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, createScheduleActivity.class);
+                Intent intent = new Intent(employerActivity.this, employeeAttendanceActivity.class);
                 startActivity(intent);
             }
         });
         employeeStatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(employerActivity.this, employeeStatusActivity.class);
                 startActivity(intent);
             }
         });
@@ -188,14 +200,14 @@ public class employerActivity extends AppCompatActivity {
         performanceReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, createTasksActivity.class);
+                Intent intent = new Intent(employerActivity.this, performanceReviewActivity.class);
                 startActivity(intent);
             }
         });
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employerActivity.this, loginActivity.class);
+                Intent intent = new Intent(employerActivity.this, profileActivity.class);
                 startActivity(intent);
             }
         });
@@ -280,7 +292,7 @@ public class employerActivity extends AppCompatActivity {
     }
 
     // Method to fetch user data from the backend and set it in the TextViews
-    private void fetchUserData(String username) {
+    private void fetchPayData(String username) {
         if (username == null || username.isEmpty()) {
             Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
             return;
@@ -319,5 +331,106 @@ public class employerActivity extends AppCompatActivity {
 
         // Add the request to the RequestQueue
         Volley.newRequestQueue(this).add(jsonObjectRequest);
+    }
+
+    // Method to fetch user data for schedules. Get all users schedules and get next upcoming shift
+    private void fetchScheduleData(String username) {
+        if (username == null || username.isEmpty()) {
+            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/schedules/assigned/" + username;
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Initialize variables to track the next upcoming schedule
+                            JSONObject nextSchedule = null;
+                            LocalDateTime now = null;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                now = LocalDateTime.now();
+                            }
+                            LocalDateTime closestTime = null;
+
+                            // Date formatter for displaying the date and time
+                            DateTimeFormatter dateFormatter = null;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                            }
+                            DateTimeFormatter timeFormatter = null; // 12-hour format with AM/PM
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+                            }
+
+                            // Iterate through all schedules
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject schedule = response.getJSONObject(i);
+
+                                // Check if the schedule is assigned to the specified username
+                                String assignedTo = schedule.optString("employerAssignedTo", "");
+                                if (!assignedTo.equals(username)) {
+                                    // Skip this schedule if it's not assigned to the provided username
+                                    continue;
+                                }
+
+                                // Parse the start time
+                                String startTimeStr = schedule.optString("startTime", "");
+                                LocalDateTime startTime = null;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    startTime = LocalDateTime.parse(startTimeStr);
+                                }
+
+                                // Check if the schedule is upcoming and closer than any previously found schedule
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    if (startTime.isAfter(now) && (closestTime == null || startTime.isBefore(closestTime))) {
+                                        closestTime = startTime;
+                                        nextSchedule = schedule;
+                                    }
+                                }
+                            }
+
+                            // If an upcoming schedule was found, set it in the TextViews
+                            if (nextSchedule != null) {
+                                // Format the date and time
+                                String dateHome = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    dateHome = closestTime.toLocalDate().format(dateFormatter);
+                                }
+                                String hoursStartHome = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    hoursStartHome = closestTime.format(timeFormatter);
+                                }
+                                String hoursEndHome = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    hoursEndHome = LocalDateTime.parse(nextSchedule.optString("endTime")).format(timeFormatter);
+                                }
+                                String projectHome = nextSchedule.optString("eventType", "N/A");
+
+                                shiftDateNextHome.setText("Next Shift: " + dateHome);
+                                shiftHoursNextHome.setText("Hours: " + hoursStartHome + " - " + hoursEndHome);
+                                shiftProjectNextHome.setText("Assigned Project: " + projectHome);
+                            } else {
+                                // No upcoming schedule found for the user
+                                shiftDateNextHome.setText("No upcoming shifts");
+                                shiftHoursNextHome.setText("");
+                                shiftProjectNextHome.setText("");
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(employerActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(employerActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Add the request to the RequestQueue
+        Volley.newRequestQueue(this).add(jsonArrayRequest);
     }
 }
