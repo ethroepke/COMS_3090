@@ -16,6 +16,7 @@ import java.util.List;
 @Data
 public class ProjectDTO {
 
+    private Long projectId;
 
     private String Description;
 

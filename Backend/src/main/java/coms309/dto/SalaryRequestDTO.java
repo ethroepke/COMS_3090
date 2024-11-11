@@ -24,7 +24,11 @@ public class SalaryRequestDTO {
     @Positive(message = "Pay rate must be positive")
     private Double payRate;
 
+
     private Double bonusPay = 0.0;
     private Double deductibles = 0.0;
+
+    private Double grossPay;
+    private Double takeHomePay;
 
 }

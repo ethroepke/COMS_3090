@@ -2,6 +2,7 @@ package coms309.service;
 
 import coms309.dto.SalaryRequestDTO;
 import coms309.dto.SalaryResponseDTO;
+
 import coms309.entity.Salary;
 import coms309.entity.UserProfile;
 import coms309.repository.SalaryRepository;
@@ -95,8 +96,7 @@ public class PayDetailService {
      * @param salary the salary details
      * @return the created or updated salary entity wrapped in ResponseEntity
      */
-    public ResponseEntity<?> createOrUpdateSalaryResponse(Salary salary) {
-        // Validate that the userProfile exists
+    public ResponseEntity<?> createOrUpdateSalaryResponse(Salary salary ) {
         Long userId = salary.getUserProfile().getUserId(); // Assuming getUserId() exists
         Optional<UserProfile> userProfileOpt = userProfileRepository.findById(userId);
         if (!userProfileOpt.isPresent()) {
@@ -131,6 +131,7 @@ public class PayDetailService {
         SalaryResponseDTO responseDTO = mapToSalaryResponseDTO(savedSalary);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
     }
 
     /**
@@ -175,6 +176,5 @@ public class PayDetailService {
         salary.setGrossPay(salary.calculateGrossPay());
         salary.setTakeHomePay(salary.calculateTakeHomePay());
     }
-
 
 }

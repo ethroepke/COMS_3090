@@ -1,8 +1,11 @@
 package com.example.androidexample;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,7 +21,9 @@ public class messageActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewIndividual;
     private RecyclerView recyclerViewGroup;
+    private Button newChat;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,11 +31,22 @@ public class messageActivity extends AppCompatActivity {
 
         recyclerViewIndividual = findViewById(R.id.recyclerView_individual);
         recyclerViewGroup = findViewById(R.id.recyclerView_group);
+        newChat = findViewById(R.id.newChat);
+
         setTitle("Messages");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        newChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(messageActivity.this, chatActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         // Fetch messages from backend
         Apiservice apiService = new Apiservice(this);

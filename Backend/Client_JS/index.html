@@ -7,22 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="wrapper">
+<div taskId="wrapper">
     <h1>WebSocket Chat</h1>
-    <div id="connection-section">
-        <input type="text" id="wsserver" placeholder="WebSocket URL" value="ws://coms-3090-046.class.las.iastate.edu:8080/chat/" />
-        <input type="text" id="username" placeholder="Username" />
-        <select id="chatType">
+    <div taskId="connection-section">
+        <input type="text" taskId="wsserver" placeholder="WebSocket URL" value="ws://coms-3090-046.class.las.iastate.edu:8080/chat/" />
+        <input type="text" taskId="username" placeholder="Username" />
+        <select taskId="chatType">
             <option value="individual">Individual Chat</option>
             <option value="group">Group Chat</option>
         </select>
         <button class="button" type="button" onclick="connect();">Connect</button>
     </div>
-    <div id="chat-section">
-        <textarea id="log" rows="15" cols="80" readonly></textarea>
-        <div id="message-input">
-            <input type="text" id="msg" placeholder="Type your message here..." />
-            <input type="file" id="imageUpload" accept="image/*">
+    <div taskId="chat-section">
+        <textarea taskId="log" rows="15" cols="80" readonly></textarea>
+        <div taskId="message-input">
+            <input type="text" taskId="msg" placeholder="Type your message here..." />
+            <input type="file" taskId="imageUpload" accept="image/*">
             <button class="button" type="button" onclick="send();">Send</button>
             <button class="button" type="button" onclick="sendImage();">Send Image</button>
         </div>

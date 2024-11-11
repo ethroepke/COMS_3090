@@ -58,6 +58,16 @@ public class TaskController {
         }
     }
 
+    @GetMapping("/assigned/{username}")
+    public ResponseEntity<?> getTasksAssignedTo(@PathVariable String username) {
+        try {
+            List<TaskDTO> tasks = taskService.getTasksAssignedTo(username);
+            return ResponseEntity.ok(tasks);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Internal Server Error: Unable to fetch tasks for the specified user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // Get tasks by status
     @GetMapping("/status/{status}")
     public ResponseEntity<?> getTasksByStatus(@PathVariable String status) {

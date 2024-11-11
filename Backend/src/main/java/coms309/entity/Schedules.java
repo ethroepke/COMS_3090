@@ -47,13 +47,16 @@ public class Schedules {
     @Column(name = "updated_at", columnDefinition = "DATETIME(6)")
     private LocalDateTime updatedAt;
 
-    // Constructors
-    public Schedules() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
+    @Column(name = "employee_assigned_to", nullable = true)
+    private String employeeAssignedTo;
 
-    public Schedules(Long scheduleId, String eventType, LocalDateTime startTime, LocalDateTime endTime, User user, Projects project) {
+    @Column(name = "employer_assigned_to", nullable = true)
+    private String employerAssignedTo;
+
+    // Constructors
+    public Schedules() {}
+
+    public Schedules(Long scheduleId, String eventType, LocalDateTime startTime, LocalDateTime endTime, User user, Projects project, LocalDateTime createdAt, LocalDateTime updatedAt, String EmployeeAssignedTo, String EmployerAssignedTo) {
         this.scheduleId = scheduleId;
         this.eventType = eventType;
         this.startTime = startTime;
@@ -62,6 +65,8 @@ public class Schedules {
         this.project = project;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.employeeAssignedTo = EmployeeAssignedTo;
+        this.employerAssignedTo = EmployerAssignedTo;
     }
 
     // Getters and Setters
@@ -127,6 +132,22 @@ public class Schedules {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getEmployeeAssignedTo() {
+        return employeeAssignedTo;
+    }
+
+    public void setEmployeeAssignedTo(String employeeAssignedTo) {
+        this.employeeAssignedTo = employeeAssignedTo;
+    }
+
+    public String getEmployerAssignedTo() {
+        return employerAssignedTo;
+    }
+
+    public void setEmployerAssignedTo(String employerAssignedTo) {
+        this.employerAssignedTo = employerAssignedTo;
     }
 
     // Utility methods for scheduling validations

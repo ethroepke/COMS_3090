@@ -45,10 +45,10 @@ public class Salary {
     private Double payRate;
 
     @Column(name = "bonus_pay")
-    private Double bonusPay = 0.0; // Default to 0 if not provided
+    private Double bonusPay = 0.0;
 
     @Column(name = "deductibles")
-    private Double deductibles = 0.0; // Default to 0 if not provided
+    private Double deductibles = 0.0;
 
     @Column(name = "gross_pay")
     private Double grossPay;
@@ -56,7 +56,7 @@ public class Salary {
     @Column(name = "take_home_pay")
     private Double takeHomePay;
 
-    // Default constructor required by JPA
+
     public Salary() {
     }
 
@@ -65,10 +65,10 @@ public class Salary {
         this.userProfile = userProfile;
         this.hoursWorked = hoursWorked;
         this.payRate = payRate;
-        this.bonusPay = bonusPay != null ? bonusPay : 0.0; // Default to 0 if not provided
-        this.deductibles = deductibles != null ? deductibles : 0.0; // Default to 0 if not provided
+        this.bonusPay = bonusPay != null ? bonusPay : 0.0;
+        this.deductibles = deductibles != null ? deductibles : 0.0;
 
-        // Calculate gross and take-home pay
+
         this.grossPay = calculateGrossPay();
         this.takeHomePay = calculateTakeHomePay();
     }

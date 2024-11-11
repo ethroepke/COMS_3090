@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -36,15 +38,20 @@ public class TaskService {
         }
 
         // Fetch the project associated with the task
-        Projects projects = projectRepository.findById(taskDTO.getProjectId())
+        Projects projects = projectRepository.findByProjectId(taskDTO.getProjectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + taskDTO.getProjectId()));
 
         Tasks tasks = new Tasks();
+
         tasks.setName(taskDTO.getName());
         tasks.setDescription(taskDTO.getDescription());
         tasks.setStatus("Assigned");
         tasks.setProgress(0);
         tasks.setProject(projects); // Set the project
+        tasks.setCreatedAt(LocalDateTime.now());
+        tasks.setUpdatedAt(LocalDateTime.now());
+        tasks.setEmployeeAssignedTo(taskDTO.getEmployeeAssignedTo());
+        tasks.setEmployerAssignedTo(taskDTO.getEmployerAssignedTo());
 
         taskRepository.save(tasks);
 
@@ -60,20 +67,38 @@ public class TaskService {
     }
 
     // Retrieve task by ID
-    public Tasks getTaskById(Long id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tasks not found with id: " + id));
+    public Tasks getTaskById(Long taskId) {
+        return taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tasks not found with id: " + taskId));
     }
 
     public List<Tasks> getTasksByStatus(String status) {
         return taskRepository.findByStatus(status);
     }
 
+    public List<TaskDTO> getTasksAssignedTo(String userId) {
+        List<Tasks> tasks = taskRepository.findByEmployeeAssignedTo(userId);
+        // Convert entity list to DTO list (using a mapping method or library)
+        return tasks.stream().map(this::convertToTaskDTO).collect(Collectors.toList());
+    }
+
+    private TaskDTO convertToTaskDTO(Tasks task) {
+        return new TaskDTO(
+                task.getName(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getProgress(),
+                task.getProject(),
+                task.getEmployeeAssignedTo(),
+                task.getEmployerAssignedTo()
+        );
+    }
+
     // Update an existing task
     @Transactional
-    public Tasks updateTask(Long id, TaskDTO taskDTO) {
-        Tasks tasks = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tasks not found with id: " + id));
+    public Tasks updateTask(Long taskId, TaskDTO taskDTO) {
+        Tasks tasks = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tasks not found with id: " + taskId));
 
         tasks.setStatus(taskDTO.getStatus());
         tasks.setProgress(taskDTO.getProgress());
@@ -86,9 +111,9 @@ public class TaskService {
     }
 
     // Delete a task by ID
-    public void deleteTask(Long id) {
-        Tasks tasks = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tasks not found with id: " + id));
+    public void deleteTask(Long taskiId) {
+        Tasks tasks = taskRepository.findById(taskiId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tasks not found with id: " + taskiId));
 
         taskRepository.delete(tasks);
 

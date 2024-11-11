@@ -1,11 +1,5 @@
 package coms309.dto;
 
-import coms309.dto.*;
-import coms309.entity.*;
-import coms309.entity.*;
-import coms309.exception.*;
-import coms309.repository.*;
-import coms309.service.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,21 +23,24 @@ public class ScheduleDTO {
     @NotNull(message = "User ID is required")
     private Long userId; // ID of the user assigned to this schedule
 
-    @NotNull(message = "Project ID is required") // Added for project association
+    @NotNull(message = "Project ID is required")
     private Long projectId; // ID of the project associated with this schedule
 
-    @NotNull
-    private UserDTO user;
+    @NotNull(message = "Employee assigned to is required")
+    private String employeeAssignedTo;
+
+    @NotNull(message = "Employer assigned to is required")
+    private String employerAssignedTo;
 
     // Constructors
-    public ScheduleDTO() {}
-
-    public ScheduleDTO(String eventType, LocalDateTime startTime, LocalDateTime endTime, Long userId, Long projectId) {
+    public ScheduleDTO(String eventType, LocalDateTime startTime, LocalDateTime endTime, Long userId, Long projectId, String employeeAssignedTo, String employerAssignedTo) {
         this.eventType = eventType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.userId = userId;
         this.projectId = projectId;
+        this.employeeAssignedTo = employeeAssignedTo;
+        this.employerAssignedTo = employerAssignedTo;
     }
 
     // Getters and Setters
@@ -85,5 +82,21 @@ public class ScheduleDTO {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public String getEmployeeAssignedTo() {
+        return employeeAssignedTo;
+    }
+
+    public void setEmployeeAssignedTo(String employeeAssignedTo) {
+        this.employeeAssignedTo = employeeAssignedTo;
+    }
+
+    public String getEmployerAssignedTo() {
+        return employerAssignedTo;
+    }
+
+    public void setEmployerAssignedTo(String employerAssignedTo) {
+        this.employerAssignedTo = employerAssignedTo;
     }
 }

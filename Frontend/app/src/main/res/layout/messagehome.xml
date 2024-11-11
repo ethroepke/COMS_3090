@@ -18,16 +18,33 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Individual Messages Divider -->
-    <TextView
-        android:id="@+id/individual_messages_divider"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Individual Messages"
-        android:textSize="18sp"
-        android:textStyle="bold">
-    </TextView>
+        android:orientation="horizontal">
+
+        <!-- Individual Messages Divider -->
+        <TextView
+            android:id="@+id/individual_messages_divider"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Individual Messages"
+            android:textSize="18sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <!-- Button to join chat -->
+        <Button
+            android:id="@+id/newChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="90dp"
+            android:text="New chat"
+            android:backgroundTint="#FFA500">
+        </Button>
+
+    </LinearLayout>
 
     <!-- RecyclerView for Individual Messages -->
     <androidx.recyclerview.widget.RecyclerView

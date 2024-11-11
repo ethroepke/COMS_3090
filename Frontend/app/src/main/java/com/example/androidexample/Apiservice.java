@@ -30,6 +30,8 @@ public class Apiservice extends AppCompatActivity {
     }
 
     public void getMessages(String chatId, final MessageCallback callback) {
+
+        //URL needs to change
         String url = BASE_URL + "/messages/" + chatId;
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,

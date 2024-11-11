@@ -34,8 +34,8 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public ResponseEntity<Projects> getProjectById(Long id) {
-        Optional<Projects> project = projectRepository.findById(id);
+    public ResponseEntity<Projects> getProjectById(Long projectId) {
+        Optional<Projects> project = projectRepository.findById(projectId);
         if (project.isPresent()) {
             return ResponseEntity.ok(project.get());
         } else {
@@ -60,6 +60,7 @@ public class ProjectService {
         }
 
         Projects project = new Projects();
+        project.setProjectId(projectDTO.getProjectId());
         project.setProjectName(projectDTO.getProjectName());
         project.setDescription(projectDTO.getDescription());
         project.setDueDate(projectDTO.getDueDate());

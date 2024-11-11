@@ -54,6 +54,7 @@ public class Projects {
     private Set<Admin> admins = new HashSet<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
     private Set<Employee> employees = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
@@ -73,15 +74,14 @@ public class Projects {
 
     public Projects(){}
 
-    public Projects(String Description, Date dueDate, String projectName, String status ){
+    public Projects(Long projectId, String projectName, String Description, Date dueDate, String status, Priority priority, LocalDate startDate, LocalDate endDate ) {
+        this.projectId = projectId;
+        this.projectName = projectName;
         this.Description= Description;
-        this.projectName=projectName;
+        this.dueDate = dueDate;
         this.status= status;
-        this.dueDate= new Date();
-
+        this.priority = priority;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
-
-
-
-
 }

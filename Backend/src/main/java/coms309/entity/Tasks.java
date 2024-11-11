@@ -1,5 +1,6 @@
 package coms309.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -15,7 +16,7 @@ public class Tasks {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "task_id", nullable = false, updatable = false)
     private Long id;
 
     @NotBlank(message = "Task name is required")
@@ -37,12 +38,15 @@ public class Tasks {
     @Column(name = "progress")
     private Integer progress;  // Represented as a percentage (0-100)
 
-    @ManyToOne(fetch = FetchType.EAGER) // instead of FetchType.LAZY
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
     @JsonManagedReference
     private Projects project;
-    @ManyToMany(fetch = FetchType.EAGER) // instead of FetchType.LAZY
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Set<User> assignedEmployees = new HashSet<>();
+
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -50,13 +54,17 @@ public class Tasks {
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    // Constructors
-    public Tasks() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
+    @Column(name = "employee_assigned_to", nullable = true)
+    private String employeeAssignedTo;
 
-    public Tasks(String name, String description, String status, int progress, Projects project) {
+    @Column(name = "employer_assigned_to", nullable = true)
+    private String employerAssignedTo;
+
+    // Constructors
+    public Tasks() {}
+
+    public Tasks(Long id, String name, String description, String status, Integer progress, Projects project, LocalDateTime createdAt, LocalDateTime updatedAt, String EmployeeAssignedTo, String EmployerAssignedTo) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
@@ -64,6 +72,8 @@ public class Tasks {
         this.project = project;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.employeeAssignedTo = EmployeeAssignedTo;
+        this.employerAssignedTo = EmployerAssignedTo;
     }
 
     // Getters and setters
@@ -71,8 +81,8 @@ public class Tasks {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long taskId) {
+        this.id = taskId;
     }
 
     public String getName() {
@@ -111,8 +121,8 @@ public class Tasks {
         return project;
     }
 
-    public void setProject(Projects project) {
-        this.project = project;
+    public void setProject(Projects projectId) {
+        this.project = projectId;
     }
 
     public Set<User> getAssignedEmployees() {
@@ -137,6 +147,22 @@ public class Tasks {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getEmployeeAssignedTo() {
+        return employeeAssignedTo;
+    }
+
+    public void setEmployeeAssignedTo(String employeeAssignedTo) {
+        this.employeeAssignedTo = employeeAssignedTo;
+    }
+
+    public String getEmployerAssignedTo() {
+        return employerAssignedTo;
+    }
+
+    public void setEmployerAssignedTo(String employerAssignedTo) {
+        this.employerAssignedTo = employerAssignedTo;
     }
 
     // Utility methods to manage bidirectional relationship with User

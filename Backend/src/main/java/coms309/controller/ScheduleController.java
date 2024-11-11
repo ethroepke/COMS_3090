@@ -85,6 +85,16 @@ public class ScheduleController {
         }
     }
 
+    @GetMapping("/assigned/{username}")
+    public ResponseEntity<?> getSchedulesAssignedTo(@PathVariable String username) {
+        try {
+            List<ScheduleDTO> schedules = scheduleService.getSchedulesAssignedTo(username);
+            return ResponseEntity.ok(schedules);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Internal Server Error: Unable to fetch schedules for the specified user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // Update schedule by ID
     @PutMapping("/{id}")
     public ResponseEntity<?> updateSchedule(@PathVariable Long id, @Valid @RequestBody ScheduleDTO scheduleDTO) {

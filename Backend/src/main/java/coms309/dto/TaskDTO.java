@@ -1,5 +1,6 @@
 package coms309.dto;
 
+import coms309.entity.Projects;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,20 +21,28 @@ public class TaskDTO {
 
     @Min(value = 0, message = "Progress must be at least 0%")
     @Max(value = 100, message = "Progress must not exceed 100%")
-    private int progress;  // Represented as percentage (0-100)
+    private Integer progress;  // Represented as percentage (0-100)
 
-    @NotNull(message = "Project ID is required") // Add this field to ensure it's provided
+    @NotNull(message = "Project ID is required")
     private Long projectId;
+
+    @NotNull(message = "Project ID is required")
+    private String employeeAssignedTo;
+
+    @NotNull(message = "Project ID is required")
+    private String employerAssignedTo;
 
     // Constructors
     public TaskDTO() {}
 
-    public TaskDTO(String name, String description, String status, int progress, Long projectId) {
+    public TaskDTO(String name, String description, String status, Integer progress, Projects projectId, String EmployeeAssignedTo, String EmployerAssignedTo) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.progress = progress;
-        this.projectId = projectId;
+        this.projectId = projectId.getProjectId();
+        this.employeeAssignedTo = EmployeeAssignedTo;
+        this.employerAssignedTo = EmployerAssignedTo;
     }
 
     // Getters and Setters
@@ -75,5 +84,21 @@ public class TaskDTO {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public String getEmployeeAssignedTo() {
+        return employeeAssignedTo;
+    }
+
+    public void setEmployeeAssignedTo(String employeeAssignedTo) {
+        this.employeeAssignedTo = employeeAssignedTo;
+    }
+
+    public String getEmployerAssignedTo() {
+        return employerAssignedTo;
+    }
+
+    public void setEmployerAssignedTo(String employerAssignedTo) {
+        this.employerAssignedTo = employerAssignedTo;
     }
 }

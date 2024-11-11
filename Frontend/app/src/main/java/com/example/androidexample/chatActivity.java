@@ -13,8 +13,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.VolleyError;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +25,9 @@ public class chatActivity extends AppCompatActivity {
 
     private messageAdapter messageAdapter;
     private List<String> messageList;
+
+    private chatWebSocketClient chatWebSocketClient;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,56 +49,61 @@ public class chatActivity extends AppCompatActivity {
         // Retrieve intent extras
         String name = getIntent().getStringExtra("name");
         boolean isGroup = getIntent().getBooleanExtra("isGroup", false);
-        String chatId = getIntent().getStringExtra("chatId"); // Assuming you pass chatId as well
+        username = getIntent().getStringExtra("username");  // Get username (like "eroepke")
+        String chatId = getIntent().getStringExtra("chatId");
         chatTitle.setText(isGroup ? "Group: " + name : name);
 
-
+        // Initialize message list and adapter
         messageList = new ArrayList<>();
         messageAdapter = new messageAdapter(this, messageList, true);
         recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewMessages.setAdapter(messageAdapter);
 
-        // Fetch messages from backend
-        Apiservice apiService = new Apiservice(this);
-        apiService.getMessages(chatId, new Apiservice.MessageCallback() {
-            @Override
-            public void onSuccess(List<String> messages) {
-                messageList.addAll(messages);
-                messageAdapter.notifyDataSetChanged();
-                recyclerViewMessages.scrollToPosition(messageList.size() - 1);
-            }
+        // Initialize and start WebSocket connection
+        String chatType = isGroup ? "group" : "individual";
+        chatWebSocketClient = new chatWebSocketClient();
+        chatWebSocketClient.startWebSocket(chatType, username);  // Pass username to WebSocket
 
+        // Listen for incoming messages from WebSocket
+        chatWebSocketClient.setMessageListener(new chatWebSocketClient.MessageListener() {
             @Override
-            public void onError(VolleyError error) {
-            }
-        });
-
-        // Send button for messages
-        sendButton.setOnClickListener(v -> {
-            String message = messageInput.getText().toString().trim();
-            if (!message.isEmpty()) {
-                apiService.sendMessage(chatId, message, new Apiservice.ResponseCallback() {
-                    @Override
-                    public void onSuccess() {
+            public void onMessageReceived(String message) {
+                runOnUiThread(() -> {
+                    // Only add the message if it isn't sent by the user (to avoid duplication)
+                    if (!message.startsWith(username + ": ")) {
                         messageList.add(message);
                         messageAdapter.notifyItemInserted(messageList.size() - 1);
                         recyclerViewMessages.scrollToPosition(messageList.size() - 1);
-                        messageInput.setText("");
-                    }
-
-                    @Override
-                    public void onError(VolleyError error) {
                     }
                 });
             }
         });
+
+        // Set up send button to send messages over WebSocket
+        sendButton.setOnClickListener(v -> {
+            String message = messageInput.getText().toString().trim();
+            if (!message.isEmpty()) {
+                String formattedMessage = username + ": " + message;
+                chatWebSocketClient.sendMessage(formattedMessage);
+                messageList.add(formattedMessage);
+                messageAdapter.notifyItemInserted(messageList.size() - 1);
+                recyclerViewMessages.scrollToPosition(messageList.size() - 1);
+                messageInput.setText("");
+            }
+        });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (chatWebSocketClient != null) {
+            chatWebSocketClient.closeWebSocket();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            //For permissions this will be chang depending on users (Admin or Employer or Employee) to make sure send back to right page
             Intent intent = new Intent(chatActivity.this, messageActivity.class);
             startActivity(intent);
             return true;
@@ -105,3 +111,5 @@ public class chatActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+
+

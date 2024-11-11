@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface SalaryRepository extends JpaRepository<Salary, Long> {
     Optional<Salary> findByUserProfile(UserProfile user);
     List<Salary> findAllByUserProfile(UserProfile userProfile);
+
 }

@@ -45,7 +45,7 @@ public class PayDetailController {
      * @return the updated or created salary
      */
     @PostMapping("/update")
-    public ResponseEntity<?> createOrUpdateSalary(@RequestBody Salary salary) {
+    public ResponseEntity<?> createOrUpdateSalary(@RequestBody Salary salary ) {
         return payDetailService.createOrUpdateSalaryResponse(salary);
     }
     /**

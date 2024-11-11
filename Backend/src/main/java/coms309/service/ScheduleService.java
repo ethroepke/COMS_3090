@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ScheduleService {
@@ -32,15 +33,20 @@ public class ScheduleService {
         User user = userRepository.findById(scheduleDTO.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + scheduleDTO.getUserId()));
 
-        Projects project = projectRepository.findById(scheduleDTO.getProjectId())
+        Projects project = projectRepository.findByProjectId(scheduleDTO.getProjectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + scheduleDTO.getProjectId()));
 
         Schedules schedule = new Schedules();
-        schedule.setEventType(scheduleDTO.getEventType());
+
+        schedule.setCreatedAt(LocalDateTime.now());
         schedule.setStartTime(scheduleDTO.getStartTime());
         schedule.setEndTime(scheduleDTO.getEndTime());
+        schedule.setEventType(scheduleDTO.getEventType());
         schedule.setUser(user);
-        schedule.setProject(project); // Set the project
+        schedule.setProject(project);
+        schedule.setUpdatedAt(LocalDateTime.now());
+        schedule.setEmployeeAssignedTo(scheduleDTO.getEmployeeAssignedTo());
+        schedule.setEmployerAssignedTo(scheduleDTO.getEmployerAssignedTo());
 
         return scheduleRepository.save(schedule);
     }
@@ -50,10 +56,28 @@ public class ScheduleService {
         return scheduleRepository.findAll();
     }
 
+    public List<ScheduleDTO> getSchedulesAssignedTo(String scheduleId) {
+        List<Schedules> schedules = scheduleRepository.findByEmployeeAssignedTo(scheduleId);
+        return schedules.stream().map(this::convertToScheduleDTO).collect(Collectors.toList());
+    }
+
+    private ScheduleDTO convertToScheduleDTO(Schedules schedules) {
+        return new ScheduleDTO(
+                schedules.getEventType(),
+                schedules.getStartTime(),
+                schedules.getEndTime(),
+                schedules.getUser().getId(),
+                schedules.getProject().getProjectId(),
+                schedules.getEmployeeAssignedTo(),
+                schedules.getEmployerAssignedTo()
+        );
+    }
+
+
     // Retrieve a schedule by ID
-    public Schedules getScheduleById(Long id) {
-        return scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedules not found with id: " + id));
+    public Schedules getScheduleById(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Schedules not found with id: " + scheduleId));
     }
 
     // Retrieve schedules by user ID
@@ -68,9 +92,9 @@ public class ScheduleService {
 
     // Update an existing schedule
     @Transactional
-    public Schedules updateSchedule(Long id, ScheduleDTO scheduleDTO) {
-        Schedules schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedules not found with id: " + id));
+    public Schedules updateSchedule(Long scheduleId, ScheduleDTO scheduleDTO) {
+        Schedules schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Schedules not found with id: " + scheduleId));
 
         User user = userRepository.findById(scheduleDTO.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + scheduleDTO.getUserId()));
@@ -88,9 +112,9 @@ public class ScheduleService {
     }
 
     // Delete a schedule by ID
-    public void deleteSchedule(Long id) {
-        Schedules schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedules not found with id: " + id));
+    public void deleteSchedule(Long scheduleId) {
+        Schedules schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Schedules not found with id: " + scheduleId));
 
         scheduleRepository.delete(schedule);
     }

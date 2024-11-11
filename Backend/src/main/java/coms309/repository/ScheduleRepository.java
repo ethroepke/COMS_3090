@@ -30,4 +30,7 @@ public interface ScheduleRepository extends JpaRepository<Schedules, Long> {
 
     // Find schedules by project and date range
     List<Schedules> findByProject_ProjectIdAndStartTimeBetween(Long projectId, LocalDateTime start, LocalDateTime end);
+
+    List<Schedules> findByEmployeeAssignedTo(String employeeAssignedTo);
+    List<Schedules> findByEmployerAssignedTo(String employeeAssignedTo);
 }

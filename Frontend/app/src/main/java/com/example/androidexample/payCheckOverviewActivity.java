@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +32,13 @@ public class payCheckOverviewActivity extends AppCompatActivity {
     private TextView takeHomePay;
     private TextView grossPay;
     private String loggedInUsername;
+    private TextView hoursWorked;
+    private TextView pay_Rate;
+    private TextView bonus_Pay;
+    private TextView deductibles1;
+    private ProgressBar takeHomePayProgressBar;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +55,12 @@ public class payCheckOverviewActivity extends AppCompatActivity {
         userName = findViewById(R.id.userName);
         takeHomePay = findViewById(R.id.takeHomePay);
         grossPay = findViewById(R.id.grossPay);
+        hoursWorked = findViewById(R.id.hoursWorked);
+        pay_Rate = findViewById(R.id.payRate);
+        bonus_Pay = findViewById(R.id.bonusPay);
+        deductibles1 = findViewById(R.id.deductibles);
+        takeHomePayProgressBar = findViewById(R.id.firstTakHomePay);
+
 
         @SuppressLint({"MissingInflatedId", "LocalSuppress"})
         Toolbar toolbar = findViewById(R.id.toolBarPay);
@@ -91,7 +104,7 @@ public class payCheckOverviewActivity extends AppCompatActivity {
             return;
         }
 
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/salary/username/" + username;
 
         // Create a new request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -100,13 +113,28 @@ public class payCheckOverviewActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             // Parse the response and set the values
-                            String name = response.optString("name", "N/A");
+                            String name = response.optString("username", "N/A");
                             String takeHome = response.optString("takeHomePay", "0.00");
                             String gross = response.optString("grossPay", "0.00");
+                            String hours = response.optString("hoursWorked", "0.00");
+                            String payRate = response.optString("payRate", "0.00");
+                            String bonusPay = response.optString("bonusPay", "0.00");
+                            String deductibles = response.optString("deductibles", "0.00");
 
                             userName.setText(name);
                             takeHomePay.setText("Take Home Pay: $" + takeHome);
                             grossPay.setText("Gross Pay: $" + gross);
+                            hoursWorked.setText("Hours worked: " + hours);
+                            pay_Rate.setText("Pay Rate: $" + payRate);
+                            bonus_Pay.setText("Bonus Pay: $" + bonusPay);
+                            deductibles1.setText("Deductibles: $" + deductibles);
+
+                            //ProgressBar
+                            float takeHomeValue = Float.parseFloat(takeHome);
+
+                            takeHomePayProgressBar.setProgress((int) takeHomeValue);
+
+
                         } catch (Exception e) {
                             Toast.makeText(payCheckOverviewActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }

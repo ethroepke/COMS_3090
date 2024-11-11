@@ -22,7 +22,7 @@ function connect() {
     };
 
     ws.onclose = function() {
-        logMessage("Disconnected from server.");
+        //logMessage("Disconnected from server.");
     };
 
     ws.onerror = function(error) {
@@ -62,6 +62,14 @@ function sendImage() {
 
 function logMessage(message) {
     var log = document.getElementById("log");
-    log.value += message + "\n";
-    log.scrollTop = log.scrollHeight;  // Auto-scroll to the bottom
+    if (message.startsWith("/image ")) {
+        var img = document.createElement("img");
+        img.src = message.substring(7); // Remove '/image ' prefix
+        img.style.maxWidth = "100%";
+        log.appendChild(img);
+        log.appendChild(document.createElement("br"));
+    } else {
+        log.value += message + "\n";
+        log.scrollTop = log.scrollHeight; // Auto-scroll to the bottom
+    }
 }
