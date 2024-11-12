@@ -187,7 +187,7 @@ public class employeeActivity extends AppCompatActivity {
         selfServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, scheduleActivity.class);
+                Intent intent = new Intent(employeeActivity.this, scheduleEmployeeActivity.class);
                 startActivity(intent);
             }
         });

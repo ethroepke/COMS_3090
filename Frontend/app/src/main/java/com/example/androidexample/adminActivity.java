@@ -222,7 +222,7 @@ public class adminActivity extends AppCompatActivity {
         selfServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, scheduleActivity.class);
+                Intent intent = new Intent(adminActivity.this, scheduleAdminActivity.class);
                 startActivity(intent);
             }
         });

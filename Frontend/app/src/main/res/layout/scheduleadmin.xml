@@ -20,7 +20,7 @@
 
 
     <Button
-        android:id="@+id/createScheduleButtonEmployer"
+        android:id="@+id/createScheduleButtonAdmin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create Schedule"
@@ -161,4 +161,3 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

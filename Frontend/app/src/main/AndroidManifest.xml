@@ -102,7 +102,7 @@
             android:name=".createProject"
             android:exported="true" />
         <activity
-            android:name=".scheduleActivity"
+            android:name=".scheduleAdminActivity"
             android:exported="true" />
         <activity
             android:name=".createScheduleActivity"
@@ -115,6 +115,18 @@
             android:exported="true" />
         <activity
             android:name=".taskEmployeeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".scheduleEmployeeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".scheduleEmployerActivity"
+            android:exported="true" />
+        <activity
+            android:name=".createScheduleEmployerActivity"
+            android:exported="true" />
+        <activity
+            android:name=".createScheduleAdminActivity"
             android:exported="true" />
     </application>
 
