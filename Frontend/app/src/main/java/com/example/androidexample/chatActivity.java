@@ -1,6 +1,7 @@
 package com.example.androidexample;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,7 @@ public class chatActivity extends AppCompatActivity {
     private RecyclerView recyclerViewMessages;
     private EditText messageInput;
     private Button sendButton;
+    private String loggedInUsername;
 
     private messageAdapter messageAdapter;
     private List<String> messageList;
@@ -46,11 +48,14 @@ public class chatActivity extends AppCompatActivity {
 
         messageInput.requestFocus();
 
-        // Retrieve intent extras
-        String name = getIntent().getStringExtra("name");
-        boolean isGroup = getIntent().getBooleanExtra("isGroup", false);
-        username = getIntent().getStringExtra("username");  // Get username (like "eroepke")
-        String chatId = getIntent().getStringExtra("chatId");
+        // Retrieve data from SharedPreferences instead of Intent
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        loggedInUsername = sharedPreferences.getString("username", null);
+        String name = sharedPreferences.getString("name", "");
+        boolean isGroup = sharedPreferences.getBoolean("isGroup", false);
+        username = sharedPreferences.getString("username", "");  // Get username
+        String chatId = sharedPreferences.getString("chatId", "");
+
         chatTitle.setText(isGroup ? "Group: " + name : name);
 
         // Initialize message list and adapter
@@ -83,7 +88,7 @@ public class chatActivity extends AppCompatActivity {
         sendButton.setOnClickListener(v -> {
             String message = messageInput.getText().toString().trim();
             if (!message.isEmpty()) {
-                String formattedMessage = username + ": " + message;
+                String formattedMessage = message;
                 chatWebSocketClient.sendMessage(formattedMessage);
                 messageList.add(formattedMessage);
                 messageAdapter.notifyItemInserted(messageList.size() - 1);
@@ -111,6 +116,7 @@ public class chatActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+
 
 
 
