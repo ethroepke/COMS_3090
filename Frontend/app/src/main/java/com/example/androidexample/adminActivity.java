@@ -14,8 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +27,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.androidexample.R;
-import com.example.androidexample.loginActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.time.format.DateTimeFormatter;
 
 public class adminActivity extends AppCompatActivity {
     private boolean isClockedIn = false;
@@ -78,6 +73,7 @@ public class adminActivity extends AppCompatActivity {
     private TextView resultTextView;
 
     private List<String> sampleData;
+
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -120,21 +116,35 @@ public class adminActivity extends AppCompatActivity {
 
         initializeSampleData();
 
-        // Search button listener
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performSearch();
-            }
-        });
+        // Restore clock-in state and time from SharedPreferences
+        isClockedIn = sharedPreferences.getBoolean("isClockedIn", false);
+        clockInTime = sharedPreferences.getLong("clockInTime", 0);
 
-        //Clock In/Out functionality
+        LayerDrawable layerDrawable = (LayerDrawable) borderChange.getBackground();
+        Drawable borderDrawable = layerDrawable.getDrawable(0);
+
+        if (borderDrawable instanceof GradientDrawable) {
+            GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
+
+            if (isClockedIn) {
+                gradientDrawable.setStroke(15, Color.GREEN);
+                checkInMsg.setText("Clock Out");
+
+                // Resume the chronometer based on the saved clock-in time
+                timeClockMsg.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - clockInTime));
+                timeClockMsg.start();
+            } else {
+                gradientDrawable.setStroke(15, Color.GRAY);
+                checkInMsg.setText("Clock In");
+                timeClockMsg.stop();
+                timeClockMsg.setBase(SystemClock.elapsedRealtime());
+            }
+        }
+
+        // Clock In/Out button listener
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayerDrawable layerDrawable = (LayerDrawable) borderChange.getBackground();
-                Drawable borderDrawable = layerDrawable.getDrawable(0);
-
                 if (borderDrawable instanceof GradientDrawable) {
                     GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
 
@@ -159,6 +169,14 @@ public class adminActivity extends AppCompatActivity {
 
                     isClockedIn = !isClockedIn;
                 }
+            }
+        });
+
+        // Search button listener
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performSearch();
             }
         });
 
@@ -233,9 +251,22 @@ public class adminActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
     }
 
-    // Initialize sample data for searching
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Save the clock-in state and time to SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isClockedIn", isClockedIn);
+        editor.putLong("clockInTime", clockInTime);
+        editor.apply();
+    }
+
     private void initializeSampleData() {
         sampleData = new ArrayList<>();
         sampleData.add("Project A");
@@ -246,7 +277,6 @@ public class adminActivity extends AppCompatActivity {
         sampleData.add("Performance Review");
     }
 
-    // Search functionality
     private void performSearch() {
         String query = searchView.getQuery().toString().toLowerCase();
         if (!query.isEmpty()) {
@@ -262,20 +292,17 @@ public class adminActivity extends AppCompatActivity {
 
             if (found) {
                 resultTextView.setText(results.toString());
-                resultTextView.setVisibility(View.VISIBLE); // Show results
+                resultTextView.setVisibility(View.VISIBLE);
             } else {
                 resultTextView.setText("No results found for: " + query);
-                resultTextView.setVisibility(View.VISIBLE); // Show no results found
+                resultTextView.setVisibility(View.VISIBLE);
             }
         } else {
             resultTextView.setText("Please enter a search term.");
-            resultTextView.setVisibility(View.VISIBLE); // Show prompt
+            resultTextView.setVisibility(View.VISIBLE);
         }
     }
 
-
-
-    //Pop up page to show hours worked after clocking out
     private void showClockOutPopup(long clockInTime, long elapsedMillis, String clockOutTime) {
         long elapsedHours = elapsedMillis / 3600000;
         long elapsedMinutes = (elapsedMillis % 3600000) / 60000;
@@ -434,5 +461,6 @@ public class adminActivity extends AppCompatActivity {
         // Add the request to the RequestQueue
         Volley.newRequestQueue(this).add(jsonArrayRequest);
     }
+
 }
 
