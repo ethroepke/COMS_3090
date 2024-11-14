@@ -259,7 +259,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="1"
-            android:text="Assign \nProject"
+            android:text="Assign \nTask"
             android:gravity="center"
             android:textSize="17dp"
             android:textColor="@color/black"

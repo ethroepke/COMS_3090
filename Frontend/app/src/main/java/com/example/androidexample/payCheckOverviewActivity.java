@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -88,11 +89,7 @@ public class payCheckOverviewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            // Determine navigation based on user role
-            Intent intent = new Intent(payCheckOverviewActivity.this, adminActivity.class);
-            startActivity(intent);
-            finish();
-            return true;
+            fetchUserProfile(loggedInUsername);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -165,6 +162,69 @@ public class payCheckOverviewActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    // When on back button check userType to make sure goes back to right page
+    private void fetchUserProfile(final String username) {
+        // URL to fetch user profile using the username
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;
+
+        // Make a GET request to fetch the user profile
+        JsonObjectRequest profileRequest = new JsonObjectRequest(Request.Method.GET, url,
+                null, // No body needed for GET request
+                new Response.Listener<JSONObject>() {
+                    @SuppressLint("ShowToast")
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Extract user details from the response
+                            int userId = response.getInt("userId");
+                            String fullName = response.getString("fullName");
+                            String userType = response.getString("userType");
+
+                            // Save these details in SharedPreferences
+                            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putInt("userId", userId);
+                            editor.putString("username", username);
+                            editor.putString("userType", userType);
+                            editor.putString("fullName", fullName);
+                            editor.apply();
+
+                            // Redirect to appropriate activity based on user type
+                            Intent intent;
+                            switch (userType) {
+                                case "ADMIN":
+                                    intent = new Intent(payCheckOverviewActivity.this, adminActivity.class);
+                                    break;
+                                case "EMPLOYER":
+                                    intent = new Intent(payCheckOverviewActivity.this, employerActivity.class);
+                                    break;
+                                case "EMPLOYEE":
+                                    intent = new Intent(payCheckOverviewActivity.this, employeeActivity.class);
+                                    break;
+                                default:
+                                    Toast.makeText(payCheckOverviewActivity.this, "Unknown user type", Toast.LENGTH_SHORT);
+                                    return;
+                            }
+                            startActivity(intent);
+
+                        } catch (JSONException e) {
+                            Toast.makeText(payCheckOverviewActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
+                            Log.e("Profile Error", "JSON parsing error", e);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(payCheckOverviewActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
+                        Log.e("Profile Error", error.toString());
+                    }
+                });
+
+        // Add the profile request to the Volley request queue
+        Volley.newRequestQueue(payCheckOverviewActivity.this).add(profileRequest);
     }
 }
 
