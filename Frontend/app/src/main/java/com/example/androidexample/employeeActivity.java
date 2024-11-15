@@ -110,23 +110,38 @@ public class employeeActivity extends AppCompatActivity {
 
         initializeSampleData();
 
-        // Search button listener
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performSearch();
-            }
-        });
 
-        //Clock In/Out functionality
+        // Restore clock-in state and time from SharedPreferences
+        isClockedIn = sharedPreferences.getBoolean("isClockedIn", false);
+        clockInTime = sharedPreferences.getLong("clockInTime", 0);
+
+        LayerDrawable layerDrawable = (LayerDrawable) borderChange.getBackground();
+        Drawable borderDrawable = layerDrawable.getDrawable(0);
+
+        if (borderDrawable instanceof GradientDrawable) {
+            GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
+
+            if (isClockedIn) {
+                gradientDrawable.setStroke(15, Color.GREEN);
+                checkInMsg.setText("Clock Out");
+
+                // Resume the chronometer based on the saved clock-in time
+                timeClockMsg.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - clockInTime));
+                timeClockMsg.start();
+            } else {
+                gradientDrawable.setStroke(15, Color.GRAY);
+                checkInMsg.setText("Clock In");
+                timeClockMsg.stop();
+                timeClockMsg.setBase(SystemClock.elapsedRealtime());
+            }
+        }
+
+        // Clock In/Out button listener
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Drawable backgroundDrawable = borderChange.getBackground();
-
-                // Check if the background is a GradientDrawable
-                if (backgroundDrawable instanceof GradientDrawable) {
-                    GradientDrawable gradientDrawable = (GradientDrawable) backgroundDrawable;
+                if (borderDrawable instanceof GradientDrawable) {
+                    GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
 
                     if (isClockedIn) {
                         gradientDrawable.setStroke(15, Color.GRAY);
@@ -148,12 +163,18 @@ public class employeeActivity extends AppCompatActivity {
                     }
 
                     isClockedIn = !isClockedIn;
-                } else {
-                    Toast.makeText(employeeActivity.this, "Background is not a GradientDrawable", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+
+        // Search button listener
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performSearch();
+            }
+        });
 
         //All Intents for buttons to new pages down below
         messageButton.setOnClickListener(new View.OnClickListener() {
@@ -198,6 +219,18 @@ public class employeeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Save the clock-in state and time to SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isClockedIn", isClockedIn);
+        editor.putLong("clockInTime", clockInTime);
+        editor.apply();
     }
 
     // Initialize sample data for searching

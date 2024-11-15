@@ -75,7 +75,7 @@ public class employerActivity extends AppCompatActivity {
     private List<String> sampleData;
 
 
-    @SuppressLint("WrongViewCast")
+    @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,11 +88,11 @@ public class employerActivity extends AppCompatActivity {
         // Fetch user data using the logged-in username
         fetchPayData(loggedInUsername);
         fetchScheduleData(loggedInUsername);
-        resetButtonBorders();
-        updateCheckFrameBorder();
+        //resetButtonBorders();
+        //updateCheckFrameBorder();
 
         borderChange = findViewById(R.id.frameChange);
-        checkButton = findViewById(R.id.checkButton);
+        checkButton = findViewById(R.id.checkButtonLogin);
         checkInMsg = findViewById(R.id.checkText);
         timeClockMsg = findViewById(R.id.timeText);
         projectStatButton = findViewById(R.id.projStatusButton);
@@ -117,6 +117,7 @@ public class employerActivity extends AppCompatActivity {
 
 
         initializeSampleData();
+
 
         // Restore clock-in state and time from SharedPreferences
         isClockedIn = sharedPreferences.getBoolean("isClockedIn", false);
@@ -147,39 +148,29 @@ public class employerActivity extends AppCompatActivity {
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the specific drawable for checkButton to avoid affecting all buttons
-                Drawable checkButtonDrawable = checkButton.getBackground();
+                if (borderDrawable instanceof GradientDrawable) {
+                    GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
 
-                if (checkButtonDrawable instanceof LayerDrawable) {
-                    LayerDrawable layerDrawable = (LayerDrawable) checkButtonDrawable;
-                    Drawable borderDrawable = layerDrawable.getDrawable(0);
+                    if (isClockedIn) {
+                        gradientDrawable.setStroke(15, Color.GRAY);
+                        checkInMsg.setText("Clock In");
 
-                    if (borderDrawable instanceof GradientDrawable) {
-                        GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
+                        timeClockMsg.stop();
+                        timeClockMsg.setBase(SystemClock.elapsedRealtime());
 
-                        if (isClockedIn) {
-                            // Clocking out, reset border to default color (Gray)
-                            gradientDrawable.setStroke(15, Color.GRAY);
-                            checkInMsg.setText("Clock In");
+                        String clockOutTime = dateFormat.format(new Date());
+                        showClockOutPopup(clockInTime, System.currentTimeMillis() - clockInTime, clockOutTime);
+                    } else {
+                        gradientDrawable.setStroke(15, Color.GREEN);
+                        checkInMsg.setText("Clock Out");
 
-                            timeClockMsg.stop();
-                            timeClockMsg.setBase(SystemClock.elapsedRealtime());
+                        timeClockMsg.setBase(SystemClock.elapsedRealtime());
+                        timeClockMsg.start();
 
-                            String clockOutTime = dateFormat.format(new Date());
-                            showClockOutPopup(clockInTime, System.currentTimeMillis() - clockInTime, clockOutTime);
-                        } else {
-                            // Clocking in, set border color to Green
-                            gradientDrawable.setStroke(15, Color.GREEN);
-                            checkInMsg.setText("Clock Out");
-
-                            timeClockMsg.setBase(SystemClock.elapsedRealtime());
-                            timeClockMsg.start();
-
-                            clockInTime = System.currentTimeMillis();
-                        }
-
-                        isClockedIn = !isClockedIn;
+                        clockInTime = System.currentTimeMillis();
                     }
+
+                    isClockedIn = !isClockedIn;
                 }
             }
         });
@@ -267,48 +258,6 @@ public class employerActivity extends AppCompatActivity {
         });
     }
 
-    private void resetButtonBorders() {
-        int defaultColor = Color.GRAY; // Default color for borders
-
-        Button[] buttons = {projectStatButton, assignProjButton, employeeAttendanceButton,
-                employeeStatButton, messageButton, performanceReviewButton,
-                profileButton, projButton, selfServiceButton, payButton};
-
-        for (Button button : buttons) {
-            if (button != null) { // Add null check
-                Drawable buttonDrawable = button.getBackground();
-                if (buttonDrawable instanceof LayerDrawable) {
-                    LayerDrawable layerDrawable = (LayerDrawable) buttonDrawable;
-                    Drawable borderDrawable = layerDrawable.getDrawable(0);
-
-                    if (borderDrawable instanceof GradientDrawable) {
-                        GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
-                        gradientDrawable.setStroke(15, defaultColor);
-                    }
-                }
-            }
-        }
-    }
-
-
-    // Set the border color for the checkButton based on clock-in state
-    private void updateCheckFrameBorder(FrameLayout frameLayout) {
-        if (frameLayout != null) { // Ensure the FrameLayout is not null
-            Drawable frameDrawable = frameLayout.getBackground();
-            if (frameDrawable instanceof LayerDrawable) {
-                LayerDrawable layerDrawable = (LayerDrawable) frameDrawable;
-                Drawable borderDrawable = layerDrawable.getDrawable(0);
-
-                if (borderDrawable instanceof GradientDrawable) {
-                    GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;
-                    gradientDrawable.setStroke(15, Color.RED); // Set border color
-                }
-            }
-        }
-    }
-
-
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -320,6 +269,7 @@ public class employerActivity extends AppCompatActivity {
         editor.putLong("clockInTime", clockInTime);
         editor.apply();
     }
+
 
     private void initializeSampleData() {
         sampleData = new ArrayList<>();

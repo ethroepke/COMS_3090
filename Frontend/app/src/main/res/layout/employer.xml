@@ -74,7 +74,7 @@
     </TextView>
 
     <Button
-        android:id="@+id/checkButton"
+        android:id="@+id/checkButtonLogin"
         android:layout_width="400dp"
         android:layout_height="90dp"
         android:layout_gravity="center"

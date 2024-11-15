@@ -124,7 +124,7 @@ public class loginActivity extends AppCompatActivity {
         });
     }
 
-    // Method to fetch user profile after successful login
+    // Method to check userType to send to right page
     private void fetchUserProfile(final String username) {
         // URL to fetch user profile using the username
         String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;

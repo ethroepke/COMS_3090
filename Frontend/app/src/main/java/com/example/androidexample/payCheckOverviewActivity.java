@@ -86,13 +86,6 @@ public class payCheckOverviewActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            fetchUserProfile(loggedInUsername);
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     // Method to fetch user data from the backend and set it in the TextViews
     private void fetchUserData(String username) {
@@ -146,22 +139,6 @@ public class payCheckOverviewActivity extends AppCompatActivity {
 
         // Add the request to the RequestQueue
         Volley.newRequestQueue(this).add(jsonObjectRequest);
-    }
-
-    // Method to toggle the visibility of the pay details container
-    private void togglePayDetails() {
-        if (payDetailsContainer.getVisibility() == View.VISIBLE) {
-            payDetailsContainer.setVisibility(View.GONE);
-            showHideButton.setText("Show Pay Details");
-        } else {
-            payDetailsContainer.setVisibility(View.VISIBLE);
-            showHideButton.setText("Hide Pay Details");
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     // When on back button check userType to make sure goes back to right page
@@ -225,6 +202,25 @@ public class payCheckOverviewActivity extends AppCompatActivity {
 
         // Add the profile request to the Volley request queue
         Volley.newRequestQueue(payCheckOverviewActivity.this).add(profileRequest);
+    }
+
+    // Method to toggle the visibility of the pay details container
+    private void togglePayDetails() {
+        if (payDetailsContainer.getVisibility() == View.VISIBLE) {
+            payDetailsContainer.setVisibility(View.GONE);
+            showHideButton.setText("Show Pay Details");
+        } else {
+            payDetailsContainer.setVisibility(View.VISIBLE);
+            showHideButton.setText("Hide Pay Details");
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            fetchUserProfile(loggedInUsername);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 
