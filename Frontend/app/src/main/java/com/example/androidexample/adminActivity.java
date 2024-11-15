@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -29,6 +30,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -88,6 +90,7 @@ public class adminActivity extends AppCompatActivity {
         // Fetch user data using the logged-in username
         fetchPayData(loggedInUsername);
         fetchScheduleData(loggedInUsername);
+        fetchUsersName(loggedInUsername);
 
         borderChange = findViewById(R.id.frameChange);
         checkButton = findViewById(R.id.checkButton);
@@ -317,6 +320,45 @@ public class adminActivity extends AppCompatActivity {
                 "\nHours Worked: " + workedHours);
         builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
         builder.show();
+    }
+
+    //Method to fetch all of users data thats logged in and then post name to welcome message
+    private void fetchUsersName(String username) {
+        if (username == null || username.isEmpty()) {
+            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Extract the "fullName" field from the response
+                            String fullName = response.getString("fullName");
+
+                            // Update the welcome message
+                            TextView welcomeMessage = findViewById(R.id.welcomeMessage);
+                            welcomeMessage.setText("Welcome, " + fullName + "!");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(adminActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(adminActivity.this, "Error fetching user data: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Add the request to the RequestQueue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonObjectRequest);
     }
 
     // Method to fetch user data from the backend and set it in the TextViews
