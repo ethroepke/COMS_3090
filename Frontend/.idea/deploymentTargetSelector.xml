@@ -14,10 +14,10 @@
       <SelectionState runConfigName="employeeActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="messageActivity">
+      <SelectionState runConfigName="employerActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="employerActivity">
+      <SelectionState runConfigName="scheduleAdminActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

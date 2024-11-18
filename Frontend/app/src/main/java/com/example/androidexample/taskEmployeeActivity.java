@@ -27,10 +27,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * This class shows an employee what tasks they are assigned to, and lets the employee modify them
+ */
 public class taskEmployeeActivity extends AppCompatActivity {
 
     private LinearLayout taskListLayout;
 
+    /**
+     * Create the class and map all buttons to the XML
+     * @param savedInstanceState
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +55,9 @@ public class taskEmployeeActivity extends AppCompatActivity {
         fetchAllTasks();
     }
 
+    /**
+     * GET all tasks assigned to the currently logged in user
+     */
     private void fetchAllTasks() {
         String url = "http://coms-3090-046.class.las.iastate.edu:8080/tasks";
 
@@ -200,6 +210,12 @@ public class taskEmployeeActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(jsonArrayRequest);
     }
 
+    /**
+     * Get the next status of the project.
+     * Order is Assigned -> In Progress -> Completed -> Assigned -> ...
+     * @param currentStatus
+     * @return
+     */
     private String getNextStatus(String currentStatus) {
         if ("Assigned".equals(currentStatus)) {
             return "In Progress";
@@ -210,6 +226,20 @@ public class taskEmployeeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Update the task object on the server using PUT requests
+     * @param taskId
+     * @param newStatus
+     * @param taskStatusView
+     * @param colorBox
+     * @param taskName
+     * @param taskDescription
+     * @param progress
+     * @param createdAt
+     * @param updatedAt
+     * @param employeeAssignedTo
+     * @param employerAssignedTo
+     */
     private void updateTaskStatusOnServer(long taskId, String newStatus, TextView taskStatusView, TextView colorBox, String taskName, String taskDescription, int progress, String createdAt, String updatedAt, String employeeAssignedTo, String employerAssignedTo) {
         // URL to update the task status
         String url = "http://coms-3090-046.class.las.iastate.edu:8080/tasks/" + taskId;
@@ -264,6 +294,11 @@ public class taskEmployeeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Close activity when done
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

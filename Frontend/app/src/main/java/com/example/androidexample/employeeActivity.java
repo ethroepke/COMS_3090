@@ -45,6 +45,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * This class is the main screen for the Employee
+ */
 public class employeeActivity extends AppCompatActivity {
     private boolean isClockedIn = false;
 
@@ -76,6 +79,10 @@ public class employeeActivity extends AppCompatActivity {
 
     private List<String> sampleData;
 
+    /**
+     * The running of the activity, all buttons listeners are located here
+     * @param savedInstanceState
+     */
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +146,9 @@ public class employeeActivity extends AppCompatActivity {
             }
         }
 
+        /**
+         * When employee checks in. Logs the amount of time the employee works.
+         */
         // Clock In/Out button listener
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,6 +181,9 @@ public class employeeActivity extends AppCompatActivity {
         });
 
 
+        /**
+         * The search button. Searchable list of all the functions of the app
+         */
         // Search button listener
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,6 +192,9 @@ public class employeeActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Button to go to the chat activity
+         */
         //All Intents for buttons to new pages down below
         messageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,6 +203,9 @@ public class employeeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        /**
+         * Button to go to the performance review activity
+         */
         performanceReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,6 +213,9 @@ public class employeeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        /**
+         * Button to go the profile activity
+         */
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,6 +223,9 @@ public class employeeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        /**
+         * Button to go to the task activity
+         */
         taskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -208,6 +233,9 @@ public class employeeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        /**
+         * Button to go to the schedule activity
+         */
         selfServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,6 +243,9 @@ public class employeeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        /**
+         * Button to go to the paycheck overview activity
+         */
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -224,6 +255,9 @@ public class employeeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Saves the amount of time currently worked by the employee between screens
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -236,6 +270,9 @@ public class employeeActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Initializes sample data for searching
+     */
     // Initialize sample data for searching
     private void initializeSampleData() {
         sampleData = new ArrayList<>();
@@ -247,6 +284,9 @@ public class employeeActivity extends AppCompatActivity {
         sampleData.add("Performance Review");
     }
 
+    /**
+     * Runs the search of all methods
+     */
     // Search functionality
     private void performSearch() {
         String query = searchView.getQuery().toString().toLowerCase();
@@ -275,7 +315,12 @@ public class employeeActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * Pop up page to show hours worked after clocking out
+     * @param clockInTime
+     * @param elapsedMillis
+     * @param clockOutTime
+     */
     //Pop up page to show hours worked after clocking out
     private void showClockOutPopup(long clockInTime, long elapsedMillis, String clockOutTime) {
         long elapsedHours = elapsedMillis / 3600000;
@@ -294,6 +339,10 @@ public class employeeActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Fetch all users that are logged in
+     * @param username
+     */
     //Method to fetch all of users data thats logged in and then post name to welcome message
     private void fetchUsersName(String username) {
         if (username == null || username.isEmpty()) {
@@ -333,6 +382,10 @@ public class employeeActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
+    /**
+     * Fetch pay data for a given user
+     * @param username
+     */
     // Method to fetch user data from the backend and set it in the TextViews
     private void fetchPayData(String username) {
         if (username == null || username.isEmpty()) {
@@ -375,6 +428,10 @@ public class employeeActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
 
+    /**
+     * Fetch schedule data for a given user
+     * @param username
+     */
     // Method to fetch user data for schedules. Get all users schedules and get next upcoming shift
     private void fetchScheduleData(String username) {
         if (username == null || username.isEmpty()) {

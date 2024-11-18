@@ -33,6 +33,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class handles the signing up of a new user
+ */
 public class joinNowActivity extends AppCompatActivity {
 
     private Button backButton;
@@ -55,6 +58,10 @@ public class joinNowActivity extends AppCompatActivity {
     private JSONObject signup_details;
 
 
+    /**
+     * The running of the class, initiallizes all buttons and maps them to the XML
+     * @param savedInstanceState
+     */
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +89,9 @@ public class joinNowActivity extends AppCompatActivity {
 
         signup_details = new JSONObject();
 
+        /**
+         * Username text entry
+         */
         name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -97,6 +107,9 @@ public class joinNowActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * User's name text entry
+         */
         // Add TextWatcher for name EditText
         name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -116,6 +129,9 @@ public class joinNowActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
+        /**
+         * Text entry for email
+         */
         // Add TextWatcher for email EditText
         email.addTextChangedListener(new TextWatcher() {
             @Override
@@ -135,6 +151,9 @@ public class joinNowActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
+        /**
+         * Text entry for password
+         */
         // Add TextWatcher for password EditText
         password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -153,6 +172,9 @@ public class joinNowActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
+        /**
+         * Text entry for verify password
+         */
         // Add TextWatcher for verify password EditText
         verifyPassword.addTextChangedListener(new TextWatcher() {
             @Override
@@ -172,6 +194,9 @@ public class joinNowActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
+        /**
+         * Button to go back to login screen
+         */
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -180,6 +205,9 @@ public class joinNowActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Submit all entries to sign up
+         */
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -245,6 +273,9 @@ public class joinNowActivity extends AppCompatActivity {
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         verifyPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
+        /**
+         * Show password button
+         */
         //Show and hide password for first line
         showPassword1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,6 +292,9 @@ public class joinNowActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Hide password button
+         */
         //Show and hide password for second line
         showPassword2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,16 +312,31 @@ public class joinNowActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Check if the full name is valid
+     * @param nameFilled
+     * @return
+     */
     private boolean isValidFullName(String nameFilled) {
         // Check if full name is not empty and contains at least one space (indicating two words)
         return !TextUtils.isEmpty(nameFilled) && nameFilled.contains(" ") && nameFilled.trim().split("\\s+").length >= 2;
     }
 
+    /**
+     * Check if the email is valid
+     * @param emailFilled
+     * @return
+     */
     private boolean isValidEmail(String emailFilled) {
         // Check if email matches legit email addresses
         return !TextUtils.isEmpty(emailFilled) && Patterns.EMAIL_ADDRESS.matcher(emailFilled).matches();
     }
 
+    /**
+     * Check if the password meets all parameters. One uppercase letter, one digit, one special character.
+     * @param passwordFilled
+     * @return
+     */
     private boolean isValidPassword(String passwordFilled) {
         // Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character
         return passwordFilled.length() >= 8
@@ -296,6 +345,11 @@ public class joinNowActivity extends AppCompatActivity {
                 && passwordFilled.matches(".*[!@#\\$%^&*].*"); // At least one special character
     }
 
+    /**
+     * Helper method to show alerts
+     * @param title
+     * @param message
+     */
     private void showAlertDialog(String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(joinNowActivity.this);
         builder.setTitle(title);
@@ -304,6 +358,11 @@ public class joinNowActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Helper method to autofill username from given name
+     * @param name
+     * @param username
+     */
     private void fillUsername(EditText name, EditText username){
         String fullName = name.getText().toString().trim();
         //Split name by space
@@ -321,6 +380,10 @@ public class joinNowActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * POST request to add a new userprofile object to the database
+     * @param j
+     */
     public void postRequest(JSONObject j) {
         JsonObjectRequest post_join = new JsonObjectRequest(
                 Request.Method.POST,
