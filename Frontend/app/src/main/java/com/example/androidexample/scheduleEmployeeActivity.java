@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This page is for employees that can view all shifts assigned on a calendar and what tasks they have.
+ */
 public class scheduleEmployeeActivity extends AppCompatActivity {
 
     private CalendarView scheduleCalendar;

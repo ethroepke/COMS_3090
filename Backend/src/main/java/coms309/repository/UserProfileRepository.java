@@ -18,7 +18,7 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
     Optional<UserProfile> findByEmail(String email);
     List<UserProfile> findAllByUserType(UserType userType );
 
+
     @Query("SELECT e FROM Employer e WHERE e.userProfile.username IN :usernames AND e.userProfile.userType = :userType")
     List<Employer> findAllByUserProfileUsernameInAndUserProfileUserType(@Param("usernames") List<String> usernames, @Param("userType") UserType userType);
-
 }

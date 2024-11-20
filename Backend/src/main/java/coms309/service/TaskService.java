@@ -25,11 +25,8 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ProjectRepository projectRepository; // Add this line
-
-    @Autowired
-    private TaskWebSocketService taskWebSocketService;
+//    @Autowired
+//    private TaskWebSocketService taskWebSocketService;
 
     // Create a new task
     public Tasks createTask(TaskDTO taskDTO) {
@@ -55,8 +52,8 @@ public class TaskService {
 
         taskRepository.save(tasks);
 
-        // Notify all users about the new task creation
-        taskWebSocketService.sendTaskNotification("New task created: " + tasks.getName());
+        // Notify all users about the new tasks creation
+//        taskWebSocketService.sendTaskNotification("New tasks created: " + tasks.getName());
 
         return tasks;
     }
@@ -109,7 +106,7 @@ public class TaskService {
         taskRepository.save(tasks);
 
         // Trigger WebSocket update to all relevant users
-        taskWebSocketService.sendTaskUpdate(tasks);
+//        taskWebSocketService.sendTaskUpdate(tasks);
 
         return tasks;
     }
@@ -122,7 +119,7 @@ public class TaskService {
         taskRepository.delete(tasks);
 
         // Notify about tasks deletion
-        taskWebSocketService.sendTaskNotification("Tasks deleted: " + tasks.getName());
+//        taskWebSocketService.sendTaskNotification("Tasks deleted: " + tasks.getName());
     }
 
     // Assign a user to a task
@@ -138,7 +135,7 @@ public class TaskService {
         taskRepository.save(tasks);
 
         // Notify the specific user about tasks assignment
-        taskWebSocketService.sendTaskUpdateToUser(userId, tasks);
+//        taskWebSocketService.sendTaskUpdateToUser(userId, tasks);
 
         return tasks;
     }

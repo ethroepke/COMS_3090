@@ -34,6 +34,9 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.ContextCompat;
 
+/**
+ * This class is for Admin view, they are able to create new projects. They are able to view all projects made.
+ */
 public class projectActivity extends AppCompatActivity {
     private LinearLayout projectListLayout;
     private List<Map<String, String>> projectList;

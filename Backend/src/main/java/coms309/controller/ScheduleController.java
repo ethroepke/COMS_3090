@@ -13,33 +13,49 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// OpenAPI 3 annotations
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+/**
+ * Controller class for handling schedule-related API endpoints.
+ */
 @RestController
 @RequestMapping("/schedules")
+@Tag(name = "Schedule Management", description = "Operations for creating, retrieving, updating, and deleting schedules")
 public class ScheduleController {
 
     @Autowired
     private ScheduleService scheduleService;
 
-    // Create a new schedule
+    /**
+     * Creates a new schedule.
+     *
+     * @param scheduleDTO the schedule data transfer object
+     * @return the created schedule
+     */
+    @Operation(summary = "Create a new schedule", responses = {
+            @ApiResponse(responseCode = "201", description = "Successfully created the schedule"),
+            @ApiResponse(responseCode = "400", description = "Invalid schedule data")
+    })
     @PostMapping("/create")
-    public ResponseEntity<?> createSchedule(@Valid @RequestBody ScheduleDTO scheduleDTO) {
-        try {
-            if (scheduleDTO.getProjectId() == null) {
-                return ResponseEntity.badRequest().body("Project ID must not be null");
-            }
-
-            Schedules schedule = scheduleService.createSchedule(scheduleDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(schedule);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Unable to create schedule");
-        }
+    public ResponseEntity<Schedules> createSchedule(
+            @Valid @RequestBody ScheduleDTO scheduleDTO) {
+        Schedules schedule = scheduleService.createSchedule(scheduleDTO);
+        return new ResponseEntity<>(schedule, HttpStatus.CREATED);
     }
 
-    // Get all schedules
+    /**
+     * Retrieves all schedules.
+     *
+     * @return a list of all schedules
+     */
+    @Operation(summary = "Retrieve all schedules", responses = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved all schedules")
+    })
     @GetMapping
     public ResponseEntity<?> getSchedules() {
         try {
@@ -50,80 +66,99 @@ public class ScheduleController {
         }
     }
 
-    // Get schedule by ID
+    /**
+     * Retrieves a schedule by its ID.
+     *
+     * @param id the schedule ID
+     * @return the schedule with the specified ID
+     */
+    @Operation(summary = "Retrieve a schedule by its ID", responses = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the schedule"),
+            @ApiResponse(responseCode = "404", description = "Schedule not found")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<?> getScheduleById(@PathVariable Long id) {
-        try {
-            Schedules schedule = scheduleService.getScheduleById(id);
-            return ResponseEntity.ok(schedule);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Internal Server Error: Unable to fetch schedule", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Schedules> getScheduleById(
+            @Parameter(description = "ID of the schedule to retrieve", required = true)
+            @PathVariable Long id) {
+        Schedules schedule = scheduleService.getScheduleById(id);
+        return ResponseEntity.ok(schedule);
     }
 
-    // Get schedules by assigned user ID
+    /**
+     * Retrieves schedules assigned to a specific user.
+     *
+     * @param userId the user ID
+     * @return a list of schedules assigned to the user
+     */
+    @Operation(summary = "Retrieve schedules by user ID", responses = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved schedules for the user"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getSchedulesByUser(@PathVariable Long userId) {
-        try {
-            List<Schedules> schedules = scheduleService.getSchedulesByUser(userId);
-            return ResponseEntity.ok(schedules);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Internal Server Error: Unable to fetch schedules", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<List<Schedules>> getSchedulesByUser(
+            @Parameter(description = "ID of the user to retrieve schedules for", required = true)
+            @PathVariable Long userId) {
+        List<Schedules> schedules = scheduleService.getSchedulesByUser(userId);
+        return ResponseEntity.ok(schedules);
     }
 
-    // Get schedules by date range
+    /**
+     * Retrieves schedules within a specified date range.
+     *
+     * @param start the start date of the range
+     * @param end   the end date of the range
+     * @return a list of schedules within the specified range
+     */
+    @Operation(summary = "Retrieve schedules within a date range", responses = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved schedules within the date range"),
+            @ApiResponse(responseCode = "400", description = "Invalid date range")
+    })
     @GetMapping("/range")
-    public ResponseEntity<?> getSchedulesByDateRange(@RequestParam("start") LocalDateTime start, @RequestParam("end") LocalDateTime end) {
-        try {
-            List<Schedules> schedules = scheduleService.getSchedulesByDateRange(start, end);
-            return ResponseEntity.ok(schedules);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Internal Server Error: Unable to fetch schedules", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<List<Schedules>> getSchedulesByDateRange(
+            @Parameter(description = "Start date of the range", required = true)
+            @RequestParam("start") LocalDateTime start,
+            @Parameter(description = "End date of the range", required = true)
+            @RequestParam("end") LocalDateTime end) {
+        List<Schedules> schedules = scheduleService.getSchedulesByDateRange(start, end);
+        return ResponseEntity.ok(schedules);
     }
 
-    @GetMapping("/assigned/{username}")
-    public ResponseEntity<?> getSchedulesAssignedTo(@PathVariable String username) {
-        try {
-            List<ScheduleDTO> schedules = scheduleService.getSchedulesAssignedTo(username);
-            return ResponseEntity.ok(schedules);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Internal Server Error: Unable to fetch schedules for the specified user", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Update schedule by ID
+    /**
+     * Updates a schedule by its ID.
+     *
+     * @param id           the schedule ID
+     * @param scheduleDTO  the updated schedule data
+     * @return the updated schedule
+     */
+    @Operation(summary = "Update a schedule by its ID", responses = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the schedule"),
+            @ApiResponse(responseCode = "404", description = "Schedule not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid schedule data")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateSchedule(@PathVariable Long id, @Valid @RequestBody ScheduleDTO scheduleDTO) {
-        try {
-            if (scheduleDTO.getProjectId() == null) {
-                return new ResponseEntity<>("Project ID must not be null", HttpStatus.BAD_REQUEST);
-            }
-
-            Schedules updatedSchedule = scheduleService.updateSchedule(id, scheduleDTO);
-            return ResponseEntity.ok(updatedSchedule);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Internal Server Error: Unable to update schedule", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Schedules> updateSchedule(
+            @Parameter(description = "ID of the schedule to update", required = true)
+            @PathVariable Long id,
+            @Valid @RequestBody ScheduleDTO scheduleDTO) {
+        Schedules updatedSchedule = scheduleService.updateSchedule(id, scheduleDTO);
+        return ResponseEntity.ok(updatedSchedule);
     }
 
-    // Delete schedule by ID
+    /**
+     * Deletes a schedule by its ID.
+     *
+     * @param id the schedule ID
+     * @return a response with no content
+     */
+    @Operation(summary = "Delete a schedule by its ID", responses = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted the schedule"),
+            @ApiResponse(responseCode = "404", description = "Schedule not found")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSchedule(@PathVariable Long id) {
-        try {
-            scheduleService.deleteSchedule(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Internal Server Error: Unable to delete schedule", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Void> deleteSchedule(
+            @Parameter(description = "ID of the schedule to delete", required = true)
+            @PathVariable Long id) {
+        scheduleService.deleteSchedule(id);
+        return ResponseEntity.noContent().build();
     }
 }

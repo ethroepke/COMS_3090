@@ -19,5 +19,5 @@ public class NotificationRequestDTO {
     @NotNull(message = "User ID cannot be null")
     private Long userId;
 
-    private Long projectId; // Optional
+    private Long projectId;
 }

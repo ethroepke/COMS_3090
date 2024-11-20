@@ -25,6 +25,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This page is what a user would see when they open the app and login with their credentials. They will login with their credentials.They can also reset password or create account from this page
+ */
 public class loginActivity extends AppCompatActivity {
 
     private TextView messageText;

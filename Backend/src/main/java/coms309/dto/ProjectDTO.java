@@ -2,6 +2,8 @@ package coms309.dto;
 
 
 import coms309.entity.Priority;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
@@ -10,35 +12,38 @@ import lombok.Setter;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
 @Data
 public class ProjectDTO {
 
-    private Long projectId;
+//    private String description;
+//
+//    private String projectName;
+//
+//    private String status;
+//
+//    private Date dueDate;
+//
+    private Date startDate;
 
-    private String Description;
+
+    private Date endDate;
+
+//    @NotNull(message = "Priority level is required")
+//    private Priority priority;
+//
+//    @NotEmpty(message = "Employers list cannot be empty")
+//    private List<@NotBlank(message = "Employer username cannot be blank") String> employerUsernames;
+
 
     private String projectName;
-
-    private String status;
-
+    private String description;
     private Date dueDate;
-
-    public List<String> getEmployerUsernames() {
-        return getEmployerUsernames();
-    }
-
-    public @NotNull(message = "Start date is required") LocalDate getStartDate() {
-        return getStartDate();
-    }
-
-    public @NotNull(message = "End date is required") LocalDate getEndDate() {
-        return getEndDate();
-    }
-
-    public @NotNull(message = "Priority level is required") Priority getPriority() {
-        return getPriority();
-    }
+    private Priority priority;
+//    private String employerUsername;
+    private String status;
+    private String employerUsername;
 }

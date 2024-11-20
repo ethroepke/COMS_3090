@@ -1,6 +1,7 @@
 
 package coms309.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -11,10 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Entity class representing a user's profile.
@@ -75,9 +73,11 @@ public class UserProfile implements Serializable {
     @JsonManagedReference
     private Salary salary;
 
-    @OneToOne(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToOne(mappedBy = "userProfile")
+    @JsonBackReference
     private Employer employer;
+
+
 
     public UserProfile(Long userId, String password, String username, String email ) {
         this.userId = Long.valueOf(userId);

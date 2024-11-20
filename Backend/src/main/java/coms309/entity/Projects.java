@@ -3,13 +3,13 @@ package coms309.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.catalina.User;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -24,7 +24,7 @@ import java.util.*;
 @Getter
 @Setter
 @Table(name = "projects")
-public class Projects {
+public class Projects implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,12 +44,25 @@ public class Projects {
     @Column(name = "Due_date")
     private Date dueDate ;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", nullable = false)
+    @NotNull(message = "Priority level is required")
+    private Priority priority;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "start_date", nullable = false)
+    private Date startDate;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "end_date", nullable = false)
+    private Date endDate;
 
     @Column(name = "status", nullable = false)
     private String status;
 
-    @ManyToMany(mappedBy = "projects")
-    private Set<Employer> employers = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employer_id", referencedColumnName = "employer_id", nullable = false)
+    private Employer employer;
 
     @ManyToMany(mappedBy = "projects")
     private Set<Admin> admins = new HashSet<>();

@@ -31,24 +31,13 @@ public class Employer{
     @JsonBackReference
     private UserProfile userProfile;
 
-    @ManyToMany
-    @JoinTable(
-            name = "employer_projects",
-            joinColumns = @JoinColumn(name = "employer_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
-    @JsonBackReference
-    private Set<Projects> projects = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Projects> projects = new ArrayList<>();
+
 
     public Employer(){}
 
-    public void addProject(Projects project) {
-        this.projects.add(project);
-        project.getEmployers().add(this);
-    }
 
-    public void removeProject(Projects project) {
-        this.projects.remove(project);
-        project.getEmployers().remove(this);
-    }
 }

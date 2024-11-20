@@ -8,11 +8,14 @@ import coms309.entity.UserType;
 import coms309.repository.NotificationRepository;
 import coms309.repository.ProjectRepository;
 import coms309.repository.UserProfileRepository;
+import coms309.websocket.ChatSocket;
+import jakarta.websocket.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +31,9 @@ public class NotificationService {
 
     @Autowired
     private ProjectRepository projectsRepository;
+
+    @Autowired
+    private ChatSocket chatSocket;
 
     /**
      * Notify employees about a specific project.
@@ -72,7 +78,6 @@ public class NotificationService {
         if (notificationRequestDTO.getMessage() == null || notificationRequestDTO.getMessage().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Notification message cannot be empty.");
         }
-
         // Fetch UserProfile
         Optional<UserProfile> userOpt = userProfileRepository.findById(notificationRequestDTO.getUserId());
         if (!userOpt.isPresent()) {
@@ -89,7 +94,6 @@ public class NotificationService {
             }
             project = projectOpt.get();
         }
-
         // Create and save Notification
         Notification notification = new Notification(
                 notificationRequestDTO.getMessage(),
@@ -159,5 +163,6 @@ public class NotificationService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Notification not found with ID: " + id);
         }
     }
+
 }
 
