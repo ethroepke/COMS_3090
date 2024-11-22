@@ -19,6 +19,8 @@ import java.util.Set;
 @Data
 public class ProjectDTO {
 
+    private Long projectId;
+
 //    private String description;
 //
 //    private String projectName;
@@ -46,4 +48,12 @@ public class ProjectDTO {
 //    private String employerUsername;
     private String status;
     private String employerUsername;
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 }

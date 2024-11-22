@@ -65,8 +65,8 @@ public class ProjectService {
         project.setDueDate(projectDTO.getDueDate());
         project.setPriority(projectDTO.getPriority());
         project.setEmployer(userProfile.getEmployer());
-        project.setStartDate(projectDTO.getStartDate());
-        project.setEndDate(projectDTO.getEndDate());
+        project.setStartDate(projectDTO.getStartDate().toLocalDate());
+        project.setEndDate(projectDTO.getEndDate().toLocalDate());
         project.setStatus(projectDTO.getStatus());
 
 

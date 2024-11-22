@@ -25,6 +25,9 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ProjectRepository projectRepository;
+
 //    @Autowired
 //    private TaskWebSocketService taskWebSocketService;
 

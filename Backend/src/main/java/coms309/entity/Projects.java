@@ -2,6 +2,7 @@
 package coms309.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -44,21 +45,13 @@ public class Projects implements Serializable {
     @Column(name = "Due_date")
     private Date dueDate ;
 
+    @Column(name = "status", nullable = false)
+    private String status;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
     @NotNull(message = "Priority level is required")
     private Priority priority;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "start_date", nullable = false)
-    private Date startDate;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "end_date", nullable = false)
-    private Date endDate;
-
-    @Column(name = "status", nullable = false)
-    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employer_id", referencedColumnName = "employer_id", nullable = false)
@@ -74,11 +67,6 @@ public class Projects implements Serializable {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<Tasks> tasks = new HashSet<>();
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "priority", nullable = false)
-    @NotNull(message = "Priority level is required")
-    private Priority priority;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Start date is required")

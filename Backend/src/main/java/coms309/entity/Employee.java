@@ -1,5 +1,6 @@
 package coms309.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -40,6 +41,7 @@ public class Employee {
     @NotNull(message = "Project assignment cannot be null")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
+    @JsonManagedReference
     private Projects project;
 
     public Employee(){}
