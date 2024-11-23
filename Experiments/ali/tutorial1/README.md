@@ -2,7 +2,7 @@
 
 ### What is this example: 
 
-A "hello world" example for testing environment setup
+Another "hello world" example for testing environment setup
 
 ### version tested
 |Android Studio            | Android SDK | Gradle | Emulator |
