@@ -1,6 +1,7 @@
 
 package coms309.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -30,6 +31,7 @@ public class Admin {
             joinColumns = @JoinColumn(name = "admin_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
+    @JsonIgnore
     private Set<Projects> projects = new HashSet<>();
 
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)

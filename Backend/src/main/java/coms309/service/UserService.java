@@ -4,6 +4,8 @@ import coms309.dto.UserDTO;
 import coms309.dto.SignUpDTO;
 import coms309.entity.UserProfile;
 import coms309.repository.UserProfileRepository;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,17 +121,19 @@ public class UserService {
 
     /**
      * Delete a user by their ID.
-     * @param id The ID of the user to delete
+     * @param userId The ID of the user to delete
      * @return True if the user was deleted, false if not found
      */
-    public boolean deleteUser(Long id) {
-        logger.info("Deleting user with ID: {}", id);
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-            logger.info("User with ID: {} deleted successfully", id);
+    public boolean deleteUserByUserId(Long userId) {
+        logger.info("Deleting user profile with user_id: {}", userId);
+        // Find user by user_id
+        Optional<UserProfile> user = userRepository.findByUserId(userId);
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+            logger.info("User profile with user_id: {} deleted successfully", userId);
             return true;
         }
-        logger.warn("User with ID: {} not found for deletion", id);
+        logger.warn("User profile with user_id: {} not found for deletion", userId);
         return false;
     }
 

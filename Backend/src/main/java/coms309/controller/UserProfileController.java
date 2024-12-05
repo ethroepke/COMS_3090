@@ -193,22 +193,22 @@ public class UserProfileController {
     /**
      * Delete a user profile by ID.
      *
-     * @param id The ID of the user to delete.
+     * @param userId The ID of the user to delete.
      * @return ResponseEntity indicating the outcome.
      */
     @Operation(summary = "Delete a user profile by ID", responses = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted the user profile"),
             @ApiResponse(responseCode = "404", description = "User profile not found")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserProfile(@PathVariable Long id) {
-        logger.info("Controller: Deleting user profile with ID: {}", id);
-        boolean deleted = userService.deleteUser(id);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUserProfileByUserId(@PathVariable Long userId) {
+        logger.info("Controller: Deleting user profile with user_id: {}", userId);
+        boolean deleted = userService.deleteUserByUserId(userId);
         if (deleted) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build(); // HTTP 204
         } else {
-            logger.warn("Controller: User profile not found for ID: {}", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            logger.warn("Controller: User profile not found for user_id: {}", userId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // HTTP 404
         }
     }
 
@@ -347,3 +347,4 @@ public class UserProfileController {
         return ResponseEntity.ok(usernames);
     }
 }
+

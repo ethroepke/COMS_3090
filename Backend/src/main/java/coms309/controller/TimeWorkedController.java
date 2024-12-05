@@ -15,7 +15,6 @@ import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
@@ -85,9 +84,10 @@ public class TimeWorkedController {
     @PostMapping("/timeweek")
     public ResponseEntity<String> submitTimeForWeek(@Valid @RequestBody UserProfile user) {
         logger.info("Submitting time for week for user with id: {}", user.getUserId());
-        if (user.getTimeWorked() < 0 || user.getTimeWorked() > 168) { // A week has 168 hours max
+        if (user.getTimeWorked() < 0 || user.getTimeWorked() > 168) {
             return ResponseEntity.badRequest().body("Invalid time entry. Time should be between 0 and 168 hours.");
         }
+        // Map DTO to entity and call the service
         boolean result = userService.submitTimeForWeek(user);
         if (!result) {
             return ResponseEntity.badRequest().body("Failed to submit time for the week.");
@@ -105,7 +105,7 @@ public class TimeWorkedController {
             @ApiResponse(responseCode = "200", description = "Successfully unsubmited time for the week"),
             @ApiResponse(responseCode = "400", description = "Failed to unsubmit time for the week")
     })
-    @DeleteMapping("/timeweek")
+    @DeleteMapping("/unsubmit")
     public ResponseEntity<String> unsubmitTimeForWeek(@Valid @RequestBody UserProfile user) {
         logger.info("Unsubmitting time for week for user with id: {}", user.getUserId());
         boolean result = userService.unsubmitTimeForWeek(user);

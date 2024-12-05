@@ -1,6 +1,7 @@
 package coms309.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -31,10 +32,14 @@ public class Employer{
     @JsonBackReference
     private UserProfile userProfile;
 
-
-
-    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Projects> projects = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "employer_projects",
+            joinColumns = @JoinColumn(name = "employer_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
+    @JsonManagedReference
+    private Set<Projects> projects = new HashSet<>();
 
 
     public Employer(){}

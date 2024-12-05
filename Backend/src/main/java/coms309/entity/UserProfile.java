@@ -1,10 +1,6 @@
-
 package coms309.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.NotNull;
@@ -67,9 +63,8 @@ public class UserProfile implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date nextShift;
 
-    @NotNull(message = "Salary cannot be null")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "salary_id", referencedColumnName = "salary_id", nullable = false)
+    @JoinColumn(name = "salary_id", referencedColumnName = "salary_id", nullable = true)
     @JsonManagedReference
     private Salary salary;
 
@@ -77,7 +72,9 @@ public class UserProfile implements Serializable {
     @JsonBackReference
     private Employer employer;
 
-
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private Set<Employee> employees = new HashSet<>();
 
     public UserProfile(Long userId, String password, String username, String email ) {
         this.userId = Long.valueOf(userId);
@@ -91,3 +88,4 @@ public class UserProfile implements Serializable {
 
     public UserProfile(){}
 }
+

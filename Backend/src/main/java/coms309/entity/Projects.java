@@ -2,6 +2,8 @@
 package coms309.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -27,6 +29,7 @@ import java.util.*;
 @Table(name = "projects")
 public class Projects implements Serializable {
 
+    private Priority priority;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
@@ -48,14 +51,10 @@ public class Projects implements Serializable {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "priority", nullable = false)
-    @NotNull(message = "Priority level is required")
-    private Priority priority;
+    @ManyToMany(mappedBy = "projects")
+    @JsonBackReference
+    private Set<Employer> employers = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employer_id", referencedColumnName = "employer_id", nullable = false)
-    private Employer employer;
 
     @ManyToMany(mappedBy = "projects")
     private Set<Admin> admins = new HashSet<>();
@@ -77,6 +76,9 @@ public class Projects implements Serializable {
     @NotNull(message = "End date is required")
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
+    @ManyToOne
+    @JoinColumn(name = "employer_id")
+    private Employer employer;
 
     public Projects(){}
 
@@ -89,5 +91,13 @@ public class Projects implements Serializable {
         this.priority = priority;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
+    }
+
+    public Employer getEmployer() {
+        return employer;
     }
 }
