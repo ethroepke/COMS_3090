@@ -47,16 +47,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- Example Entry -->
-            <TextView
-                android:id="@+id/currentUser"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:padding="8dp"
-                android:background="#FFF0E0"
-                android:text="Ethan Roepke: Clocked In: 9:00 AM"
-                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 
@@ -88,16 +78,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- Example Entry -->
-            <TextView
-                android:id="@+id/previousUser1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:padding="8dp"
-                android:background="#FFF0E0"
-                android:text="Ethan Roepke: \nClocked In: 9:00 AM, Clocked Out: 5:00 PM"
-                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 

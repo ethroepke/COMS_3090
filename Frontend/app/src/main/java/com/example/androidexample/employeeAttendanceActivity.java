@@ -66,82 +66,88 @@ public class employeeAttendanceActivity extends AppCompatActivity {
      * Populates the list of current users working.
      */
     private void populateCurrentUsers() {
-        try {
-            JSONArray currentUsers = getCurrentUsersData(); // Simulate fetching current users data
-            for (int i = 0; i < currentUsers.length(); i++) {
-                JSONObject user = currentUsers.getJSONObject(i);
-                String name = user.getString("name");
-                String clockInTime = user.getString("clockInTime");
+        String url = ""; //Change with URL
 
-                // Create a TextView for each user
-                TextView userView = new TextView(this);
-                userView.setText(name + " - Clocked In: " + clockInTime);
-                userView.setTextSize(16);
-                userView.setPadding(8, 8, 8, 8);
-                userView.setBackgroundColor(getResources().getColor(android.R.color.white));
-                userView.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                ));
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        JSONArray currentUsers = response.getJSONArray("data");
+                        for (int i = 0; i < currentUsers.length(); i++) {
+                            JSONObject user = currentUsers.getJSONObject(i);
+                            String name = user.getString("name");
+                            String clockInTime = user.getString("clockInTime");
 
-                currentUsersLayout.addView(userView);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                            // Add each user to the UI
+                            TextView userView = new TextView(this);
+                            userView.setText(name + " - Clocked In: " + clockInTime);
+                            userView.setTextSize(16);
+                            userView.setPadding(8, 8, 8, 8);
+                            userView.setBackgroundColor(getResources().getColor(android.R.color.white));
+                            userView.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            ));
+
+                            currentUsersLayout.addView(userView);
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(this, "Error parsing current users data", Toast.LENGTH_SHORT).show();
+                        Log.e("CurrentUsersError", e.toString());
+                    }
+                },
+                error -> {
+                    Toast.makeText(this, "Failed to fetch current users", Toast.LENGTH_SHORT).show();
+                    Log.e("CurrentUsersError", error.toString());
+                });
+
+        // Add request to Volley queue
+        Volley.newRequestQueue(this).add(request);
     }
+
 
     /**
      * Populates the list of users who worked today.
      */
     private void populatePreviousUsers() {
-        try {
-            JSONArray previousUsers = getPreviousUsersData(); // Simulate fetching previous users data
-            for (int i = 0; i < previousUsers.length(); i++) {
-                JSONObject user = previousUsers.getJSONObject(i);
-                String name = user.getString("name");
-                String clockInTime = user.getString("clockInTime");
-                String clockOutTime = user.getString("clockOutTime");
+        String url = ""; //Change with URL
 
-                // Create a TextView for each user
-                TextView userView = new TextView(this);
-                userView.setText(name + "\nClocked In: " + clockInTime + ", Clocked Out: " + clockOutTime);
-                userView.setTextSize(16);
-                userView.setPadding(8, 8, 8, 8);
-                userView.setBackgroundColor(getResources().getColor(android.R.color.white));
-                userView.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                ));
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        JSONArray previousUsers = response.getJSONArray("data");
+                        for (int i = 0; i < previousUsers.length(); i++) {
+                            JSONObject user = previousUsers.getJSONObject(i);
+                            String name = user.getString("name");
+                            String clockInTime = user.getString("clockInTime");
+                            String clockOutTime = user.getString("clockOutTime");
 
-                previousUsersLayout.addView(userView);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                            // Add each user to the UI
+                            TextView userView = new TextView(this);
+                            userView.setText(name + "\nClocked In: " + clockInTime + ", Clocked Out: " + clockOutTime);
+                            userView.setTextSize(16);
+                            userView.setPadding(8, 8, 8, 8);
+                            userView.setBackgroundColor(getResources().getColor(android.R.color.white));
+                            userView.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            ));
+
+                            previousUsersLayout.addView(userView);
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(this, "Error parsing previous users data", Toast.LENGTH_SHORT).show();
+                        Log.e("PreviousUsersError", e.toString());
+                    }
+                },
+                error -> {
+                    Toast.makeText(this, "Failed to fetch previous users", Toast.LENGTH_SHORT).show();
+                    Log.e("PreviousUsersError", error.toString());
+                });
+
+        // Add request to Volley queue
+        Volley.newRequestQueue(this).add(request);
     }
-
-    /**
-     * Simulates fetching data for current users working.
-     */
-    private JSONArray getCurrentUsersData() throws JSONException {
-        // Simulate API response or database query
-        JSONArray users = new JSONArray();
-        users.put(new JSONObject().put("name", "Ethan Roepke").put("clockInTime", "09:00 AM"));
-        users.put(new JSONObject().put("name", "John Doe").put("clockInTime", "08:30 AM"));
-        return users;
-    }
-
-    /**
-     * Simulates fetching data for users who worked today.
-     */
-    private JSONArray getPreviousUsersData() throws JSONException {
-        // Simulate API response or database query
-        JSONArray users = new JSONArray();
-        users.put(new JSONObject().put("name", "Ethan Roepke").put("clockInTime", "09:00 AM").put("clockOutTime", "05:00 PM"));
-        users.put(new JSONObject().put("name", "Jane Smith").put("clockInTime", "08:00 AM").put("clockOutTime", "04:00 PM"));
-        return users;
-    }
+    
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
