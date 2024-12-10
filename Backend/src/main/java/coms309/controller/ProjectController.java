@@ -1,3 +1,4 @@
+
 package coms309.controller;
 
 import coms309.dto.NotificationRequestDTO;
@@ -7,6 +8,7 @@ import coms309.entity.Projects;
 import coms309.service.NotificationService;
 import coms309.service.UserService;
 import coms309.service.ProjectService;
+import coms309.service.TaskService;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +23,35 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Controller class for handling project-related API endpoints.
  */
 @RestController
-@RequestMapping("/api/project")
-@Tag(name = "Project Management", description = "API endpoints for project and notification management")
+@RequestMapping("/project")
+@Tag(name = "Project Management System", description = "API endpoints for project and notification management")
 public class ProjectController {
 
     private final NotificationService notificationService;
     private final UserService userService;
+
+    @Autowired
     private final ProjectService projectService;
+
+    @Autowired
+    private final TaskService taskService;
+
+    private Projects convertDtoToEntity(ProjectDTO projectDTO) {
+        Projects project = new Projects();
+        // Assuming Projects has setName and setDescription methods
+        // Add the setName method in the Projects class if it doesn't exist
+        project.setName(projectDTO.getName());
+        // Add the setDescription method in the Projects class if it doesn't exist
+        project.setDescription(projectDTO.getDescription());
+        return project;
+    }
 
     /**
      * Constructs a new ProjectController with the given services.
@@ -41,10 +60,11 @@ public class ProjectController {
      * @param userService         the user service
      * @param projectService      the project service
      */
-    public ProjectController(NotificationService notificationService, UserService userService, ProjectService projectService) {
+    public ProjectController(NotificationService notificationService, UserService userService, ProjectService projectService, TaskService taskService) {
         this.notificationService = notificationService;
         this.userService = userService;
         this.projectService = projectService;
+        this.taskService = taskService;
     }
 
     /**
@@ -55,7 +75,7 @@ public class ProjectController {
     @Operation(summary = "Retrieve all projects", responses = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved all projects")
     })
-    @GetMapping("/allproject")
+    @GetMapping("/all")
     public List<Projects> getAllProjects() {
         return projectService.getAllProjects();
     }
@@ -90,7 +110,8 @@ public class ProjectController {
     @PostMapping("/create")
     public ResponseEntity<String> createProject(
             @Valid @RequestBody ProjectDTO projectDTO) {
-        return projectService.createProject(projectDTO);
+                Projects project = convertDtoToEntity(projectDTO);
+                return projectService.createProject(projectDTO);
     }
 
     /*
@@ -195,5 +216,23 @@ public class ProjectController {
             @Parameter(description = "ID of the notification to delete", required = true)
             @PathVariable Long id) {
         return notificationService.deleteNotification(id);
+    }
+
+    // Endpoint to get project progress
+    @GetMapping("/{projectId}/progress")
+    public Map<String, Integer> getProjectProgress(@PathVariable Long projectId) {
+        int completedTasks = projectService.getCompletedTasks(projectId);
+        int totalTasks = projectService.getTotalTasks(projectId);
+        Map<String, Integer> progress = new HashMap<>();
+        progress.put("completedTasks", completedTasks);
+        progress.put("totalTasks", totalTasks);
+        return progress;
+    }
+
+    // Endpoint to mark a task as completed
+    @PostMapping("/tasks/{taskId}/complete")
+    public ResponseEntity<String> markTaskAsCompleted(@PathVariable Long taskId) {
+        taskService.markTaskAsCompleted(taskId);
+        return ResponseEntity.ok("Task marked as completed successfully.");
     }
 }

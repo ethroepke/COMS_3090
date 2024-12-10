@@ -1,7 +1,8 @@
+
 package coms309.dto;
 
-
 import coms309.entity.Priority;
+import coms309.entity.Projects;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +32,6 @@ public class ProjectDTO {
 //
     private Date startDate;
 
-
     private Date endDate;
 
 //    @NotNull(message = "Priority level is required")
@@ -40,7 +40,6 @@ public class ProjectDTO {
 //    @NotEmpty(message = "Employers list cannot be empty")
 //    private List<@NotBlank(message = "Employer username cannot be blank") String> employerUsernames;
 
-
     private String projectName;
     private String description;
     private Date dueDate;
@@ -48,6 +47,8 @@ public class ProjectDTO {
 //    private String employerUsername;
     private String status;
     private String employerUsername;
+    private int completedTasks;
+    private int totalTasks;
 
     public Long getProjectId() {
         return projectId;
@@ -55,5 +56,42 @@ public class ProjectDTO {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public int getCompletedTasks() {
+        return completedTasks;
+    }
+
+    public void setCompletedTasks(int completedTasks) {
+        this.completedTasks = completedTasks;
+    }
+
+    public int getTotalTasks() {
+        return totalTasks;
+    }
+
+    public void setTotalTasks(int totalTasks) {
+        this.totalTasks = totalTasks;
+    }
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public static ProjectDTO fromEntity(Projects project) {
+        ProjectDTO dto = new ProjectDTO();
+        dto.setProjectName(project.getProjectName());
+        dto.setDescription(project.getDescription());
+        dto.setPriority(Priority.valueOf(project.getPriority()));
+        dto.setStatus(project.getStatus());
+        dto.setStartDate(java.sql.Date.valueOf(project.getStartDate().toLocalDate()));
+        dto.setEndDate(java.sql.Date.valueOf(project.getEndDate().toLocalDate()));
+        dto.setDueDate(java.sql.Date.valueOf(project.getDueDate().toLocalDate()));
+        return dto;
     }
 }

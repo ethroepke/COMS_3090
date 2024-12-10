@@ -2,6 +2,7 @@ package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -25,6 +26,10 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class employeeAttendanceActivity extends AppCompatActivity {
 
@@ -66,7 +71,7 @@ public class employeeAttendanceActivity extends AppCompatActivity {
      * Populates the list of current users working.
      */
     private void populateCurrentUsers() {
-        String url = ""; //Change with URL
+        String url = "https://33a10a78-e275-47f1-aa89-ae3a5cfad850.mock.pstmn.io/usersWorked"; //Mock server URL
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -77,20 +82,39 @@ public class employeeAttendanceActivity extends AppCompatActivity {
                             String name = user.getString("name");
                             String clockInTime = user.getString("clockInTime");
 
-                            // Add each user to the UI
+
+
+                            // Create a CardView to wrap each user's info
+                            CardView cardView = new CardView(this);
+                            cardView.setCardBackgroundColor(getResources().getColor(android.R.color.white));
+                            cardView.setRadius(10);
+                            cardView.setCardElevation(5);
+
+                            // Set layout params for the CardView and add margin for spacing between cards
+                            LinearLayout.LayoutParams cardLayoutParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            cardLayoutParams.setMargins(16, 8, 16, 8);
+                            cardView.setLayoutParams(cardLayoutParams);
+
+                            // Create a TextView inside the CardView
                             TextView userView = new TextView(this);
                             userView.setText(name + " - Clocked In: " + clockInTime);
                             userView.setTextSize(16);
-                            userView.setPadding(8, 8, 8, 8);
-                            userView.setBackgroundColor(getResources().getColor(android.R.color.white));
-                            userView.setLayoutParams(new LinearLayout.LayoutParams(
+                            userView.setPadding(16, 16, 16, 16);
+                            userView.setLayoutParams(new CardView.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
                             ));
 
-                            currentUsersLayout.addView(userView);
+                            // Add the TextView to the CardView
+                            cardView.addView(userView);
+
+                            // Add the CardView to the layout
+                            currentUsersLayout.addView(cardView);
                         }
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         Toast.makeText(this, "Error parsing current users data", Toast.LENGTH_SHORT).show();
                         Log.e("CurrentUsersError", e.toString());
                     }
@@ -109,7 +133,7 @@ public class employeeAttendanceActivity extends AppCompatActivity {
      * Populates the list of users who worked today.
      */
     private void populatePreviousUsers() {
-        String url = ""; //Change with URL
+        String url = "https://72b97328-1352-43d0-9e69-8c9ad2eb9414.mock.pstmn.io/currentUsersToday"; // Change with URL
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -121,18 +145,36 @@ public class employeeAttendanceActivity extends AppCompatActivity {
                             String clockInTime = user.getString("clockInTime");
                             String clockOutTime = user.getString("clockOutTime");
 
-                            // Add each user to the UI
+
+                            // Create a CardView to wrap each user's info
+                            CardView cardView = new CardView(this);
+                            cardView.setCardBackgroundColor(getResources().getColor(android.R.color.white));
+                            cardView.setRadius(10);
+                            cardView.setCardElevation(5);
+
+                            // Set layout params for the CardView
+                            LinearLayout.LayoutParams cardLayoutParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            cardLayoutParams.setMargins(16, 8, 16, 8);
+                            cardView.setLayoutParams(cardLayoutParams);
+
+                            // Create a TextView to display the user info
                             TextView userView = new TextView(this);
                             userView.setText(name + "\nClocked In: " + clockInTime + ", Clocked Out: " + clockOutTime);
                             userView.setTextSize(16);
-                            userView.setPadding(8, 8, 8, 8);
-                            userView.setBackgroundColor(getResources().getColor(android.R.color.white));
-                            userView.setLayoutParams(new LinearLayout.LayoutParams(
+                            userView.setPadding(16, 16, 16, 16);
+                            userView.setLayoutParams(new CardView.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
                             ));
 
-                            previousUsersLayout.addView(userView);
+                            // Add the TextView to the CardView
+                            cardView.addView(userView);
+
+                            // Add the CardView to the layout
+                            previousUsersLayout.addView(cardView);
                         }
                     } catch (JSONException e) {
                         Toast.makeText(this, "Error parsing previous users data", Toast.LENGTH_SHORT).show();
@@ -147,6 +189,7 @@ public class employeeAttendanceActivity extends AppCompatActivity {
         // Add request to Volley queue
         Volley.newRequestQueue(this).add(request);
     }
+
 
 
     @Override

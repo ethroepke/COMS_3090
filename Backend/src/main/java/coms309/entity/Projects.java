@@ -1,19 +1,15 @@
 
 package coms309.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.catalina.User;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -28,8 +24,6 @@ import java.util.*;
 @Setter
 @Table(name = "projects")
 public class Projects implements Serializable {
-
-    private Priority priority;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
@@ -40,55 +34,61 @@ public class Projects implements Serializable {
     @Column(name = "project_name", nullable = false)
     private String projectName;
 
-    @NotNull(message = "Project description cannot be null")
-    @Column(name = "project_description", nullable= false)
-    private String Description;
+    @NotNull(message = "Username cannot be null")
+    @Column(name = "username", nullable = false)
+    private String username;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "Due_date")
-    private Date dueDate ;
+    @NotNull(message = "Project description cannot be null")
+    @Column(name = "project_description", nullable = false)
+    private String description;
 
     @Column(name = "status", nullable = false)
     private String status;
 
-    @ManyToMany(mappedBy = "projects")
-    @JsonBackReference
-    private Set<Employer> employers = new HashSet<>();
+    @Column(name = "priority", nullable = false)
+    private String priority;
 
+    @Column(name = "due_date", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    private LocalDateTime dueDate;
+
+    @ManyToMany(mappedBy = "projects")
+    @JsonBackReference("employer-project")
+    private Set<Employer> employers = new HashSet<>();
 
     @ManyToMany(mappedBy = "projects")
     private Set<Admin> admins = new HashSet<>();
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @OneToMany(mappedBy = "projects", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("project-employee")
     private Set<Employee> employees = new HashSet<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonBackReference("project-task")
     private Set<Tasks> tasks = new HashSet<>();
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Start date is required")
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "End date is required")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    @Column(name = "start_date", nullable = false)
+    private LocalDateTime startDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    private LocalDateTime endDate;
     @ManyToOne
     @JoinColumn(name = "employer_id")
     private Employer employer;
 
     public Projects(){}
 
-    public Projects(Long projectId, String projectName, String Description, Date dueDate, String status, Priority priority, LocalDate startDate, LocalDate endDate ) {
+    public Projects(Long projectId, String projectName, String username, String description, String status, String priority, LocalDateTime dueDate, LocalDateTime startDate, LocalDateTime endDate ) {
         this.projectId = projectId;
         this.projectName = projectName;
-        this.Description= Description;
-        this.dueDate = dueDate;
+        this.username = username;
+        this.description= description;
         this.status= status;
         this.priority = priority;
+        this.dueDate = dueDate;
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -99,5 +99,18 @@ public class Projects implements Serializable {
 
     public Employer getEmployer() {
         return employer;
+    }
+
+    public void setName(String name) {
+        this.projectName = name;
+    }
+
+    public String getName() {
+        return projectName;
+    }
+
+    @JsonProperty("priority")
+    public String getPriority() {
+        return priority;
     }
 }

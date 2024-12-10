@@ -1,3 +1,4 @@
+
 package coms309.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -38,9 +39,9 @@ public class Tasks {
     @Column(name = "progress")
     private Integer progress;  // Represented as a percentage (0-100)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
-    @JsonBackReference // Adjust to the correct side of the relationship
+    @ManyToOne
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id")
+    @JsonManagedReference("project-task")
     private Projects project;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -59,6 +60,9 @@ public class Tasks {
 
     @Column(name = "employer_assigned_to", nullable = true)
     private String employerAssignedTo;
+
+    @Column(name = "is_completed", nullable = true)
+    private boolean isCompleted;
 
     // Constructors
     public Tasks() {}

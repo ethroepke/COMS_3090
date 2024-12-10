@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Entity class representing an Employee.
@@ -34,16 +36,14 @@ public class Employee {
     @JoinColumn(name = "user_profile_id", unique = true)
     private UserProfile userProfile;
 
-    @NotNull(message = "Projects assignment cannot be null")
-    @ManyToOne
-    @JoinColumn(name = "e_projects", referencedColumnName = "project_id")
-    private Projects projects;
-
-    @NotNull(message = "Project assignment cannot be null")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
-    @JsonManagedReference
-    private Projects project;
+    @ManyToMany
+    @JoinTable(
+            name = "employer_projects",
+            joinColumns = @JoinColumn(name = "employer_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
+    @JsonManagedReference("employer-project")
+    private Set<Projects> projects = new HashSet<>();
 
     public Employee(){}
 }

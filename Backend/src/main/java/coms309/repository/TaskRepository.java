@@ -1,9 +1,13 @@
-// Updated TaskRepository.java with improved method structure
+
 package coms309.repository;
 
 import coms309.entity.Tasks;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,4 +31,9 @@ public interface TaskRepository extends JpaRepository<Tasks, Long> {
 
     List<Tasks> findByEmployeeAssignedTo(String employeeAssignedTo);
     List<Tasks> findByEmployerAssignedTo(String employerAssignedTo);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Tasks t SET t.isCompleted = true WHERE t.id = :taskId")
+    void markTaskAsCompleted(@Param("taskId") Long taskId);
 }
