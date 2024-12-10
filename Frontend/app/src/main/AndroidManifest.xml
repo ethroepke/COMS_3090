@@ -104,6 +104,12 @@
             android:name=".scheduleAdminActivity"
             android:exported="true" />
         <activity
+            android:name=".GiveReviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".EmployeePerformanceReviewActivity"
+            android:exported="true" />
+        <activity
             android:name=".projectEmployerActivity"
             android:exported="true" />
         <activity

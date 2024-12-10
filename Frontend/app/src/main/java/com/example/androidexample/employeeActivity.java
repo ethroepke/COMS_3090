@@ -208,7 +208,7 @@ public class employeeActivity extends AppCompatActivity {
         performanceReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(employeeActivity.this, performanceReviewActivity.class);
+                Intent intent = new Intent(employeeActivity.this, EmployeePerformanceReviewActivity.class);
                 startActivity(intent);
             }
         });
