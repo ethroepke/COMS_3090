@@ -1,16 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:background="#FFF0E0">
 
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBarReviews"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFA500"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="#FFFFFF"
+        tools:ignore="MissingConstraints">
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Performance Review"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-</LinearLayout>
+        android:text="Performance Reviews"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:padding="16dp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+
+    <!-- ScrollView to display reviews -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp">
+
+        <!-- LinearLayout inside ScrollView to hold multiple reviews -->
+        <LinearLayout
+            android:id="@+id/reviewLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Button to add new review -->
+    <Button
+        android:id="@+id/addReviewButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add New Review"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:backgroundTint="#FFA500"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"/>
+</androidx.appcompat.widget.LinearLayoutCompat>
