@@ -32,7 +32,7 @@
         app:layout_constraintBottom_toTopOf="@id/requestTimeScroll">
 
         <LinearLayout
-            android:id="@+id/currentAvailableLayout"
+            android:id="@+id/availableLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -45,7 +45,7 @@
                 android:layout_margin="8dp"
                 android:text="Availabilty:"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
         </LinearLayout>
     </ScrollView>
@@ -74,9 +74,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Request Time Off::"
+                android:text="Requested Time Off:"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
         </LinearLayout>
     </ScrollView>

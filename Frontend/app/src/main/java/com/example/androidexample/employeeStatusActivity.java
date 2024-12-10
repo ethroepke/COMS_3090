@@ -32,9 +32,9 @@ public class employeeStatusActivity extends AppCompatActivity {
     private LinearLayout availableLayout;
     private LinearLayout requestOffLayout;
     private String loggedInUsername;
-    private static final String URL = ""; // Mock URL
+    private static final String URL = "https://acf37832-c33a-49c7-befe-31b02a15f1b6.mock.pstmn.io/userStatus"; // Mock URL
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "CutPasteId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +53,8 @@ public class employeeStatusActivity extends AppCompatActivity {
         // Initialize UI components
         scrollViewAvailability = findViewById(R.id.availabilityScroll);
         scrollViewTimeOff = findViewById(R.id.requestTimeScroll);
-        availableLayout = new LinearLayout(this);
-        availableLayout.setOrientation(LinearLayout.VERTICAL);
-        requestOffLayout = new LinearLayout(this);
-        requestOffLayout.setOrientation(LinearLayout.VERTICAL);
-
-        // Attach layouts to ScrollViews
-        scrollViewAvailability.addView(availableLayout);
-        scrollViewTimeOff.addView(requestOffLayout);
+        availableLayout = findViewById(R.id.availabilityScroll).findViewById(R.id.availableLayout);
+        requestOffLayout = findViewById(R.id.requestTimeScroll).findViewById(R.id.requestTimeLayout);
 
         // Load employee status
         loadEmployeeStatus();
@@ -102,27 +96,34 @@ public class employeeStatusActivity extends AppCompatActivity {
                                         LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT
                                 );
-                                cardLayoutParams.setMargins(16, 8, 16, 8);
+                                cardLayoutParams.setMargins(16, 8, 16, 8); // Adjusted margins
                                 cardView.setLayoutParams(cardLayoutParams);
+
+                                // Create a LinearLayout to contain both TextViews inside the CardView
+                                LinearLayout cardContentLayout = new LinearLayout(employeeStatusActivity.this);
+                                cardContentLayout.setOrientation(LinearLayout.VERTICAL);
+                                cardContentLayout.setPadding(16, 16, 16, 16); // Added padding
 
                                 // Create a TextView for the employee's name and status
                                 TextView employeeStatus = new TextView(employeeStatusActivity.this);
                                 employeeStatus.setText(name + ": " + status);
                                 employeeStatus.setTextSize(16);
-                                employeeStatus.setPadding(16, 16, 16, 8);
+                                employeeStatus.setPadding(0, 0, 0, 8); // Padding between name/status and details
 
-                                // Add the status TextView to the CardView
-                                cardView.addView(employeeStatus);
+                                // Add the name/status TextView to the LinearLayout
+                                cardContentLayout.addView(employeeStatus);
 
                                 // If additional details are provided, add another TextView
                                 if (!details.isEmpty() && (status.equalsIgnoreCase("On Leave") || status.equalsIgnoreCase("Time Off Requested"))) {
                                     TextView detailView = new TextView(employeeStatusActivity.this);
                                     detailView.setText("Details: " + details);
                                     detailView.setTextSize(14);
-                                    detailView.setPadding(16, 4, 16, 16);
-
-                                    cardView.addView(detailView);
+                                    detailView.setPadding(0, 8, 0, 0); // Padding for details TextView
+                                    cardContentLayout.addView(detailView);
                                 }
+
+                                // Add the LinearLayout to the CardView
+                                cardView.addView(cardContentLayout);
 
                                 // Add the CardView to the appropriate layout
                                 if (status.equalsIgnoreCase("Available")) {
@@ -130,6 +131,7 @@ public class employeeStatusActivity extends AppCompatActivity {
                                 } else {
                                     requestOffLayout.addView(cardView);
                                 }
+
                             }
                         } catch (JSONException e) {
                             Log.e("EmployeeStatus", "JSON Parsing error: " + e.getMessage());

@@ -68,9 +68,9 @@ public class ProjectStatusController {
     }
 
     // Mark a task as completed and update progress
-    @PostMapping("/tasks/{taskId}/complete")
-    public ResponseEntity<String> markTaskAsCompleted(@PathVariable Long taskId) {
-        taskService.markTaskAsCompleted(taskId);
+    @PostMapping("/tasks/{id}/complete")
+    public ResponseEntity<String> markTaskAsCompleted(@PathVariable Long id) {
+        taskService.markTaskAsCompleted(id);
         return ResponseEntity.ok("Task marked as completed successfully.");
     }
 
