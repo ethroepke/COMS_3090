@@ -1,6 +1,5 @@
 package coms309.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -26,24 +25,25 @@ public class Employee {
     @Column(name = "employee_id")
     private Long employeeId;
 
-   @OneToMany(mappedBy="employee", cascade = CascadeType.ALL)
-   private List<LeaveRequests> leaveRequestsList = new ArrayList<>();
+    @OneToMany(mappedBy="employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<LeaveRequests> leaveRequestsList = new ArrayList<>();
 
-   @OneToMany(mappedBy = "employee" , cascade = CascadeType.ALL)
-   private List<TimeLog> timeLogs= new ArrayList<>();
+    @OneToMany(mappedBy = "employee" , cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<TimeLog> timeLogs = new ArrayList<>();
 
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_profile_id", unique = true)
+    @JsonManagedReference
     private UserProfile userProfile;
 
-    @ManyToMany
-    @JoinTable(
-            name = "employer_projects",
-            joinColumns = @JoinColumn(name = "employer_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
-    @JsonManagedReference("employer-project")
-    private Set<Projects> projects = new HashSet<>();
+    @NotNull(message = "Project assignment cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
+    @JsonManagedReference
+    private Projects project;
 
     public Employee(){}
 }
+

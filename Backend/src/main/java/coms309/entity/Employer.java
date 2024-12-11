@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import java.util.ArrayList;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,17 +31,12 @@ public class Employer{
     @JsonBackReference
     private UserProfile userProfile;
 
-    @ManyToMany
-    @JoinTable(
-            name = "employer_projects",
-            joinColumns = @JoinColumn(name = "employer_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
-    @JsonManagedReference
-    private Set<Projects> projects = new HashSet<>();
+    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Projects> projects = new ArrayList<>();
 
 
     public Employer(){}
 
 
 }
+

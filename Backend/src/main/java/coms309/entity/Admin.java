@@ -1,4 +1,3 @@
-
 package coms309.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,23 +19,24 @@ import java.util.Set;
 @Entity
 public class Admin {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "admin_id")
-    private Long adminId;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "admin_id")
+        private Long adminId;
 
-    @ManyToMany
-    @JoinTable(
-            name = "admin_projects",
-            joinColumns = @JoinColumn(name = "admin_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
-    @JsonIgnore
-    private Set<Projects> projects = new HashSet<>();
+        @ManyToMany
+        @JoinTable(
+                name = "admin_projects",
+                joinColumns = @JoinColumn(name = "admin_id"),
+                inverseJoinColumns = @JoinColumn(name = "project_id")
+        )
+        @JsonIgnore // Prevent serialization loops here
+        private Set<Projects> projects = new HashSet<>();
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_profile_id", referencedColumnName = "user_id", unique = true)
-    private UserProfile userProfile;
+        @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
+        @JoinColumn(name = "user_profile_id", referencedColumnName = "user_id", unique = true)
+        private UserProfile userProfile;
 
-    public Admin(){}
+        public Admin() {}
 }
+

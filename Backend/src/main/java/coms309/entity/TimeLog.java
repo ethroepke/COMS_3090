@@ -1,6 +1,6 @@
-
 package coms309.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  * Entity class representing a time log entry for an employee.
- * 
+ *
  * Improvements:
  * - Added validation annotations to enforce data integrity.
  * - Enhanced documentation for field-level relationships and time tracking.
@@ -23,22 +23,27 @@ public class TimeLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "timeLog_id")
+    @Column(name = "time_log_id")
     private Long timeLogId;
 
     @NotNull(message = "Log date cannot be null")
     @Temporal(TemporalType.DATE)
-    @Column(name = "log_date")
+    @Column(name = "log_date", nullable = false)
     private Date logDate;
 
-    @NotNull(message = "Hours logged cannot be null")
-    @Column(name = "hours_logged")
-    private Integer hoursLogged;
+    @Column(name = "clock_in_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date clockInTime;
 
-    @NotNull(message = "Employee cannot be null")
+    @Column(name = "clock_out_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date clockOutTime;
+
     @ManyToOne
-    @JoinColumn(name = "timeTrackingForEmployee", referencedColumnName = "employee_id")
+    @JoinColumn(name = "employee_id", nullable = false)
+    @JsonBackReference
     private Employee employee;
 
 
 }
+

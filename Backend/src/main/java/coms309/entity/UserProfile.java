@@ -63,10 +63,10 @@ public class UserProfile implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date nextShift;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "salary_id", referencedColumnName = "salary_id", nullable = true)
-    @JsonManagedReference
+    @OneToOne(mappedBy = "userProfile")
+    @JsonBackReference
     private Salary salary;
+
 
     @OneToOne(mappedBy = "userProfile")
     @JsonBackReference

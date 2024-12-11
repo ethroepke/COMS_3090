@@ -14,12 +14,4 @@ public interface ProjectRepository extends JpaRepository<Projects, Long> {
     Optional<Projects> findByProjectId(Long projectId);
     Optional<Projects> findByProjectName(String projectName);
 
-    List<Projects> findByUsername(String username);
-
-    boolean existsByProjectName(String projectName);
-    @Query("SELECT COUNT(t) FROM Tasks t WHERE t.project.id = :projectId AND t.isCompleted = true")
-    int countCompletedTasks(@Param("projectId") Long projectId);
-
-    @Query("SELECT COUNT(t) FROM Tasks t WHERE t.project.id = :projectId")
-    int countTotalTasks(@Param("projectId") Long projectId);
 }

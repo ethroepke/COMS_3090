@@ -30,11 +30,11 @@ public class Salary {
     @Column(name = "salary_id")
     private Long salaryId;
 
-    @NotNull(message = "User profile cannot be null")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_profile_id", referencedColumnName = "user_id", nullable = false)
     @JsonIgnore
     private UserProfile userProfile;
+
 
     @NotNull(message = "Hours worked cannot be null")
     @Column(name = "hours_worked", nullable = false)
@@ -60,7 +60,6 @@ public class Salary {
     public Salary() {
     }
 
-    // Constructor with parameters
     public Salary(UserProfile userProfile, Double hoursWorked, Double payRate, Double bonusPay, Double deductibles) {
         this.userProfile = userProfile;
         this.hoursWorked = hoursWorked;

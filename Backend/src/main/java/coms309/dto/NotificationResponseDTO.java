@@ -14,6 +14,6 @@ public class NotificationResponseDTO {
     private String type;
     private String message;
     private LocalDateTime timeStamp;
-    private String username; // Username of the associated user
-    private String projectName; // Project name if associated
+    private String username;
+    private String projectName;
 }

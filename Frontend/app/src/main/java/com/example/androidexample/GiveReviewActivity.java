@@ -67,7 +67,7 @@ public class GiveReviewActivity extends AppCompatActivity {
     // Method to load employee list (example)
     private void loadEmployees() {
         // Fetch the list of employees (simulated API call)
-        String url = "http://example.com/api/employees";  // Replace with your actual URL
+        String url = "https://32bedba2-9b96-417c-bf46-88d9fc3ad047.mock.pstmn.io/names";  // Replace with your actual URL
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -139,7 +139,7 @@ public class GiveReviewActivity extends AppCompatActivity {
             reviewData.put("review", reviewText);
 
             // Send the review to the server (simulated API request)
-            String url = "http://example.com/api/submitReview";  // Replace with actual URL
+            String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/performance-reviews/create";
             JsonObjectRequest submitRequest = new JsonObjectRequest(Request.Method.POST, url, reviewData,
                     new Response.Listener<JSONObject>() {
                         @Override
