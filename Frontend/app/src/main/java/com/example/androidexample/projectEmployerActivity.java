@@ -171,7 +171,7 @@ public class projectEmployerActivity extends AppCompatActivity {
     // When on back button check userType to make sure goes back to right page
     private void fetchUserProfile(final String username) {
         // URL to fetch user profile using the username
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;
+        String url = "https://dfb6bb63-c0ea-4c10-bbd9-c6201d4aa3a3.mock.pstmn.io/project";
 
         // Make a GET request to fetch the user profile
         JsonObjectRequest profileRequest = new JsonObjectRequest(Request.Method.GET, url,

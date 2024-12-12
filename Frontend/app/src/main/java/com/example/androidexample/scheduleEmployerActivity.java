@@ -114,7 +114,7 @@ public class scheduleEmployerActivity extends AppCompatActivity {
     // Method to fetch event data and process it
     private void fetchEventData(String username) {
         // Updated URL that directly fetches the logged-in user's schedules
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/schedules/assigned/" + username;
+        String url = "https://eceda3fd-5b51-430f-bd55-3a91ebb3ca23.mock.pstmn.io/schedule/johndoe";
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
