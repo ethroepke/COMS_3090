@@ -28,7 +28,7 @@
     </TextView>
 
     <Spinner
-        android:id="@+id/nameEntry"
+        android:id="@+id/nameEntrySchedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter the username of an employer"

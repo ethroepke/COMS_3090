@@ -38,7 +38,7 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.employee_perfomance_review);  // Load the XML layout
+        setContentView(R.layout.employee_perfomance_review);
 
         // Initialize the UI components
         reviewLayout = findViewById(R.id.reviewLayout);
@@ -87,12 +87,11 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
                                     hasReviews = true;
 
                                     // Extract review details
-                                    String reviewer = review.getString("reviewer");
                                     String standards = review.getString("standards");
                                     String description = review.getString("description");
 
                                     // Add the review to the layout using CardView
-                                    addReviewCard(reviewer, standards, description);
+                                    addReviewCard(standards, description);
                                 }
                             }
 
@@ -114,7 +113,7 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(EmployeePerformanceReviewActivity.this, "Failed to load reviews", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(EmployeePerformanceReviewActivity.this, "Failed to load reviews", Toast.LENGTH_SHORT).show();
                         Log.e("Error", "API Error", error);
                     }
                 });
@@ -125,7 +124,7 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
 
     // Helper method to add a review as a CardView
     @SuppressLint("SetTextI18n")
-    private void addReviewCard(String reviewer, String standards, String description) {
+    private void addReviewCard(String standards, String description) {
         // Create a CardView
         androidx.cardview.widget.CardView cardView = new androidx.cardview.widget.CardView(this);
 
@@ -144,12 +143,6 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
         cardContent.setOrientation(LinearLayout.VERTICAL);
         cardContent.setPadding(16, 16, 16, 16);
 
-        // Add TextViews for reviewer, standards, and description
-        TextView reviewerText = new TextView(this);
-        reviewerText.setText("Reviewer: " + reviewer);
-        reviewerText.setTextSize(16);
-        reviewerText.setPadding(0, 0, 0, 8);
-
         TextView standardsText = new TextView(this);
         standardsText.setText("Standards: " + standards);
         standardsText.setTextSize(16);
@@ -161,7 +154,6 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
         descriptionText.setPadding(0, 0, 0, 8);
 
         // Add TextViews to the card content
-        cardContent.addView(reviewerText);
         cardContent.addView(standardsText);
         cardContent.addView(descriptionText);
 
@@ -214,18 +206,18 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
                                 intent = new Intent(EmployeePerformanceReviewActivity.this, employeeActivity.class);
                                 break;
                             default:
-                                Toast.makeText(this, "Unknown user type", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(this, "Unknown user type", Toast.LENGTH_SHORT).show();
                                 return;
                         }
                         startActivity(intent);
 
                     } catch (JSONException e) {
-                        Toast.makeText(this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
                         Log.e("Profile Error", "JSON parsing error", e);
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
                     Log.e("Profile Error", error.toString());
                 });
 

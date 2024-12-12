@@ -98,7 +98,7 @@ public class createProject extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(createProject.this, "Project created successfully", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(createProject.this, "Project created successfully", Toast.LENGTH_SHORT).show();
                         // Navigate back to project activity
                         Intent intent = new Intent(createProject.this, projectActivity.class);
                         startActivity(intent);
@@ -108,7 +108,7 @@ public class createProject extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(createProject.this, "Failed to create project: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(createProject.this, "Failed to create project: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

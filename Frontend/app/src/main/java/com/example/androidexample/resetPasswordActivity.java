@@ -78,7 +78,7 @@ public class resetPasswordActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Toast.makeText(resetPasswordActivity.this, "Password successfully updated.", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(resetPasswordActivity.this, "Password successfully updated.", Toast.LENGTH_SHORT).show();
 
                                 // Delay 2 seconds
                                 new android.os.Handler().postDelayed(new Runnable() {

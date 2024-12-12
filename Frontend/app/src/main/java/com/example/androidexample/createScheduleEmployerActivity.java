@@ -77,7 +77,7 @@ public class createScheduleEmployerActivity extends AppCompatActivity {
                 // Create schedule request
                 createSchedule();
             } else {
-                Toast.makeText(this, "User does not exist.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "User does not exist.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -172,7 +172,7 @@ public class createScheduleEmployerActivity extends AppCompatActivity {
                         Log.e("POST Error", "Status Code: " + error.networkResponse.statusCode);
                         Log.e("POST Error", "Response Body: " + new String(error.networkResponse.data));
                     }
-                    Toast.makeText(this, "Failed to create schedule", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Failed to create schedule", Toast.LENGTH_SHORT).show();
                 });
 
         requestQueue.add(postRequest);

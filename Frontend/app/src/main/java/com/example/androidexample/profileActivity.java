@@ -122,14 +122,14 @@ public class profileActivity extends AppCompatActivity {
                             dateOfHireView.setText(dateOfHire);
 
                         } catch (Exception e) {
-                            Toast.makeText(profileActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(profileActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(profileActivity.this, "Error fetching profile", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(profileActivity.this, "Error fetching profile", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -186,7 +186,7 @@ public class profileActivity extends AppCompatActivity {
 
     private void saveUpdatedProfile(String username, String fullName, String email) {
         // Implement an API call to save updated profile data
-        Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();
     }
 
     // When on back button check userType to make sure goes back to right page
@@ -235,7 +235,7 @@ public class profileActivity extends AppCompatActivity {
                             startActivity(intent);
 
                         } catch (JSONException e) {
-                            Toast.makeText(profileActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
+                            //Toast.makeText(profileActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
                             Log.e("Profile Error", "JSON parsing error", e);
                         }
                     }
@@ -243,7 +243,7 @@ public class profileActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(profileActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
+                        //Toast.makeText(profileActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
                         Log.e("Profile Error", error.toString());
                     }
                 });

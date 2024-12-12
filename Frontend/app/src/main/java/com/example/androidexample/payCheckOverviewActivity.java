@@ -90,11 +90,11 @@ public class payCheckOverviewActivity extends AppCompatActivity {
     // Method to fetch user data from the backend and set it in the TextViews
     private void fetchUserData(String username) {
         if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/salary/username/" + username;
+        String url = "https://550fd271-29a4-4a24-8d5b-66afcaadabc0.mock.pstmn.io/payDetails";
 
         // Create a new request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -126,14 +126,14 @@ public class payCheckOverviewActivity extends AppCompatActivity {
 
 
                         } catch (Exception e) {
-                            Toast.makeText(payCheckOverviewActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(payCheckOverviewActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(payCheckOverviewActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(payCheckOverviewActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -181,13 +181,13 @@ public class payCheckOverviewActivity extends AppCompatActivity {
                                     intent = new Intent(payCheckOverviewActivity.this, employeeActivity.class);
                                     break;
                                 default:
-                                    Toast.makeText(payCheckOverviewActivity.this, "Unknown user type", Toast.LENGTH_SHORT);
+                                    //Toast.makeText(payCheckOverviewActivity.this, "Unknown user type", Toast.LENGTH_SHORT);
                                     return;
                             }
                             startActivity(intent);
 
                         } catch (JSONException e) {
-                            Toast.makeText(payCheckOverviewActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
+                            //Toast.makeText(payCheckOverviewActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
                             Log.e("Profile Error", "JSON parsing error", e);
                         }
                     }
@@ -195,7 +195,7 @@ public class payCheckOverviewActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(payCheckOverviewActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
+                        //Toast.makeText(payCheckOverviewActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
                         Log.e("Profile Error", error.toString());
                     }
                 });

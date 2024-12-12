@@ -203,18 +203,18 @@ public class projectStatusActivity extends AppCompatActivity {
                                 intent = new Intent(projectStatusActivity.this, employeeActivity.class);
                                 break;
                             default:
-                                Toast.makeText(this, "Unknown user type", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(this, "Unknown user type", Toast.LENGTH_SHORT).show();
                                 return;
                         }
                         startActivity(intent);
 
                     } catch (JSONException e) {
-                        Toast.makeText(this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
                         Log.e("Profile Error", "JSON parsing error", e);
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
                     Log.e("Profile Error", error.toString());
                 });
 

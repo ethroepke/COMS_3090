@@ -135,7 +135,7 @@ public class employeeStatusActivity extends AppCompatActivity {
                             }
                         } catch (JSONException e) {
                             Log.e("EmployeeStatus", "JSON Parsing error: " + e.getMessage());
-                            Toast.makeText(employeeStatusActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(employeeStatusActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -143,7 +143,7 @@ public class employeeStatusActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("EmployeeStatus", "Volley error: " + error.getMessage());
-                        Toast.makeText(employeeStatusActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(employeeStatusActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -193,18 +193,18 @@ public class employeeStatusActivity extends AppCompatActivity {
                                 intent = new Intent(employeeStatusActivity.this, employeeActivity.class);
                                 break;
                             default:
-                                Toast.makeText(this, "Unknown user type", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(this, "Unknown user type", Toast.LENGTH_SHORT).show();
                                 return;
                         }
                         startActivity(intent);
 
                     } catch (JSONException e) {
-                        Toast.makeText(this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
                         Log.e("Profile Error", "JSON parsing error", e);
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
                     Log.e("Profile Error", error.toString());
                 });
 

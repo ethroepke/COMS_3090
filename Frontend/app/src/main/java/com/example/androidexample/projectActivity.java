@@ -75,17 +75,22 @@ public class projectActivity extends AppCompatActivity {
 
 
     private void fetchProjects() {
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/project/allproject";
+        String url = "https://dfb6bb63-c0ea-4c10-bbd9-c6201d4aa3a3.mock.pstmn.io/project";
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
+        // Use JsonObjectRequest to parse the response as a JSON object
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONArray response) {
+                    public void onResponse(JSONObject response) {
                         try {
                             System.out.println("JSON Response: " + response.toString());
 
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject projectObject = response.getJSONObject(i);
+                            // Get the 'projects' array from the response object
+                            JSONArray projectsArray = response.getJSONArray("projects");
+
+                            // Iterate over the array and extract each project object
+                            for (int i = 0; i < projectsArray.length(); i++) {
+                                JSONObject projectObject = projectsArray.getJSONObject(i);
 
                                 // Extract fields from the JSON object
                                 String projectName = projectObject.optString("projectName", "Unnamed Project");
@@ -171,8 +176,9 @@ public class projectActivity extends AppCompatActivity {
                 });
 
         // Add the request to the RequestQueue
-        Volley.newRequestQueue(this).add(jsonArrayRequest);
+        Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
+
 
     // When on back button check userType to make sure goes back to right page
     private void fetchUserProfile(final String username) {
@@ -214,13 +220,13 @@ public class projectActivity extends AppCompatActivity {
                                     intent = new Intent(projectActivity.this, employeeActivity.class);
                                     break;
                                 default:
-                                    Toast.makeText(projectActivity.this, "Unknown user type", Toast.LENGTH_SHORT);
+                                    //Toast.makeText(projectActivity.this, "Unknown user type", Toast.LENGTH_SHORT);
                                     return;
                             }
                             startActivity(intent);
 
                         } catch (JSONException e) {
-                            Toast.makeText(projectActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
+                            //Toast.makeText(projectActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
                             Log.e("Profile Error", "JSON parsing error", e);
                         }
                     }
@@ -228,7 +234,7 @@ public class projectActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(projectActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
+                        //Toast.makeText(projectActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
                         Log.e("Profile Error", error.toString());
                     }
                 });

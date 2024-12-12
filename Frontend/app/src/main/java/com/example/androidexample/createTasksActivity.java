@@ -76,7 +76,7 @@ public class createTasksActivity extends AppCompatActivity {
         String employerAssignedTo = sharedPreferences.getString("username", null);
 
         if (taskName.isEmpty() || taskDescription.isEmpty() || employeeAssigned.isEmpty() || employerAssignedTo == null) {
-            Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -100,7 +100,7 @@ public class createTasksActivity extends AppCompatActivity {
             taskData.put("employerAssignedTo", employerAssignedTo);  // Get employer from SharedPreferences
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Failed to create task data", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Failed to create task data", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -113,7 +113,7 @@ public class createTasksActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         // Success creating task
-                        Toast.makeText(createTasksActivity.this, "Task created successfully!", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(createTasksActivity.this, "Task created successfully!", Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK);
                         finish();
                     }
@@ -122,7 +122,7 @@ public class createTasksActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Error creating task
-                        Toast.makeText(createTasksActivity.this, "Error creating task: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(createTasksActivity.this, "Error creating task: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
         );

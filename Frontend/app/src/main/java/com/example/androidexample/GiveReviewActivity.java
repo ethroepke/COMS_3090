@@ -135,7 +135,7 @@ public class GiveReviewActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(GiveReviewActivity.this, "Failed to load user data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(GiveReviewActivity.this, "Failed to load user data", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -172,13 +172,13 @@ public class GiveReviewActivity extends AppCompatActivity {
         // Retrieve and validate review text
         String reviewText = reviewEditText.getText().toString().trim();
         if (reviewText.isEmpty()) {
-            Toast.makeText(this, "Please enter a review description", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Please enter a review description", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Ensure a standard is selected
         if (selectedStandard == null) {
-            Toast.makeText(this, "Please select a standard", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Please select a standard", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -200,7 +200,7 @@ public class GiveReviewActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             // Display a success message and close the activity
-                            Toast.makeText(GiveReviewActivity.this, "Review submitted successfully", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(GiveReviewActivity.this, "Review submitted successfully", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     },
@@ -208,7 +208,7 @@ public class GiveReviewActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             // Handle errors, display an error message
-                            Toast.makeText(GiveReviewActivity.this, "Failed to submit review", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(GiveReviewActivity.this, "Failed to submit review", Toast.LENGTH_SHORT).show();
                             Log.e("SubmitReviewError", "Error occurred while submitting the review", error);
                         }
                     });
@@ -219,7 +219,7 @@ public class GiveReviewActivity extends AppCompatActivity {
         } catch (JSONException e) {
             // Handle JSON construction errors
             Log.e("JSONError", "Failed to prepare review data", e);
-            Toast.makeText(this, "Error preparing review data", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Error preparing review data", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -19,15 +22,21 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class createScheduleAdminActivity extends AppCompatActivity {
     private EditText dateEditText;
@@ -53,8 +62,7 @@ public class createScheduleAdminActivity extends AppCompatActivity {
         startTimeText = findViewById(R.id.startTimeText);
         endTimeText = findViewById(R.id.endTimeText);
         saveButton = findViewById(R.id.saveButton);
-        nameEntry = findViewById(R.id.nameEntry);
-        employeeAssignedEditText = findViewById(R.id.nameEntry);
+        nameEntry = findViewById(R.id.nameEntrySchedule);
 
         // Set up the toolbar
         Toolbar toolbar = findViewById(R.id.toolBarScheduler);
@@ -67,6 +75,8 @@ public class createScheduleAdminActivity extends AppCompatActivity {
         // Set up the date picker for the EditText
         setUpDatePicker();
 
+        loadEmployees();
+
         // Set up time picker for start and end times
         setUpTimePicker(startTimeText, true); // true for start time
         setUpTimePicker(endTimeText, false);  // false for end time
@@ -78,9 +88,52 @@ public class createScheduleAdminActivity extends AppCompatActivity {
                 // Create schedule request
                 createSchedule();
             } else {
-                Toast.makeText(this, "User does not exist.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "User does not exist.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void loadEmployees() {
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/all";
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    List<String> userNames = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject user = response.getJSONObject(i);
+                            String username = user.getString("username");
+                            userNames.add(username);
+                        }
+
+                        // Set up the spinner with the fetched usernames
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(createScheduleAdminActivity.this,
+                                android.R.layout.simple_spinner_item, userNames);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        nameEntry.setAdapter(adapter);
+
+                        // Handle spinner item selection
+                        nameEntry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                String selectedUsername = userNames.get(position);
+                                Log.d("Spinner Selection", "Selected username: " + selectedUsername);
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parentView) {
+                                // Do nothing
+                            }
+                        });
+                    } catch (JSONException e) {
+                        Log.e("Error", "Failed to parse user data", e);
+                    }
+                },
+                error -> {
+                    //Toast.makeText(createScheduleAdminActivity.this, "Failed to load user data", Toast.LENGTH_SHORT).show();
+                });
+
+        // Add the request to the queue
+        requestQueue.add(request);
     }
 
     private void setUpDatePicker() {
@@ -134,7 +187,7 @@ public class createScheduleAdminActivity extends AppCompatActivity {
         String endDateTime = selectedDate + "T" + formatTimeTo24Hour(selectedEndTime);
 
         // Get employee (from text entry) and employer (from SharedPreferences)
-        String employeeAssignedTo = employeeAssignedEditText.getSelectedItem().toString().trim();
+        String employeeAssignedTo = nameEntry.getSelectedItem().toString().trim();
 
         // Fetch employerAssignedTo (username) from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -173,7 +226,9 @@ public class createScheduleAdminActivity extends AppCompatActivity {
                         Log.e("POST Error", "Status Code: " + error.networkResponse.statusCode);
                         Log.e("POST Error", "Response Body: " + new String(error.networkResponse.data));
                     }
-                    Toast.makeText(this, "Failed to create schedule", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Failed to create schedule", Toast.LENGTH_SHORT).show();
+                    Log.d("Schedule Data Sent", scheduleData.toString());
+
                 });
 
         requestQueue.add(postRequest);

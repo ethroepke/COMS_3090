@@ -345,7 +345,7 @@ public class employeeActivity extends AppCompatActivity {
     //Method to fetch all of users data thats logged in and then post name to welcome message
     private void fetchUsersName(String username) {
         if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -365,14 +365,14 @@ public class employeeActivity extends AppCompatActivity {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(employeeActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(employeeActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(employeeActivity.this, "Error fetching user data: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(employeeActivity.this, "Error fetching user data: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -388,7 +388,7 @@ public class employeeActivity extends AppCompatActivity {
     // Method to fetch user data from the backend and set it in the TextViews
     private void fetchPayData(String username) {
         if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -412,14 +412,14 @@ public class employeeActivity extends AppCompatActivity {
 
 
                         } catch (Exception e) {
-                            Toast.makeText(employeeActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(employeeActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(employeeActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(employeeActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -434,11 +434,11 @@ public class employeeActivity extends AppCompatActivity {
     // Method to fetch user data for schedules. Get all users schedules and get next upcoming shift
     private void fetchScheduleData(String username) {
         if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/schedules/assigned/" + username;
+        String url = "https://eceda3fd-5b51-430f-bd55-3a91ebb3ca23.mock.pstmn.io/schedule/johndoe";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -517,14 +517,14 @@ public class employeeActivity extends AppCompatActivity {
                                 shiftProjectNextHome.setText("");
                             }
                         } catch (Exception e) {
-                            Toast.makeText(employeeActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            ///Toast.makeText(employeeActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(employeeActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(employeeActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 });
 

@@ -325,7 +325,7 @@ public class adminActivity extends AppCompatActivity {
     //Method to fetch all of users data thats logged in and then post name to welcome message
     private void fetchUsersName(String username) {
         if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -345,14 +345,14 @@ public class adminActivity extends AppCompatActivity {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(adminActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(adminActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(adminActivity.this, "Error fetching user data: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(adminActivity.this, "Error fetching user data: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -364,11 +364,11 @@ public class adminActivity extends AppCompatActivity {
     // Method to fetch user data from the backend and set it in the TextViews
     private void fetchPayData(String username) {
         if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/salary/username/" + username;
+        String url = "https://550fd271-29a4-4a24-8d5b-66afcaadabc0.mock.pstmn.io/payDetails";
 
         // Create a new request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -388,14 +388,14 @@ public class adminActivity extends AppCompatActivity {
 
 
                         } catch (Exception e) {
-                            Toast.makeText(adminActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(adminActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(adminActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(adminActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -406,11 +406,11 @@ public class adminActivity extends AppCompatActivity {
     // Method to fetch user data for schedules. Get all users schedules and get next upcoming shift
     private void fetchScheduleData(String username) {
         if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/schedules/assigned/" + username;
+        String url = "https://eceda3fd-5b51-430f-bd55-3a91ebb3ca23.mock.pstmn.io/schedule/johndoe";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -489,14 +489,14 @@ public class adminActivity extends AppCompatActivity {
                                 shiftProjectNextHome.setText("");
                             }
                         } catch (Exception e) {
-                            Toast.makeText(adminActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(adminActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(adminActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(adminActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 });
 

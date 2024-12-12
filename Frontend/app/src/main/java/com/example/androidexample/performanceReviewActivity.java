@@ -89,7 +89,7 @@ public class performanceReviewActivity extends AppCompatActivity {
                             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             employeeSpinner.setAdapter(adapter);
                         } catch (JSONException e) {
-                            Toast.makeText(performanceReviewActivity.this, "Error parsing employee list.", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(performanceReviewActivity.this, "Error parsing employee list.", Toast.LENGTH_SHORT).show();
                             Log.e("Employee List Error", "JSON parsing error", e);
                         }
                     }
@@ -97,7 +97,7 @@ public class performanceReviewActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(performanceReviewActivity.this, "Failed to fetch employee list.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(performanceReviewActivity.this, "Failed to fetch employee list.", Toast.LENGTH_SHORT).show();
                         Log.e("Employee List Error", error.toString());
                     }
                 });
@@ -155,7 +155,7 @@ public class performanceReviewActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(performanceReviewActivity.this, "Failed to load reviews", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(performanceReviewActivity.this, "Failed to load reviews", Toast.LENGTH_SHORT).show();
                         Log.e("Error", "API Error", error);
                     }
                 });
@@ -244,7 +244,7 @@ public class performanceReviewActivity extends AppCompatActivity {
                             // Redirect to appropriate activity based on user type
                             // (Handle redirect based on the userType logic here)
                         } catch (JSONException e) {
-                            Toast.makeText(performanceReviewActivity.this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(performanceReviewActivity.this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
                             Log.e("Profile Error", "JSON parsing error", e);
                         }
                     }
@@ -252,7 +252,7 @@ public class performanceReviewActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(performanceReviewActivity.this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(performanceReviewActivity.this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
                         Log.e("Profile Error", error.toString());
                     }
                 });

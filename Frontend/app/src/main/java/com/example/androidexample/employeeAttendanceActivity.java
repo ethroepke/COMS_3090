@@ -115,12 +115,12 @@ public class employeeAttendanceActivity extends AppCompatActivity {
                             currentUsersLayout.addView(cardView);
                         }
                     } catch (Exception e) {
-                        Toast.makeText(this, "Error parsing current users data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "Error parsing current users data", Toast.LENGTH_SHORT).show();
                         Log.e("CurrentUsersError", e.toString());
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Failed to fetch current users", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Failed to fetch current users", Toast.LENGTH_SHORT).show();
                     Log.e("CurrentUsersError", error.toString());
                 });
 
@@ -177,12 +177,12 @@ public class employeeAttendanceActivity extends AppCompatActivity {
                             previousUsersLayout.addView(cardView);
                         }
                     } catch (JSONException e) {
-                        Toast.makeText(this, "Error parsing previous users data", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "Error parsing previous users data", Toast.LENGTH_SHORT).show();
                         Log.e("PreviousUsersError", e.toString());
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Failed to fetch previous users", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Failed to fetch previous users", Toast.LENGTH_SHORT).show();
                     Log.e("PreviousUsersError", error.toString());
                 });
 
@@ -240,13 +240,13 @@ public class employeeAttendanceActivity extends AppCompatActivity {
                                     intent = new Intent(employeeAttendanceActivity.this, employeeActivity.class);
                                     break;
                                 default:
-                                    Toast.makeText(employeeAttendanceActivity.this, "Unknown user type", Toast.LENGTH_SHORT);
+                                    //Toast.makeText(employeeAttendanceActivity.this, "Unknown user type", Toast.LENGTH_SHORT);
                                     return;
                             }
                             startActivity(intent);
 
                         } catch (JSONException e) {
-                            Toast.makeText(employeeAttendanceActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
+                            //Toast.makeText(employeeAttendanceActivity.this,"Error parsing user profile.", Toast.LENGTH_SHORT);
                             Log.e("Profile Error", "JSON parsing error", e);
                         }
                     }
@@ -254,7 +254,7 @@ public class employeeAttendanceActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(employeeAttendanceActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
+                        //Toast.makeText(employeeAttendanceActivity.this,"Failed to fetch user profile.", Toast.LENGTH_SHORT);
                         Log.e("Profile Error", error.toString());
                     }
                 });

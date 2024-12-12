@@ -59,19 +59,23 @@ public class taskEmployeeActivity extends AppCompatActivity {
      * GET all tasks assigned to the currently logged in user
      */
     private void fetchAllTasks() {
-        String url = "http://coms-3090-046.class.las.iastate.edu:8080/tasks";
+        String url = "https://55f1aed6-2955-4d90-a1cc-fe885ca7571f.mock.pstmn.io/tasks";
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
+        // Use JsonObjectRequest to handle JSONObject response
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONArray response) {
+                    public void onResponse(JSONObject response) {
                         try {
+                            // Get the 'tasks' array from the response
+                            JSONArray tasksArray = response.getJSONArray("tasks");
+
                             // Clear the layout to avoid duplicating task cards
                             taskListLayout.removeAllViews();
 
-                            // Loop through each task in the response
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject taskObject = response.getJSONObject(i);
+                            // Loop through each task in the 'tasks' array
+                            for (int i = 0; i < tasksArray.length(); i++) {
+                                JSONObject taskObject = tasksArray.getJSONObject(i);
 
                                 // Extract fields including the task ID
                                 final long taskId = taskObject.optLong("id"); // Get the task ID
@@ -84,12 +88,7 @@ public class taskEmployeeActivity extends AppCompatActivity {
                                 String updatedAt = taskObject.optString("updatedAt", "");
                                 int progress = taskObject.optInt("progress", 0);
 
-                                // Only show tasks assigned to the current user
-                                SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                                String currentUser = sharedPreferences.getString("username", null);
-                                if (employeeAssignedTo != null && !employeeAssignedTo.equals(currentUser)) {
-                                    continue;  // Skip tasks not assigned to the current user
-                                }
+
 
                                 // Create a new CardView for this task
                                 CardView taskCard = new CardView(taskEmployeeActivity.this);
@@ -194,7 +193,7 @@ public class taskEmployeeActivity extends AppCompatActivity {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(taskEmployeeActivity.this, "Error fetching tasks", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(taskEmployeeActivity.this, "Error fetching tasks", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -202,13 +201,14 @@ public class taskEmployeeActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("Volley Error", "Error fetching tasks: " + error.getMessage());
-                        Toast.makeText(taskEmployeeActivity.this, "Error fetching tasks: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(taskEmployeeActivity.this, "Error fetching tasks: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
         // Add the request to the RequestQueue
-        Volley.newRequestQueue(this).add(jsonArrayRequest);
+        Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
+
 
     /**
      * Get the next status of the project.
@@ -264,7 +264,7 @@ public class taskEmployeeActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             // On success, update the status on the UI
-                            Toast.makeText(taskEmployeeActivity.this, "Task status updated to " + newStatus, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(taskEmployeeActivity.this, "Task status updated to " + newStatus, Toast.LENGTH_SHORT).show();
                             taskStatusView.setText(newStatus);
 
                             // Change color based on new status
@@ -281,7 +281,7 @@ public class taskEmployeeActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e("Volley Error", "Error updating task status: " + error.getMessage());
-                            Toast.makeText(taskEmployeeActivity.this, "Error updating task status: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(taskEmployeeActivity.this, "Error updating task status: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -290,7 +290,7 @@ public class taskEmployeeActivity extends AppCompatActivity {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(taskEmployeeActivity.this, "Error creating task data", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(taskEmployeeActivity.this, "Error creating task data", Toast.LENGTH_SHORT).show();
         }
     }
 

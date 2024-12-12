@@ -8,16 +8,16 @@
       <SelectionState runConfigName="loginActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="GiveReviewActivity">
+      <SelectionState runConfigName="employeeActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="createScheduleAdminActivity">
+      <SelectionState runConfigName="adminActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EmployeePerformanceReviewActivity">
+      <SelectionState runConfigName="taskEmployeeActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="performanceReviewActivity">
+      <SelectionState runConfigName="payCheckOverviewActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
