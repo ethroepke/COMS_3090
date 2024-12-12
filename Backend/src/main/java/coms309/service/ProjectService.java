@@ -53,25 +53,7 @@ public class ProjectService {
     }
     @Transactional
     public ResponseEntity<String> createProject(ProjectDTO projectDTO) {
-        Optional<Projects> existingProject = projectRepository.findByProjectName(projectDTO.getProjectName());
-        if (existingProject.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Project with the same name already exists");
-        }
-        Optional<UserProfile> userProfileOpt = userProfileRepository.findByUsername(projectDTO.getEmployerUsername());
-        if (!userProfileOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("User with username " + projectDTO.getEmployerUsername() + " does not exist");
-        }
-        UserProfile userProfile = userProfileOpt.get();
-        if (userProfile.getUserType() != UserType.EMPLOYER) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("User with username " + projectDTO.getEmployerUsername() + " is not an employer");
-        }
-
-
         Projects project = new Projects();
-//        project.setProjectId(projectDTO.getProjectId());
         project.setProjectName(projectDTO.getProjectName());
         project.setDescription(projectDTO.getDescription());
         project.setPriority(projectDTO.getPriority().toString());

@@ -1,6 +1,7 @@
 package com.example.androidexample;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +33,7 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
     private TextView performanceReviewTitle;
     private LinearLayout reviewLayout;
     private Button addReviewButton;
+    private String loggedInUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,56 +41,195 @@ public class EmployeePerformanceReviewActivity extends AppCompatActivity {
         setContentView(R.layout.employee_perfomance_review);  // Load the XML layout
 
         // Initialize the UI components
-        performanceReviewTitle = findViewById(R.id.performanceReviewTitle);
         reviewLayout = findViewById(R.id.reviewLayout);
         addReviewButton = findViewById(R.id.addReviewButton);
 
+        // Setup Toolbar
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"})
+        Toolbar toolbar = findViewById(R.id.toolbarReviews);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Performance Reviews");
+
         // Get the username from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        String currentUsername = sharedPreferences.getString("username", null);  // Retrieve the username
+        loggedInUsername = sharedPreferences.getString("username", null);
 
-        if (currentUsername != null) {
-            // Set the performance review title with the employee's username
-            performanceReviewTitle.setText("Performance Reviews for " + currentUsername);
-
-            // Fetch and display the performance reviews associated with the employee here
-            displayEmployeeReviews(currentUsername);
+        if (loggedInUsername != null) {
+            displayEmployeeReviews(loggedInUsername);
         }
 
-        // Button click listener (You can use this for functionality to add a review)
+
+
         addReviewButton.setOnClickListener(v -> {
-            // Handle the review creation logic here (e.g., open a dialog or another activity to add a new review)
         });
     }
 
     // This method will display the reviews for the current employee
     private void displayEmployeeReviews(String username) {
-        // For now, we are just simulating the display of reviews.
-        // You will need to fetch the actual reviews from your database or API.
+        // API endpoint URL
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/performance-reviews/all";
 
-        // Example review text (replace with actual data retrieval logic)
-        String[] reviews = {
-                "Great performance this month, keep up the good work!",
-                "Needs improvement in communication skills.",
-                "Excellent teamwork and collaboration."
-        };
+        // Create a GET request to fetch all reviews
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            boolean hasReviews = false;
 
-        // Display reviews in the reviewLayout LinearLayout
-        for (String review : reviews) {
-            TextView reviewTextView = new TextView(this);
-            reviewTextView.setText(review);
-            reviewTextView.setTextSize(16);
-            reviewTextView.setPadding(16, 8, 16, 8);  // Padding for the reviews
-            reviewLayout.addView(reviewTextView);
-        }
+                            // Loop through the response and filter reviews by username
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject review = response.getJSONObject(i);
 
-        // If there are no reviews, you can show a message to the employee
-        if (reviews.length == 0) {
-            TextView noReviewsMessage = new TextView(this);
-            noReviewsMessage.setText("No performance reviews available at the moment.");
-            noReviewsMessage.setTextSize(16);
-            noReviewsMessage.setPadding(16, 8, 16, 8);
-            reviewLayout.addView(noReviewsMessage);
-        }
+                                // Check if the review is for the logged-in user
+                                if (review.getString("username").equals(username)) {
+                                    hasReviews = true;
+
+                                    // Extract review details
+                                    String reviewer = review.getString("reviewer");
+                                    String standards = review.getString("standards");
+                                    String description = review.getString("description");
+
+                                    // Add the review to the layout using CardView
+                                    addReviewCard(reviewer, standards, description);
+                                }
+                            }
+
+                            // If no reviews are found, display a "no reviews" message
+                            if (!hasReviews) {
+                                TextView noReviewsMessage = new TextView(EmployeePerformanceReviewActivity.this);
+                                noReviewsMessage.setText("No performance reviews available at the moment.");
+                                noReviewsMessage.setTextSize(16);
+                                noReviewsMessage.setPadding(16, 8, 16, 8);
+                                reviewLayout.addView(noReviewsMessage);
+                            }
+
+
+                        } catch (JSONException e) {
+                            Log.e("Error", "Failed to parse reviews", e);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(EmployeePerformanceReviewActivity.this, "Failed to load reviews", Toast.LENGTH_SHORT).show();
+                        Log.e("Error", "API Error", error);
+                    }
+                });
+
+        // Add the request to the Volley queue
+        Volley.newRequestQueue(this).add(request);
     }
+
+    // Helper method to add a review as a CardView
+    @SuppressLint("SetTextI18n")
+    private void addReviewCard(String reviewer, String standards, String description) {
+        // Create a CardView
+        androidx.cardview.widget.CardView cardView = new androidx.cardview.widget.CardView(this);
+
+        // Set CardView layout parameters
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(16, 16, 16, 16); // Set margin
+        cardView.setLayoutParams(params);
+        cardView.setRadius(12);
+        cardView.setCardElevation(6);
+
+        // Create a LinearLayout for CardView content
+        LinearLayout cardContent = new LinearLayout(this);
+        cardContent.setOrientation(LinearLayout.VERTICAL);
+        cardContent.setPadding(16, 16, 16, 16);
+
+        // Add TextViews for reviewer, standards, and description
+        TextView reviewerText = new TextView(this);
+        reviewerText.setText("Reviewer: " + reviewer);
+        reviewerText.setTextSize(16);
+        reviewerText.setPadding(0, 0, 0, 8);
+
+        TextView standardsText = new TextView(this);
+        standardsText.setText("Standards: " + standards);
+        standardsText.setTextSize(16);
+        standardsText.setPadding(0, 0, 0, 8);
+
+        TextView descriptionText = new TextView(this);
+        descriptionText.setText("Description: " + description);
+        descriptionText.setTextSize(16);
+        descriptionText.setPadding(0, 0, 0, 8);
+
+        // Add TextViews to the card content
+        cardContent.addView(reviewerText);
+        cardContent.addView(standardsText);
+        cardContent.addView(descriptionText);
+
+        // Add content to CardView
+        cardView.addView(cardContent);
+
+        // Add CardView to the main layout
+        reviewLayout.addView(cardView);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            fetchUserProfile(loggedInUsername);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void fetchUserProfile(String username) {
+        String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;
+
+        JsonObjectRequest profileRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        int userId = response.getInt("userId");
+                        String fullName = response.getString("fullName");
+                        String userType = response.getString("userType");
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("userId", userId);
+                        editor.putString("username", username);
+                        editor.putString("userType", userType);
+                        editor.putString("fullName", fullName);
+                        editor.apply();
+
+                        Intent intent;
+                        switch (userType) {
+                            case "ADMIN":
+                                intent = new Intent(EmployeePerformanceReviewActivity.this, adminActivity.class);
+                                break;
+                            case "EMPLOYER":
+                                intent = new Intent(EmployeePerformanceReviewActivity.this, employerActivity.class);
+                                break;
+                            case "EMPLOYEE":
+                                intent = new Intent(EmployeePerformanceReviewActivity.this, employeeActivity.class);
+                                break;
+                            default:
+                                Toast.makeText(this, "Unknown user type", Toast.LENGTH_SHORT).show();
+                                return;
+                        }
+                        startActivity(intent);
+
+                    } catch (JSONException e) {
+                        Toast.makeText(this, "Error parsing user profile.", Toast.LENGTH_SHORT).show();
+                        Log.e("Profile Error", "JSON parsing error", e);
+                    }
+                },
+                error -> {
+                    Toast.makeText(this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
+                    Log.e("Profile Error", error.toString());
+                });
+
+        Volley.newRequestQueue(this).add(profileRequest);
+    }
+
 }

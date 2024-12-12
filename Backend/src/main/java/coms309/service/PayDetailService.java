@@ -5,8 +5,10 @@ import coms309.dto.SalaryResponseDTO;
 
 import coms309.entity.Salary;
 import coms309.entity.UserProfile;
+import coms309.exception.ResourceNotFoundException;
 import coms309.repository.SalaryRepository;
 import coms309.repository.UserProfileRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,17 +60,21 @@ public class PayDetailService {
         if (!userProfileOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with ID: " + userId);
         }
+
         UserProfile userProfile = userProfileOpt.get();
         List<Salary> salaries = salaryRepository.findAllByUserProfile(userProfile);
+
         if (!salaries.isEmpty()) {
             List<SalaryResponseDTO> responseDTOs = salaries.stream()
-                    .map(this::mapToSalaryResponseDTO)
+                    .map(this::mapToSalaryResponseDTO)  // Map each Salary to SalaryResponseDTO
                     .collect(Collectors.toList());
             return ResponseEntity.ok(responseDTOs);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No salaries found for user.");
         }
     }
+
+
     /**
      * Get salary details for a user by username.
      *

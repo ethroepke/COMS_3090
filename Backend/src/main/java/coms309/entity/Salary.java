@@ -30,10 +30,11 @@ public class Salary {
     @Column(name = "salary_id")
     private Long salaryId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_profile_id", referencedColumnName = "user_id", nullable = false)
     @JsonIgnore
     private UserProfile userProfile;
+
 
 
     @NotNull(message = "Hours worked cannot be null")

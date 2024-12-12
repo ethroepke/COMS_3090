@@ -2,6 +2,7 @@
 package coms309.dto;
 
 import coms309.entity.Priority;
+import coms309.entity.Projects;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,13 +16,32 @@ import java.util.Set;
 @Getter
 @Data
 public class ProjectDTO {
+
     private Long projectId;
+
+//    private String description;
+//
+//    private String projectName;
+//
+//    private String status;
+//
+//    private Date dueDate;
+//
     private Date startDate;
+
     private Date endDate;
+
+//    @NotNull(message = "Priority level is required")
+//    private Priority priority;
+//
+//    @NotEmpty(message = "Employers list cannot be empty")
+//    private List<@NotBlank(message = "Employer username cannot be blank") String> employerUsernames;
+
     private String projectName;
     private String description;
     private Date dueDate;
     private Priority priority;
+//    private String employerUsername;
     private String status;
     private String employerUsername;
     private int completedTasks;

@@ -12,11 +12,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// OpenAPI 3 annotations
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * Controller for managing Employee Attendance operations.
  */
 @RestController
 @RequestMapping("/api/attendance")
+@Tag(name = "Employee Attendance", description = "Operations related to employee attendance tracking")
 public class EmployeeAttendanceController {
 
     @Autowired

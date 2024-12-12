@@ -47,7 +47,7 @@ public class ProjectController {
         Projects project = new Projects();
         // Assuming Projects has setName and setDescription methods
         // Add the setName method in the Projects class if it doesn't exist
-        project.setName(projectDTO.getName());
+        project.setUsername(projectDTO.getName());
         // Add the setDescription method in the Projects class if it doesn't exist
         project.setDescription(projectDTO.getDescription());
         return project;

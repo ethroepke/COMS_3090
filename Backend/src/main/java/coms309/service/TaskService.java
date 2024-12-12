@@ -29,8 +29,10 @@ public class TaskService {
     @Autowired
     private ProjectRepository projectRepository;
 
-//    @Autowired
-//    private TaskWebSocketService taskWebSocketService;
+    @Transactional
+    public void markTaskAsCompleted(Long taskId) {
+        taskRepository.markTaskAsCompleted(taskId);
+    }
 
     // Create a new task
     public Tasks createTask(TaskDTO taskDTO) {

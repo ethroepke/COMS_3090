@@ -222,7 +222,7 @@ public class adminActivity extends AppCompatActivity {
         performanceReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(adminActivity.this, performanceReviewActivity.class);
+                Intent intent = new Intent(adminActivity.this, GiveReviewActivity.class);
                 startActivity(intent);
             }
         });

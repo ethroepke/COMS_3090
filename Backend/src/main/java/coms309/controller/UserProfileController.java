@@ -292,47 +292,6 @@ public class UserProfileController {
      * @param forgotUserDTO DTO containing email and new password.
      * @return ResponseEntity indicating the outcome.
      */
-    @Operation(summary = "Handle password reset for a user", responses = {
-            @ApiResponse(responseCode = "200", description = "Successfully reset the password"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    @PutMapping("/forgotPassword")
-    public ResponseEntity<String> forgotPassword(@Valid @RequestBody UserDTO forgotUserDTO) {
-        logger.info("Controller: Attempting to reset password for email: {}", forgotUserDTO.getEmail());
-        return userService.forgotPassword(forgotUserDTO);
-    }
-
-    /**
-     * Handle user login.
-     *
-     * @param loginUserDTO DTO containing username and password.
-     * @return ResponseEntity indicating the outcome.
-     */
-    @Operation(summary = "Handle user login", responses = {
-            @ApiResponse(responseCode = "200", description = "Successfully logged in"),
-            @ApiResponse(responseCode = "400", description = "Invalid login credentials")
-    })
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserDTO loginUserDTO) {
-        logger.info("Controller: Attempting login for username: {}", loginUserDTO.getUsername());
-        return userService.login(loginUserDTO);
-    }
-
-    /**
-     * Handle user signup.
-     *
-     * @param signUpUserProfileDTO DTO containing signup information.
-     * @return ResponseEntity indicating the outcome.
-     */
-    @Operation(summary = "Handle user signup", responses = {
-            @ApiResponse(responseCode = "201", description = "Successfully signed up"),
-            @ApiResponse(responseCode = "400", description = "Invalid signup data")
-    })
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignUpDTO signUpUserProfileDTO) {
-        logger.info("Controller: Attempting signup for username: {}", signUpUserProfileDTO.getUsername());
-        return userService.signup(signUpUserProfileDTO);
-    }
 
     /**
      * Gets all usernames.
@@ -347,4 +306,3 @@ public class UserProfileController {
         return ResponseEntity.ok(usernames);
     }
 }
-

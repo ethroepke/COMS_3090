@@ -1,8 +1,10 @@
 package coms309.controller;
 
+import coms309.dto.SalaryResponseDTO;
 import coms309.entity.Salary;
 import coms309.service.PayDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing salary details.
@@ -53,10 +58,11 @@ public class PayDetailController {
     })
     @GetMapping("/all/{userId}")
     public ResponseEntity<?> getAllSalariesForUser(
-            @Parameter(description = "ID of the user to retrieve all salary records", required = true)
             @PathVariable Long userId) {
         return payDetailService.getAllSalariesForUserResponse(userId);
     }
+
+
 
     /**
      * Create or update salary details.

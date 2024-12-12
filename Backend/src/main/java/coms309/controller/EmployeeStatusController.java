@@ -4,6 +4,7 @@ import coms309.dto.ApiResponse;
 import coms309.dto.AvailabilityDTO;
 import coms309.dto.LeaveRequestDTO;
 import coms309.entity.Availability;
+import coms309.entity.DAY;
 import coms309.entity.LeaveRequests;
 import coms309.service.EmployeeStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// OpenAPI 3 annotations
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * Controller for managing Employee Status operations, including availability and leave requests.
  */
 @RestController
 @RequestMapping("/api/status")
+@Tag(name = "Employee Status", description = "Operations related to employee status, availability, and leave requests")
 public class EmployeeStatusController {
 
     @Autowired
@@ -28,35 +36,46 @@ public class EmployeeStatusController {
      * POST: Submit Availability for an employee.
      *
      * @param employeeId       ID of the employee.
-     * @param availabilityDTOs List of AvailabilityDTO entries.
+     * @param requestBody List of AvailabilityDTO entries.
      * @return ResponseEntity containing ApiResponse with list of saved AvailabilityDTOs.
      */
     @PostMapping("/availability")
     public ResponseEntity<ApiResponse<List<AvailabilityDTO>>> submitAvailability(
             @RequestParam Long employeeId,
-            @RequestBody List<AvailabilityDTO> availabilityDTOs) {
+            @RequestBody Map<String, List<AvailabilityDTO>> requestBody) {
+
+        // Retrieve the list of availabilityDTOs from the request body
+        List<AvailabilityDTO> availabilityDTOs = requestBody.get("availabilityDTOs");
+
+        // Convert the DTOs into Availability entities
         List<Availability> availabilities = availabilityDTOs.stream()
                 .map(dto -> {
                     Availability av = new Availability();
-                    av.setDayOfWeek(dto.getDayOfWeek());
+                    av.setDayOfWeek(DAY.valueOf(dto.getDayOfWeek().toString()));  // Convert DTO's DayOfWeek to the Enum
                     av.setStartTime(dto.getStartTime());
                     av.setEndTime(dto.getEndTime());
                     return av;
                 })
                 .collect(Collectors.toList());
 
+        // Submit the availability data to the service layer
         List<Availability> savedAvailabilities = statusService.submitAvailability(employeeId, availabilities);
+
+        // Convert saved Availability entities back to DTOs for response
         List<AvailabilityDTO> savedDTOs = savedAvailabilities.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
 
+        // Send the response with the saved availability
         ApiResponse<List<AvailabilityDTO>> response = new ApiResponse<>(
                 true,
                 "Availability submitted successfully",
                 savedDTOs
         );
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 
     /**
      * GET: Retrieve Unavailable Times for an employee.

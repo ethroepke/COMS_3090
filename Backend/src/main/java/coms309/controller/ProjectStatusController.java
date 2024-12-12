@@ -20,8 +20,16 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+// OpenAPI 3 annotations
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/project-status")
+@Tag(name = "Project Status", description = "Operations related to project status and tasks")
 public class ProjectStatusController {
 
     @Autowired

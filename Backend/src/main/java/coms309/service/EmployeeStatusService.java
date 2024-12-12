@@ -49,11 +49,14 @@ public class EmployeeStatusService {
                 });
 
         availabilities.forEach(av -> av.setEmployee(employee));
+
+
         List<Availability> savedAvailabilities = availabilityRepository.saveAll(availabilities);
 
         logger.info("Availability submitted successfully for Employee ID {}", employeeId);
         return savedAvailabilities;
     }
+
 
     /**
      * Get unavailable times for an employee.

@@ -64,9 +64,7 @@ public class UserProfile implements Serializable {
     private Date nextShift;
 
     @OneToOne(mappedBy = "userProfile")
-    @JsonBackReference
     private Salary salary;
-
 
     @OneToOne(mappedBy = "userProfile")
     @JsonBackReference
@@ -76,13 +74,15 @@ public class UserProfile implements Serializable {
     @JsonBackReference
     private Set<Employee> employees = new HashSet<>();
 
+
+
     public UserProfile(Long userId, String password, String username, String email ) {
         this.userId = Long.valueOf(userId);
         this.password = password;
         this.username = username;
         this.email = email;
         this.dateOfHire = new Date();
-        this.timeWorked=0;
+        this.timeWorked= timeWorked ;
         this.nextShift= new Date();
     }
 

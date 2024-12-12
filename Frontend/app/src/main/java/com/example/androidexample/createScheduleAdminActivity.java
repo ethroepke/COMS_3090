@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +33,7 @@ public class createScheduleAdminActivity extends AppCompatActivity {
     private EditText dateEditText;
     private TextView startTimeText, endTimeText;
     private Button saveButton;
-    private EditText nameEntry, employeeAssignedEditText;
+    private Spinner nameEntry, employeeAssignedEditText;
 
     private boolean doesNotExist;
     private RequestQueue requestQueue;
@@ -133,7 +134,7 @@ public class createScheduleAdminActivity extends AppCompatActivity {
         String endDateTime = selectedDate + "T" + formatTimeTo24Hour(selectedEndTime);
 
         // Get employee (from text entry) and employer (from SharedPreferences)
-        String employeeAssignedTo = employeeAssignedEditText.getText().toString().trim();
+        String employeeAssignedTo = employeeAssignedEditText.getSelectedItem().toString().trim();
 
         // Fetch employerAssignedTo (username) from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -191,8 +192,9 @@ public class createScheduleAdminActivity extends AppCompatActivity {
         }
     }
 
+
     private void checkUserExists() {
-        String username = nameEntry.getText().toString().trim();
+        String username = nameEntry.getSelectedItem().toString().trim();
 
         // Send a GET request to check if the user exists
         String url = "http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/" + username;
@@ -209,6 +211,8 @@ public class createScheduleAdminActivity extends AppCompatActivity {
 
         requestQueue.add(request);
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

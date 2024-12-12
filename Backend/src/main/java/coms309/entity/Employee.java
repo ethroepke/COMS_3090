@@ -25,24 +25,26 @@ public class Employee {
     @Column(name = "employee_id")
     private Long employeeId;
 
-    @OneToMany(mappedBy="employee", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<LeaveRequests> leaveRequestsList = new ArrayList<>();
+   @OneToMany(mappedBy="employee", cascade = CascadeType.ALL)
+   @JsonManagedReference
+   private List<LeaveRequests> leaveRequestsList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "employee" , cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<TimeLog> timeLogs = new ArrayList<>();
+   @OneToMany(mappedBy = "employee" , cascade = CascadeType.ALL)
+   @JsonManagedReference
+   private List<TimeLog> timeLogs= new ArrayList<>();
 
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_profile_id", unique = true)
-    @JsonManagedReference
     private UserProfile userProfile;
 
-    @NotNull(message = "Project assignment cannot be null")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
-    @JsonManagedReference
-    private Projects project;
+    @ManyToMany
+    @JoinTable(
+            name = "employer_projects",
+            joinColumns = @JoinColumn(name = "employer_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
+    @JsonManagedReference("employer-project")
+    private Set<Projects> projects = new HashSet<>();
 
     public Employee(){}
 }

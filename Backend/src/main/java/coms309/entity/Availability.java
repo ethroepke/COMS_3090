@@ -26,7 +26,7 @@ public class Availability {
     @NotNull(message = "Day of week cannot be null")
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week", nullable = false)
-    private DayOfWeek dayOfWeek;
+    private DAY dayOfWeek;
 
     @NotNull(message = "Start time cannot be null")
     @Column(name = "start_time", nullable = false)
